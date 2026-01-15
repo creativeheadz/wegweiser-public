@@ -1,0 +1,806 @@
+/* Canonical typography: self-hosted Noto Sans + single size scale */
+@font-face {
+  font-family: 'Noto Sans';
+  src: local('Noto Sans'), local('NotoSans-Regular'), url('/static/fonts/noto-sans/noto-sans-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Noto Sans';
+  src: local('Noto Sans Medium'), local('NotoSans-Medium'), url('/static/fonts/noto-sans/noto-sans-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Noto Sans';
+  src: local('Noto Sans SemiBold'), local('NotoSans-SemiBold'), url('/static/fonts/noto-sans/noto-sans-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Noto Sans';
+  src: local('Noto Sans Bold'), local('NotoSans-Bold'), url('/static/fonts/noto-sans/noto-sans-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Canonical font family */
+  --font-family-base: 'Noto Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --bs-body-font-family: var(--font-family-base);
+  --bs-font-sans-serif: var(--font-family-base);
+
+  /* Canonical font-size scale */
+  --font-size-xs: 0.6875rem;  /* 11px */
+  --font-size-sm: 0.8125rem;  /* 13px */
+  --font-size-base: 0.875rem; /* 14px */
+  --font-size-md: 1rem;       /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+
+  /* Bootstrap mappings */
+  --bs-body-font-size: var(--font-size-base);
+  --bs-navbar-brand-font-size: var(--font-size-lg);
+  --bs-nav-link-font-size: var(--font-size-base);
+}
+
+/* Modern Theme System for Wegweiser
+   Simplified to support Light and Dark themes only
+*/
+
+/* Light Theme (Default) - Enhanced with nicestyle.css colors and glassmorphism */
+[data-bs-theme="light"] {
+    /* Colors - using nicestyle.css high-contrast palette */
+    --primary: #0078d4;
+    --primary-rgb: 0, 120, 212;
+    --primary-dark: #005ba4;
+    --secondary: #5B6B86;
+    --success: #06A6A9;
+    --danger: #E83C4B;
+    --warning: #FFAB00;
+    --info: #39D0D8;
+
+    /* Background colors - glassmorphism enhanced */
+    --body-bg: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    --card-bg: rgba(255, 255, 255, 0.25);
+    --sidebar-bg: rgba(255, 255, 255, 0.35);
+    --header-bg: rgba(255, 255, 255, 0.35);
+
+    /* Text colors with enhanced contrast from nicestyle.css */
+    --text-primary: #333333;
+    --text-secondary: #242424;
+    --text-muted: #475569;
+
+    /* Add accent text colors for emphasis */
+    --text-accent: #005fb8;
+    --text-success: #05959A;
+    --text-danger: #D32F3A;
+
+    /* Accent color for UI elements - glassmorphism compatible */
+    --accent-gold: var(--primary);
+
+    /* Border colors - glassmorphism enhanced with better contrast */
+    --border-color: rgba(0, 0, 0, 0.15);
+    --border-light: rgba(0, 0, 0, 0.08);
+
+    /* Glassmorphism specific variables for light theme - enhanced elegance */
+    --glass-bg: rgba(255, 255, 255, 0.65);
+    --glass-bg-hover: rgba(255, 255, 255, 0.75);
+    --glass-border: rgba(0, 0, 0, 0.15);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.12), 0 2px 8px 0 rgba(0, 0, 0, 0.06);
+    --glass-blur: blur(12px);
+    --glass-border-radius: 12px;
+
+    /* Notification colors */
+    --notification-info-bg: rgba(59, 208, 216, 0.15);
+    --notification-success-bg: rgba(6, 166, 169, 0.15);
+    --notification-warning-bg: rgba(255, 171, 0, 0.15);
+    --notification-danger-bg: rgba(232, 60, 75, 0.15);
+
+    /* Enhanced gradient for light theme with glassmorphism backdrop */
+    --main-gradient: linear-gradient(135deg, rgba(40, 81, 231, 0.08) 0%, rgba(6, 166, 169, 0.12) 50%, rgba(255, 255, 255, 0.05) 100%);
+    --backdrop-pattern: radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                       radial-gradient(circle at 80% 20%, rgba(255, 171, 0, 0.08) 0%, transparent 50%),
+                       radial-gradient(circle at 40% 80%, rgba(6, 166, 169, 0.06) 0%, transparent 50%);
+}
+
+/* Added specific styles for sidebar navigation in light theme */
+[data-bs-theme="light"] .sidebar-nav .nav-link {
+    color: #1A1D21;
+    /* Black text for menu links */
+}
+
+[data-bs-theme="light"] .sidebar-nav .nav-link.active {
+    color: #1A1D21;
+    /* Keep active links black too */
+    background-color: rgba(0, 0, 0, 0.08);
+    /* Subtle dark background for light theme */
+    font-weight: 500;
+}
+
+[data-bs-theme="light"] .sidebar-nav .nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    /* Subtle dark background for light theme */
+    color: #1A1D21;
+    /* Keep hover state black as well */
+}
+
+/* Dark Theme - Enhanced with nicestyle.css contrast colors and unified glassmorphism */
+[data-bs-theme="dark"] {
+    /* Colors - using nicestyle.css high-contrast palette */
+    --primary: #0078d4;
+    --primary-rgb: 0, 120, 212;
+    --primary-dark: #005ba4;
+    --secondary: #9ba3b4;
+    --success: #0ECFD3;
+    --danger: #FF5A69;
+    --warning: #FFB930;
+    --info: #4daafc;
+
+    /* Background colors - pure monochromatic glassmorphism */
+    --body-bg: linear-gradient(135deg, #0D1117 0%, #161b22 50%, #21262d 100%);
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --sidebar-bg: rgba(255, 255, 255, 0.12);
+    --header-bg: rgba(255, 255, 255, 0.12);
+
+    /* Text colors with enhanced contrast from nicestyle.css */
+    --text-primary: #e6eefA;
+    --text-secondary: #c3d0e5;
+    --text-muted: #9ba3b4;
+
+    /* Add accent text colors for emphasis */
+    --text-accent: #4daafc;
+    --text-success: #0ECFD3;
+    --text-danger: #FF5A69;
+
+    /* Accent color for UI elements - glassmorphism compatible */
+    --accent-gold: var(--primary);
+
+    /* Border colors - pure monochromatic */
+    --border-color: rgba(255, 255, 255, 0.18);
+    --border-light: rgba(255, 255, 255, 0.12);
+
+    /* Glassmorphism specific variables for dark theme - enhanced elegance */
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-bg-hover: rgba(255, 255, 255, 0.12);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 2px 8px 0 rgba(0, 0, 0, 0.3);
+    --glass-blur: blur(12px);
+    --glass-border-radius: 12px;
+
+    /* Notification colors - enhanced visibility */
+    --notification-info-bg: rgba(77, 170, 252, 0.2);
+    --notification-success-bg: rgba(14, 207, 211, 0.2);
+    --notification-warning-bg: rgba(255, 185, 48, 0.2);
+    --notification-danger-bg: rgba(255, 90, 105, 0.2);
+
+    /* Enhanced gradient for dark theme with pure monochromatic glassmorphism backdrop */
+    --main-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.03) 100%);
+    --backdrop-pattern: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.06) 0%, transparent 50%),
+                       radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.04) 0%, transparent 50%),
+                       radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+}
+
+/* Dark theme specific hover effects */
+[data-bs-theme="dark"] .sidebar-nav .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+[data-bs-theme="dark"] .sidebar-nav .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--text-primary) !important;
+}
+
+/* Comprehensive fix for all nav-link.active elements in dark theme */
+[data-bs-theme="dark"] .nav-link.active,
+[data-bs-theme="dark"] .navbar-nav .nav-link.active {
+    color: var(--text-primary) !important;
+}
+
+/* Dark theme glassmorphism specific adjustments - pure monochromatic */
+[data-bs-theme="dark"] .card-header {
+    background: rgba(255, 255, 255, 0.10) !important;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+[data-bs-theme="dark"] .card-footer {
+    background: rgba(255, 255, 255, 0.06) !important;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+/* Additional nicestyle.css inspired variables */
+
+[data-bs-theme="dark"] {
+    --foreground: #9ba3b4;
+    --foreground-intense: #e6eefA;
+    --header-foreground: #c3d0e5;
+    --accent-primary: #0078d4;
+    --accent-secondary: #005ba4;
+    --link-foreground: #4daafc;
+    --link-foreground-hover: #8fc3fe;
+    --button-primary-background: #0078d4;
+    --button-primary-foreground: #ffffff;
+    --button-primary-hover: #005ba4;
+    --button-secondary-background: #25292E;
+    --button-secondary-foreground: #c3d0e5;
+    --button-secondary-border: rgba(255,255,255,0.3);
+    --button-secondary-hover: #333940;
+    --icon-button-hover-background: rgba(255,255,255,0.10);
+    --search-input-background: transparent;
+    --search-input-border: rgba(255,255,255,0.15);
+    --search-input-border-active: #0078d4;
+    --search-input-foreground: #9ba3b4;
+    --search-input-placeholder-foreground: #9ba3b4;
+    --card-hover-background: rgba(255,255,255,0.08);
+    --card-border: rgba(255,255,255,0.2);
+    --card-border-active: rgba(255,255,255,0.3);
+    --feature-card-icon-background: rgba(255,255,255,0.07);
+    --code-background: rgba(255,255,255,0.15);
+    --code-foreground: #cccccc;
+
+/* TEMP FIX: Disable all card/container background animations and shimmers */
+.card,
+[data-bs-theme] .card {
+    animation: none !important;
+    background-image: none !important;
+    background: var(--card-bg, #fff) !important;
+}
+
+/* Clean main content backgrounds - removed main-wrapper to allow theme-specific backgrounds */
+.main-content,
+[data-bs-theme] .main-content {
+    animation: none !important;
+    background-image: none !important;
+    background: transparent !important;
+}
+
+/* Theme-specific component styles */
+
+/* Clean group card structure */
+.groups-list .group-card {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Single clean glassmorphism styling for group rows */
+.groups-list .group-card > .row {
+    background: var(--glass-bg) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--glass-border-radius) !important;
+    box-shadow: var(--glass-shadow) !important;
+    transition: all 0.2s ease;
+    margin: 0 !important;
+}
+
+/* Clean organization card structure */
+.orgs-list .org-card {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Single clean glassmorphism styling for organization rows */
+.orgs-list .org-card > .row {
+    background: var(--glass-bg) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--glass-border-radius) !important;
+    box-shadow: var(--glass-shadow) !important;
+    transition: all 0.2s ease;
+    margin: 0 !important;
+}
+
+/* Clean device card structure - remove all nested backgrounds */
+.devices-list .device-card {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Single clean glassmorphism styling for device rows */
+.devices-list .device-card > .row {
+    background: var(--glass-bg) !important;
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border) !important;
+    border-radius: var(--glass-border-radius) !important;
+    box-shadow: var(--glass-shadow) !important;
+    transition: all 0.2s ease;
+    margin: 0 !important;
+}
+
+/* Remove any additional card styling that might create layering */
+.devices-list .device-card > .row > * {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Cards - Glassmorphism Enhanced */
+[data-bs-theme="dark"] .card,
+[data-bs-theme="dark"] .groups-list .group-card>.row,
+[data-bs-theme="dark"] .orgs-list .org-card>.row,
+[data-bs-theme="dark"] .devices-list .device-card>.row {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-border-radius);
+    box-shadow: var(--glass-shadow);
+}
+
+/* Enhanced glassmorphism for light theme cards */
+[data-bs-theme="light"] .card,
+[data-bs-theme="light"] .groups-list .group-card>.row,
+[data-bs-theme="light"] .orgs-list .org-card>.row,
+[data-bs-theme="light"] .devices-list .device-card>.row {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--glass-border-radius);
+    box-shadow: var(--glass-shadow), 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Tables */
+[data-bs-theme="dark"] .table {
+    color: var(--text-primary);
+}
+
+[data-bs-theme="dark"] .table thead th {
+    color: var(--text-secondary);
+}
+
+[data-bs-theme="dark"] .table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Forms - Glassmorphism Enhanced */
+.form-control {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.5rem;
+    color: var(--text-primary);
+    padding: 0.625rem 0.875rem;
+    font-size: 0.95rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-control::placeholder {
+    color: rgba(var(--text-secondary-rgb, 91, 107, 134), 0.6);
+    opacity: 1;
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25);
+    outline: none;
+}
+
+/* Form labels */
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+/* Enhanced form controls for light theme */
+[data-bs-theme="light"] .form-control {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+[data-bs-theme="light"] .form-control:focus {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25), 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="dark"] .form-control {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--glass-border);
+    color: var(--text-primary);
+}
+
+[data-bs-theme="dark"] .form-control:focus {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--primary);
+}
+
+/* Main content area theming - Simplified for cleaner appearance */
+[data-bs-theme="light"] .main-wrapper {
+    background: var(--body-bg);
+    background-attachment: fixed;
+}
+
+[data-bs-theme="light"] .main-content {
+    background-color: transparent;
+}
+
+[data-bs-theme="dark"] .main-wrapper {
+    background: var(--body-bg);
+    background-attachment: fixed;
+}
+
+[data-bs-theme="dark"] .main-content {
+    background-color: transparent;
+}
+
+/* Removed blue and monochrome theme styles */
+
+/* Theme Switcher Styling */
+.theme-switcher {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.theme-option {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.1);
+    transition: var(--transition-base);
+}
+
+.theme-option:hover {
+    transform: scale(1.1);
+}
+
+.theme-option.active::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.theme-light {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+.theme-dark {
+    background-color: #121212;
+}
+
+/* Theme Switcher UI Components */
+.theme-switcher {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Theme Toggle Button - Complete border removal */
+.theme-toggle-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-base);
+    background-color: transparent;
+    border: 0 !important;
+    outline: 0 !important;
+    color: var(--text-primary);
+    position: relative;
+    overflow: hidden;
+    /* Complete style reset */
+    box-shadow: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    /* Prevent any browser default styling */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    /* Remove any possible borders */
+    border-style: none !important;
+    border-width: 0 !important;
+    border-color: transparent !important;
+}
+
+.theme-toggle-btn:hover {
+    background-color: rgba(var(--primary-rgb), 0.1);
+    transform: scale(1.05);
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+}
+
+.theme-toggle-btn:focus,
+.theme-toggle-btn:active,
+.theme-toggle-btn:focus-visible,
+.theme-toggle-btn:focus-within {
+    background-color: rgba(var(--primary-rgb), 0.15);
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    transform: scale(1.05);
+}
+
+/* Ensure no pseudo-elements create borders */
+.theme-toggle-btn::before,
+.theme-toggle-btn::after {
+    display: none !important;
+}
+
+/* Override any Bootstrap button styling specifically for theme toggle */
+button.theme-toggle-btn,
+.theme-toggle-btn.btn {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.theme-toggle-btn i {
+    font-size: 1.2rem;
+    transition: var(--transition-base);
+}
+
+/* Ensure both icons are positioned correctly in the button */
+.theme-toggle-btn {
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggle-btn .fa-sun,
+.theme-toggle-btn .fa-moon {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+    pointer-events: none;
+    /* Default state - hide both initially */
+    opacity: 0;
+    visibility: hidden;
+    display: none;
+}
+
+/* Light theme specific styling - show sun, hide moon */
+html[data-bs-theme="light"] .theme-switcher .theme-toggle-btn .fa-sun,
+html[data-bs-theme="light"] body .theme-switcher .theme-toggle-btn .fa-sun,
+[data-bs-theme="light"] .theme-toggle-btn .fa-sun {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-block !important;
+    transform: translate(-50%, -50%) rotate(0deg) !important;
+    z-index: 10 !important;
+}
+
+html[data-bs-theme="light"] .theme-switcher .theme-toggle-btn .fa-moon,
+html[data-bs-theme="light"] body .theme-switcher .theme-toggle-btn .fa-moon,
+[data-bs-theme="light"] .theme-toggle-btn .fa-moon {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    display: none !important;
+    transform: translate(-50%, -50%) rotate(90deg) !important;
+    z-index: 1 !important;
+}
+
+/* Dark theme specific styling - show moon, hide sun */
+html[data-bs-theme="dark"] .theme-switcher .theme-toggle-btn .fa-moon,
+html[data-bs-theme="dark"] body .theme-switcher .theme-toggle-btn .fa-moon,
+[data-bs-theme="dark"] .theme-toggle-btn .fa-moon {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-block !important;
+    transform: translate(-50%, -50%) rotate(0deg) !important;
+    z-index: 10 !important;
+}
+
+html[data-bs-theme="dark"] .theme-switcher .theme-toggle-btn .fa-sun,
+html[data-bs-theme="dark"] body .theme-switcher .theme-toggle-btn .fa-sun,
+[data-bs-theme="dark"] .theme-toggle-btn .fa-sun {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    display: none !important;
+    transform: translate(-50%, -50%) rotate(-90deg) !important;
+    z-index: 1 !important;
+}
+
+/* Additional aggressive border removal for theme toggle button */
+html [data-bs-theme] .theme-toggle-btn,
+html body .theme-toggle-btn,
+.navbar .theme-toggle-btn,
+.theme-switcher .theme-toggle-btn {
+    border: none !important;
+    border-width: 0 !important;
+    border-style: none !important;
+    border-color: transparent !important;
+    outline: none !important;
+    outline-width: 0 !important;
+    outline-style: none !important;
+    outline-color: transparent !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+}
+
+/* Ultimate border removal - targeting exact element structure */
+.theme-switcher.me-3 .theme-toggle-btn#themeToggleBtn,
+div.theme-switcher.me-3 button.theme-toggle-btn#themeToggleBtn,
+div.theme-switcher button[aria-label="Toggle theme"],
+.me-3 .theme-toggle-btn[title="Toggle Light/Dark Theme"] {
+    border: none !important;
+    border-width: 0px !important;
+    border-style: none !important;
+    border-color: transparent !important;
+    outline: none !important;
+    outline-width: 0px !important;
+    outline-style: none !important;
+    outline-color: transparent !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+}
+
+/* All possible focus states for the exact element */
+.theme-switcher.me-3 .theme-toggle-btn#themeToggleBtn:focus,
+.theme-switcher.me-3 .theme-toggle-btn#themeToggleBtn:active,
+.theme-switcher.me-3 .theme-toggle-btn#themeToggleBtn:focus-visible,
+.theme-switcher.me-3 .theme-toggle-btn#themeToggleBtn:focus-within,
+div.theme-switcher.me-3 button.theme-toggle-btn#themeToggleBtn:focus,
+div.theme-switcher.me-3 button.theme-toggle-btn#themeToggleBtn:active,
+div.theme-switcher.me-3 button.theme-toggle-btn#themeToggleBtn:focus-visible {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+}
+
+/* Target any potential Bootstrap classes that might be applied */
+#themeToggleBtn.btn,
+#themeToggleBtn.btn-secondary,
+#themeToggleBtn.btn-outline-secondary,
+#themeToggleBtn.btn-light,
+#themeToggleBtn.btn-dark,
+button#themeToggleBtn.theme-toggle-btn {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+/* ==========================================================================
+   UNIFIED DARK THEME COLOR HIERARCHY
+   Creates a cohesive visual system across all UI elements
+   ========================================================================== */
+
+[data-bs-theme="dark"] {
+    /* 
+     * Base Surface Colors - Ordered from darkest to lightest
+     * These create depth and visual hierarchy
+     */
+    --surface-ground: #0d0f12;      /* Deepest background - page bg */
+    --surface-base: #333333;        /* Primary surfaces - main content area */
+    --surface-raised: #999999;      /* Raised elements - sidebar, cards */
+    --surface-overlay: #21252d;     /* Overlays - dropdowns, modals, headers */
+    --surface-elevated: #282d37;    /* Highest elevation - hover states, active items */
+    
+    /* Border colors that complement surfaces */
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-default: rgba(255, 255, 255, 0.10);
+    --border-emphasis: rgba(255, 255, 255, 0.15);
+    
+    /* Semantic surface mappings for consistency */
+    --page-bg: var(--surface-ground);
+    --sidebar-bg: var(--surface-raised);
+    --header-bg: var(--surface-raised);
+    --card-bg: var(--surface-raised);
+    --dropdown-bg: var(--surface-overlay);
+    --modal-bg: var(--surface-overlay);
+    --input-bg: var(--surface-base);
+    --hover-bg: var(--surface-elevated);
+    
+    /* Text hierarchy */
+    --text-primary: #f0f2f5;
+    --text-secondary: #a0a8b4;
+    --text-muted: #6b7280;
+    --text-disabled: #4b5563;
+    
+    /* Unified primary color */
+    --primary: #0078d4;
+    --primary-rgb: 0, 120, 212;
+    --primary-hover: #1a86dc;
+    --primary-active: #006cbe;
+}
+
+/* ==========================================================================
+   UNIFIED LIGHT THEME COLOR HIERARCHY
+   Creates a cohesive visual system for light mode
+   ========================================================================== */
+
+[data-bs-theme="light"] {
+    /* 
+     * Base Surface Colors - Ordered from lightest to darker accents
+     */
+    --surface-ground: #f5f7fa;      /* Page background */
+    --surface-base: #ffffff;        /* Primary surfaces - main content */
+    --surface-raised: #ffffff;      /* Raised elements - cards */
+    --surface-overlay: #f8f9fb;     /* Overlays - dropdowns, headers */
+    --surface-elevated: #f0f2f5;    /* Hover states */
+    
+    /* Border colors */
+    --border-subtle: rgba(0, 0, 0, 0.06);
+    --border-default: rgba(0, 0, 0, 0.10);
+    --border-emphasis: rgba(0, 0, 0, 0.15);
+    
+    /* Semantic mappings */
+    --page-bg: var(--surface-ground);
+    --sidebar-bg: var(--surface-base);
+    --header-bg: var(--surface-base);
+    --card-bg: var(--surface-base);
+    --dropdown-bg: var(--surface-base);
+    --input-bg: var(--surface-base);
+    --hover-bg: var(--surface-elevated);
+    
+    /* Text hierarchy - WCAG AA compliant */
+    --text-primary: #1a1a1a;
+    --text-secondary: #4a4a4a;
+    --text-muted: #6b6b6b;
+    --text-disabled: #9ca3af;
+    
+    /* Unified primary */
+    --primary: #0078d4;
+    --primary-rgb: 0, 120, 212;
+    --primary-hover: #006cbe;
+    --primary-active: #005a9e;
+}
+
+/* Import base variables (in case this file is loaded standalone) */
+@import url('./_variables.css');
+
+/* ==========================================================================
+   ADDITIONAL THEME REFINEMENTS
+   These extend the base theme defined in _variables.css
+   ========================================================================== */
+
+/* ...existing code... */

@@ -1,0 +1,205 @@
+/* Dictionary-Style Component CSS
+ * Reusable component for elegant term definitions
+ * Originally created for Wegweiser definition on index page
+ */
+
+.dictionary-definition {
+    margin: 3rem 0;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+
+.definition-word {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #4f46e5;
+    margin-bottom: 0.5rem;
+    font-family: 'Georgia', serif;
+}
+
+.definition-type {
+    font-style: italic;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+.definition-pronunciation {
+    color: var(--text-secondary);
+    font-family: monospace;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.definition-meaning {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.definition-context {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    font-style: italic;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Size Variants */
+.dictionary-definition.compact {
+    padding: 1.5rem;
+    max-width: 400px;
+}
+
+.dictionary-definition.compact .definition-word {
+    font-size: 2rem;
+}
+
+.dictionary-definition.large {
+    padding: 3rem;
+    max-width: 600px;
+}
+
+.dictionary-definition.large .definition-word {
+    font-size: 3rem;
+}
+
+/* Color Themes */
+.dictionary-definition.alt-theme .definition-word {
+    color: #06b6d4; /* Cyan theme */
+}
+
+.dictionary-definition.success-theme .definition-word {
+    color: #10b981; /* Green theme */
+}
+
+.dictionary-definition.warning-theme .definition-word {
+    color: #f59e0b; /* Orange theme */
+}
+
+.dictionary-definition.error-theme .definition-word {
+    color: #ef4444; /* Red theme */
+}
+
+/* Minimal theme */
+.dictionary-definition.minimal {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+/* Centered variant */
+.dictionary-definition.centered {
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .dictionary-definition {
+        margin: 2rem 0;
+        padding: 1.5rem;
+    }
+
+    .definition-word {
+        font-size: 2rem;
+    }
+
+    .dictionary-definition.large .definition-word {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .dictionary-definition {
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+
+    .definition-word {
+        font-size: 1.8rem;
+    }
+
+    .dictionary-definition.compact .definition-word {
+        font-size: 1.6rem;
+    }
+
+    .dictionary-definition.large .definition-word {
+        font-size: 2rem;
+    }
+
+    .definition-pronunciation {
+        font-size: 1rem;
+    }
+
+    .definition-meaning {
+        font-size: 1rem;
+    }
+
+    .definition-context {
+        font-size: 0.9rem;
+    }
+}
+
+/* Animation variants */
+.dictionary-definition.fade-in {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hover effects */
+.dictionary-definition.interactive {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.dictionary-definition.interactive:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Print styles */
+@media print {
+    .dictionary-definition {
+        background: none;
+        border: 1px solid #ccc;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        break-inside: avoid;
+    }
+
+    .definition-word {
+        color: #000;
+    }
+
+    .definition-type,
+    .definition-pronunciation,
+    .definition-context {
+        color: #666;
+    }
+
+    .definition-meaning {
+        color: #000;
+    }
+}

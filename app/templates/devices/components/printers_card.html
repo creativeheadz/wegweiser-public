@@ -1,0 +1,52 @@
+{# Printers Card Component - Content Only #}
+{# Only show if printers exist and printer_count > 0 #}
+{% if device.modular_data and device.modular_data.printers and device.modular_data.printers.printer_count and device.modular_data.printers.printer_count > 0 %}
+<div class="row mb-3">
+    <div class="col-md-3">
+        <p class="mb-1"><strong>Total Printers:</strong> {{ device.modular_data.printers.printer_count }}</p>
+    </div>
+    <div class="col-md-3">
+        <p class="mb-1"><strong>Network:</strong> {{ device.modular_data.printers.network_printers }}</p>
+    </div>
+    <div class="col-md-3">
+        <p class="mb-1"><strong>Local:</strong> {{ device.modular_data.printers.local_printers }}</p>
+    </div>
+    <div class="col-md-3">
+        <p class="mb-1"><strong>Active:</strong> {{ device.modular_data.printers.active_printers }}</p>
+    </div>
+</div>
+
+{% if device.modular_data.printers.printers %}
+<div class="printer-cards-row">
+    {% for printer in device.modular_data.printers.printers %}
+    <div class="printer-card">
+        <div class="p-3 border rounded h-100 d-flex flex-column">
+            <div class="fw-bold mb-1">
+                {{ printer.printer_name }}
+                <span class="ai-insight-icon"
+                      data-ai-insight="printer_info"
+                      data-insight-value="Printer: {{ printer.printer_name }}, Driver: {{ printer.printer_driver or 'unknown' }}, Port: {{ printer.printer_port or 'unknown' }}"
+                      title="Ask AI about this printer (manuals, drivers, support)">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                </span>
+            </div>
+            {% if printer.printer_location %}
+            <div class="text-muted small mb-1"><i class="fas fa-map-marker-alt me-1"></i>{{ printer.printer_location }}</div>
+            {% endif %}
+            {% if printer.printer_status_readable %}
+            <div class="text-muted small mb-2"><i class="fas fa-info-circle me-1"></i>{{ printer.printer_status_readable }}</div>
+            {% elif printer.printer_status %}
+            <div class="text-muted small mb-2"><i class="fas fa-info-circle me-1"></i>{{ printer.printer_status }}</div>
+            {% endif %}
+            <div class="mt-auto">
+                {% if printer.printer_default %}<span class="badge bg-primary me-1">Default</span>{% endif %}
+                {% if printer.is_network_printer %}<span class="badge bg-info me-1">Network</span>{% else %}<span class="badge bg-secondary me-1">Local</span>{% endif %}
+                {% if printer.is_active %}<span class="badge bg-success me-1">Active</span>{% else %}<span class="badge bg-warning me-1">Inactive</span>{% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endif %}
+

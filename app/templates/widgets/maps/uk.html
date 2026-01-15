@@ -1,0 +1,111 @@
+<!-- Filepath: app/templates/widgets/maps/uk.html -->
+{# Filepath: app/templates/widgets/maps/uk.html #}
+
+{# Common styles regardless of embedding or standalone #}
+<style>
+    #uk-map-markers {
+        width: 100%;
+        height: 600px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+</style>
+
+{# The map container #}
+
+<div id="uk-map-markers"></div>
+
+
+{# Only include dependencies if standalone #}
+{% if request.endpoint == 'widgets.map_embed' %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UK Device Map</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <link href="{{ url_for('static', filename='plugins/vectormap/jquery-jvectormap-2.0.2.css') }}" rel="stylesheet">
+</head>
+<body>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/vectormap/jquery-jvectormap-2.0.2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='plugins/vectormap/jquery-jvectormap-uk-mill-en.js') }}"></script>
+{% endif %}
+
+{# Map initialization script #}
+<script>
+    function initUKMap() {
+        if (!$.fn.vectorMap) {
+            console.error('VectorMap plugin not loaded');
+            return;
+        }
+        
+        $.ajax({
+            url: "{{ url_for('widgets.map_data') }}",
+            method: "GET",
+            success: function(data) {
+                var markers = data.map(function(device) {
+                    return {
+                        latLng: [device.latitude, device.longitude],
+                        name: `Public IP: ${device.publicIp} (${device.device_count} devices)`
+                    };
+                });
+
+                $('#uk-map-markers').vectorMap({
+                    map: 'uk_mill_en',
+                    backgroundColor: 'transparent',
+                    borderColor: '#818181',
+                    borderOpacity: 0.25,
+                    borderWidth: 1,
+                    zoomOnScroll: false,
+                    color: '#009efb',
+                    regionStyle: {
+                        initial: {
+                            fill: '#673ab7'
+                        }
+                    },
+                    markerStyle: {
+                        initial: {
+                            r: 9,
+                            'fill': '#fff',
+                            'fill-opacity': 1,
+                            'stroke': '#000',
+                            'stroke-width': 5,
+                            'stroke-opacity': 0.4
+                        }
+                    },
+                    enableZoom: true,
+                    hoverColor: '#009efb',
+                    markers: markers,
+                    hoverOpacity: null,
+                    normalizeFunction: 'linear',
+                    scaleColors: ['#b6d6ff', '#005ace'],
+                    selectedColor: '#c9dfaf',
+                    selectedRegions: [],
+                    showTooltip: true,
+                    onRegionClick: function (element, code, region) {
+                        var message = 'You clicked "' + region + '" which has the code: ' + code.toUpperCase();
+                        alert(message);
+                    }
+                });
+            },
+            error: function(error) {
+                console.error('Error fetching map data:', error);
+            }
+        });
+    }
+
+    // Initialize when document is ready
+    $(function() {
+        try {
+            initUKMap();
+        } catch (error) {
+            console.error('Error initializing UK map:', error);
+        }
+    });
+</script>
+
+{% if request.endpoint == 'widgets.map_embed' %}
+</body>
+</html>
+{% endif %}

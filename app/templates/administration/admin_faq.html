@@ -1,0 +1,468 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ Management - Wegweiser{% endblock %}
+
+{% block extra_head %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+
+{% block content %}
+<div class="main-content p-4">
+    <!-- Hidden CSRF token for fallback -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <!-- Breadcrumb Navigation -->
+    {% call breadcrumb(title='Administration', items=[
+        {'text': 'FAQ Management', 'icon': 'fas fa-question-circle'}
+    ]) %}
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createFaqModal">
+            <i class="fas fa-plus me-1"></i> Add New FAQ
+        </button>
+    {% endcall %}
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- FAQ Statistics -->
+    <div class="card mb-4">
+        <div class="card-body py-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="mb-1">FAQ Management</h5>
+                    <p class="mb-0 text-muted">Manage frequently asked questions for users</p>
+                </div>
+                <div class="d-flex gap-3">
+                    <div class="text-center">
+                        <div class="h4 mb-0 text-primary">{{ faqs|length }}</div>
+                        <small class="text-muted">Total FAQs</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ List -->
+    <div class="card">
+        <div class="card-body">
+            {% if faqs %}
+                <div class="table-responsive">
+                    <table class="table table-hover" id="faqTable">
+                        <thead>
+                            <tr>
+                                <th width="50">Order</th>
+                                <th>Question</th>
+                                <th>Answer Preview</th>
+                                <th width="150">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="faqTableBody">
+                            {% for faq in faqs %}
+                            <tr data-faq-id="{{ faq.id }}">
+                                <td>
+                                    <span class="badge bg-secondary">{{ faq.order }}</span>
+                                </td>
+                                <td>
+                                    <strong>{{ faq.question }}</strong>
+                                </td>
+                                <td>
+                                    <div class="text-muted">
+                                        {{ (faq.answer|striptags)[:100] }}{% if (faq.answer|striptags)|length > 100 %}...{% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary edit-faq-btn"
+                                                data-faq-id="{{ faq.id }}"
+                                                title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger delete-faq-btn"
+                                                data-faq-id="{{ faq.id }}"
+                                                title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Reorder Instructions -->
+                <div class="mt-3">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Tip:</strong> You can drag and drop rows to reorder FAQs. Changes will be saved automatically.
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-question-circle fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No FAQs Created</h5>
+                    <p class="text-muted">Start by creating your first FAQ to help users.</p>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createFaqModal">
+                        <i class="fas fa-plus me-1"></i> Create First FAQ
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Create FAQ Modal -->
+<div class="modal fade" id="createFaqModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="{{ url_for('admin_bp.create_faq') }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New FAQ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="createQuestion" class="form-label">Question</label>
+                        <input type="text" class="form-control" id="createQuestion" name="question" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="createAnswer" class="form-label">Answer</label>
+                        <textarea class="form-control" id="createAnswer" name="answer" rows="6" required></textarea>
+                        <small class="text-muted">You can use HTML formatting in the answer.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="createOrder" class="form-label">Display Order</label>
+                        <input type="number" class="form-control" id="createOrder" name="order" min="1" placeholder="Leave empty to add at end">
+                        <small class="text-muted">Lower numbers appear first. Leave empty to add at the end.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Create FAQ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit FAQ Modal -->
+<div class="modal fade" id="editFaqModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="editFaqForm" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit FAQ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editQuestion" class="form-label">Question</label>
+                        <input type="text" class="form-control" id="editQuestion" name="question" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editAnswer" class="form-label">Answer</label>
+                        <textarea class="form-control" id="editAnswer" name="answer" rows="6" required></textarea>
+                        <small class="text-muted">You can use HTML formatting in the answer.</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editOrder" class="form-label">Display Order</label>
+                        <input type="number" class="form-control" id="editOrder" name="order" min="1" required>
+                        <small class="text-muted">Lower numbers appear first.</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Update FAQ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteFaqModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this FAQ?</p>
+                <div class="alert alert-warning">
+                    <strong>Question:</strong> <span id="deleteQuestionPreview"></span>
+                </div>
+                <p class="text-muted">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteFaqForm" method="post" style="display: inline;">
+                    {{ csrf_token() }}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash me-1"></i> Delete FAQ
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- FAQ Data for JavaScript -->
+<script type="application/json" id="faq-data">
+{{ faqs_json|tojson }}
+</script>
+<style>
+/* Admin FAQ Specific Styles */
+.table tbody tr {
+    cursor: move;
+}
+
+.table tbody tr:hover {
+    background-color: var(--glass-bg-hover);
+}
+
+.table tbody tr.sortable-ghost {
+    opacity: 0.5;
+}
+
+.table tbody tr.sortable-chosen {
+    background-color: rgba(var(--primary-rgb), 0.1);
+}
+
+.drag-handle {
+    cursor: move;
+    color: var(--text-muted);
+}
+
+.drag-handle:hover {
+    color: var(--primary);
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<script>
+// Get CSRF token from meta tag or cookie
+function getCSRFToken() {
+    // Try to get from meta tag first
+    const metaToken = document.querySelector('meta[name=csrf-token]');
+    if (metaToken) {
+        return metaToken.getAttribute('content');
+    }
+
+    // Try to get from cookie
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'csrf_token') {
+            return decodeURIComponent(value);
+        }
+    }
+
+    // If no token found, try to get it from a hidden form field
+    const hiddenInput = document.querySelector('input[name="csrf_token"]');
+    if (hiddenInput) {
+        return hiddenInput.value;
+    }
+
+    return null;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize sortable table
+    const tableBody = document.getElementById('faqTableBody');
+    if (tableBody) {
+        new Sortable(tableBody, {
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            onEnd: function(evt) {
+                updateFaqOrder();
+            }
+        });
+    }
+});
+
+// Load FAQ data from JSON script
+let faqData = {};
+try {
+    const faqDataScript = document.getElementById('faq-data');
+    if (faqDataScript) {
+        const faqs = JSON.parse(faqDataScript.textContent);
+        faqs.forEach(faq => {
+            faqData[faq.id] = faq;
+        });
+    }
+} catch (e) {
+    console.error('Error loading FAQ data:', e);
+}
+
+// Event listeners for edit and delete buttons
+document.addEventListener('DOMContentLoaded', function() {
+    // Edit FAQ event listeners
+    document.querySelectorAll('.edit-faq-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = parseInt(this.dataset.faqId);
+            const faq = faqData[id];
+            if (faq) {
+                editFaq(id, faq.question, faq.answer, faq.order);
+            }
+        });
+    });
+
+    // Delete FAQ event listeners
+    document.querySelectorAll('.delete-faq-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = parseInt(this.dataset.faqId);
+            const faq = faqData[id];
+            if (faq) {
+                deleteFaq(id, faq.question);
+            }
+        });
+    });
+});
+
+function editFaq(id, question, answer, order) {
+    const modal = new bootstrap.Modal(document.getElementById('editFaqModal'));
+    const form = document.getElementById('editFaqForm');
+
+    // Set form action
+    form.action = `/admin/faq/update/${id}`;
+
+    // Ensure CSRF token is present
+    let csrfToken = form.querySelector('input[name="csrf_token"]');
+    if (!csrfToken) {
+        // Create CSRF token input if it doesn't exist
+        csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'csrf_token';
+        form.appendChild(csrfToken);
+    }
+    // Update CSRF token value using the comprehensive function
+    const tokenValue = getCSRFToken();
+    if (tokenValue) {
+        csrfToken.value = tokenValue;
+    }
+
+    // Populate form fields
+    document.getElementById('editQuestion').value = question;
+    document.getElementById('editAnswer').value = answer;
+    document.getElementById('editOrder').value = order;
+
+    modal.show();
+}
+
+function deleteFaq(id, question) {
+    const modal = new bootstrap.Modal(document.getElementById('deleteFaqModal'));
+    const form = document.getElementById('deleteFaqForm');
+
+    // Set form action
+    form.action = `/admin/faq/delete/${id}`;
+
+    // Ensure CSRF token is present
+    let csrfToken = form.querySelector('input[name="csrf_token"]');
+    if (!csrfToken) {
+        // Create CSRF token input if it doesn't exist
+        csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'csrf_token';
+        form.appendChild(csrfToken);
+    }
+    // Update CSRF token value using the comprehensive function
+    const tokenValue = getCSRFToken();
+    if (tokenValue) {
+        csrfToken.value = tokenValue;
+    }
+
+    // Show question preview
+    document.getElementById('deleteQuestionPreview').textContent = question;
+
+    modal.show();
+}
+
+function updateFaqOrder() {
+    const rows = document.querySelectorAll('#faqTableBody tr');
+    const orders = [];
+
+    rows.forEach((row, index) => {
+        const faqId = row.getAttribute('data-faq-id');
+        orders.push({
+            id: parseInt(faqId),
+            order: index + 1
+        });
+    });
+
+    // Get CSRF token using the comprehensive function
+    const csrfToken = getCSRFToken();
+
+    // Send update to server
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+
+    if (csrfToken) {
+        headers['X-CSRFToken'] = csrfToken;
+    }
+
+    fetch('/admin/faq/reorder', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ orders: orders })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update order badges
+            rows.forEach((row, index) => {
+                const badge = row.querySelector('.badge');
+                badge.textContent = index + 1;
+            });
+
+            // Show success message
+            showToast('FAQs reordered successfully', 'success');
+        } else {
+            showToast('Error reordering FAQs: ' + data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('Error reordering FAQs', 'error');
+    });
+}
+
+function showToast(message, type) {
+    // Create toast element
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type === 'error' ? 'danger' : 'success'} alert-dismissible fade show position-fixed`;
+    toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+
+    document.body.appendChild(toast);
+
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 3000);
+}
+</script>
+{% endblock %}

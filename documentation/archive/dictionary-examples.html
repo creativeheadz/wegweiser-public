@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictionary Component Examples</title>
+    <link rel="stylesheet" href="dictionary-component.css">
+    <style>
+        /* Basic page styling for demo */
+        :root {
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+        }
+        
+        body {
+            background: #0f172a;
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 2rem;
+        }
+        
+        .example-section {
+            margin: 4rem 0;
+            padding: 2rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .example-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #4f46e5;
+        }
+        
+        .example-description {
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <h1>Dictionary-Style Component Examples</h1>
+    <p>Various implementations of the reusable dictionary definition component.</p>
+
+    <!-- Original Wegweiser Example -->
+    <div class="example-section">
+        <h2 class="example-title">1. Original Wegweiser Definition</h2>
+        <p class="example-description">The original implementation from the index page.</p>
+        
+        <div class="dictionary-definition">
+            <div class="definition-word">Wegweiser</div>
+            <div class="definition-type">noun</div>
+            <div class="definition-pronunciation">[ masculine ] /ˈveːkvaɪzɐ/</div>
+            <div class="definition-meaning">
+                A guide or signpost that shows the way; one who points the direction.
+            </div>
+            <div class="definition-context">
+                The intelligent pathfinder for MSPs, guiding you through complex system landscapes with AI-powered insights and real-time monitoring.
+            </div>
+        </div>
+    </div>
+
+    <!-- Legal/Imprint Example -->
+    <div class="example-section">
+        <h2 class="example-title">2. Legal/Imprint Page</h2>
+        <p class="example-description">Perfect for legal pages or terms explanations.</p>
+        
+        <div class="dictionary-definition">
+            <div class="definition-word">Impressum</div>
+            <div class="definition-type">noun</div>
+            <div class="definition-pronunciation">[ neuter ] /ɪmˈprɛsʊm/</div>
+            <div class="definition-meaning">
+                Legal disclosure required by German law; literally "imprint" or "impression".
+            </div>
+            <div class="definition-context">
+                Mandatory information about the publisher, ensuring transparency and legal compliance for digital services.
+            </div>
+        </div>
+    </div>
+
+    <!-- Technical Documentation -->
+    <div class="example-section">
+        <h2 class="example-title">3. Technical Documentation</h2>
+        <p class="example-description">Great for explaining technical terms or acronyms.</p>
+        
+        <div class="dictionary-definition alt-theme">
+            <div class="definition-word">MSP</div>
+            <div class="definition-type">acronym</div>
+            <div class="definition-pronunciation">[ noun ] /ɛm ɛs piː/</div>
+            <div class="definition-meaning">
+                Managed Service Provider; a company that remotely manages IT infrastructure and services.
+            </div>
+            <div class="definition-context">
+                Organizations that proactively monitor, maintain, and optimize their clients' technology systems to ensure optimal performance and security.
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Page Example -->
+    <div class="example-section">
+        <h2 class="example-title">4. Error Page (404)</h2>
+        <p class="example-description">Playful use for error pages with personality.</p>
+        
+        <div class="dictionary-definition error-theme">
+            <div class="definition-word">404</div>
+            <div class="definition-type">HTTP status</div>
+            <div class="definition-pronunciation">[ error code ] /fɔːr oʊ fɔːr/</div>
+            <div class="definition-meaning">
+                Not found; the requested resource could not be located on the server.
+            </div>
+            <div class="definition-context">
+                The digital equivalent of a "wrong turn" - the path you're looking for has wandered off the beaten track.
+            </div>
+        </div>
+    </div>
+
+    <!-- Compact Version -->
+    <div class="example-section">
+        <h2 class="example-title">5. Compact Version</h2>
+        <p class="example-description">Smaller version for sidebars or inline definitions.</p>
+        
+        <div class="dictionary-definition compact success-theme">
+            <div class="definition-word">API</div>
+            <div class="definition-type">acronym</div>
+            <div class="definition-pronunciation">[ noun ] /eɪ piː aɪ/</div>
+            <div class="definition-meaning">
+                Application Programming Interface; a set of protocols for building software applications.
+            </div>
+            <div class="definition-context">
+                The digital handshake that allows different software systems to communicate and share data seamlessly.
+            </div>
+        </div>
+    </div>
+
+    <!-- Large Version -->
+    <div class="example-section">
+        <h2 class="example-title">6. Large Version</h2>
+        <p class="example-description">Prominent version for hero sections or main content areas.</p>
+        
+        <div class="dictionary-definition large warning-theme">
+            <div class="definition-word">DevOps</div>
+            <div class="definition-type">methodology</div>
+            <div class="definition-pronunciation">[ noun ] /dɛv ɒps/</div>
+            <div class="definition-meaning">
+                Development Operations; a set of practices that combines software development and IT operations.
+            </div>
+            <div class="definition-context">
+                The bridge between development and operations teams, fostering collaboration and accelerating software delivery through automation and monitoring.
+            </div>
+        </div>
+    </div>
+
+    <!-- Minimal Theme -->
+    <div class="example-section">
+        <h2 class="example-title">7. Minimal Theme</h2>
+        <p class="example-description">Clean version without background effects.</p>
+        
+        <div class="dictionary-definition minimal">
+            <div class="definition-word">SaaS</div>
+            <div class="definition-type">acronym</div>
+            <div class="definition-pronunciation">[ noun ] /sæs/</div>
+            <div class="definition-meaning">
+                Software as a Service; a software distribution model where applications are hosted by a service provider.
+            </div>
+            <div class="definition-context">
+                Cloud-based software delivery that eliminates the need for local installation and maintenance, accessible anywhere with an internet connection.
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Version -->
+    <div class="example-section">
+        <h2 class="example-title">8. Interactive Version</h2>
+        <p class="example-description">Hover effects for clickable definitions.</p>
+        
+        <div class="dictionary-definition interactive fade-in">
+            <div class="definition-word">CI/CD</div>
+            <div class="definition-type">methodology</div>
+            <div class="definition-pronunciation">[ noun ] /siː aɪ siː diː/</div>
+            <div class="definition-meaning">
+                Continuous Integration/Continuous Deployment; practices that enable frequent code integration and automated deployment.
+            </div>
+            <div class="definition-context">
+                The automated pipeline that transforms code changes into production-ready software, reducing manual errors and accelerating delivery cycles.
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

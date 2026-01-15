@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block title %}Session Management - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Session Management</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-sm btn-primary" onclick="refreshSessions()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Session Statistics -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-info"><i class="fas fa-users"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Users</span>
+                                    <span class="info-box-number" id="total-users">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-success"><i class="fas fa-user-check"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Active Users</span>
+                                    <span class="info-box-number" id="active-users">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-warning"><i class="fas fa-desktop"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Sessions</span>
+                                    <span class="info-box-number" id="total-sessions">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-danger"><i class="fas fa-cog"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Max Per User</span>
+                                    <span class="info-box-number" id="max-sessions">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sessions Table -->
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="sessions-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>IP Address</th>
+                                    <th>Created</th>
+                                    <th>Last Activity</th>
+                                    <th>Expires</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sessions-tbody">
+                                <tr>
+                                    <td colspan="8" class="text-center">Loading sessions...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Force Logout Modal -->
+<div class="modal fade" id="forceLogoutModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Force Logout User</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to force logout <strong id="logout-user-name"></strong>?</p>
+                <p class="text-muted">This will invalidate all active sessions for this user.</p>
+                <div class="form-group">
+                    <label for="logout-reason">Reason (optional):</label>
+                    <input type="text" class="form-control" id="logout-reason" placeholder="Security incident, policy violation, etc.">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmForceLogout()">Force Logout</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentLogoutUserId = null;
+
+function refreshSessions() {
+    loadSessionStats();
+    loadSessions();
+}
+
+function loadSessionStats() {
+    fetch('/api/admin/sessions/stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error loading stats:', data.error);
+                return;
+            }
+            
+            document.getElementById('total-users').textContent = data.total_users;
+            document.getElementById('active-users').textContent = data.active_users;
+            document.getElementById('total-sessions').textContent = data.total_sessions;
+            document.getElementById('max-sessions').textContent = data.max_sessions_per_user;
+        })
+        .catch(error => {
+            console.error('Error loading session stats:', error);
+        });
+}
+
+function loadSessions() {
+    fetch('/api/admin/sessions/list')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error loading sessions:', data.error);
+                return;
+            }
+            
+            const tbody = document.getElementById('sessions-tbody');
+            tbody.innerHTML = '';
+            
+            if (data.sessions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No active sessions found</td></tr>';
+                return;
+            }
+            
+            data.sessions.forEach(session => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${session.user_info.name}</td>
+                    <td>${session.user_info.email}</td>
+                    <td><span class="badge badge-${getRoleBadgeClass(session.user_info.role)}">${session.user_info.role}</span></td>
+                    <td>${session.ip_address}</td>
+                    <td>${formatDateTime(session.created_at)}</td>
+                    <td>${formatDateTime(session.last_activity)}</td>
+                    <td>${formatDateTime(session.expires_at)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-danger" onclick="showForceLogoutModal('${session.user_info.user_id}', '${session.user_info.name}')">
+                            <i class="fas fa-sign-out-alt"></i> Force Logout
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading sessions:', error);
+            document.getElementById('sessions-tbody').innerHTML = 
+                '<tr><td colspan="8" class="text-center text-danger">Error loading sessions</td></tr>';
+        });
+}
+
+function getRoleBadgeClass(role) {
+    switch(role) {
+        case 'admin': return 'danger';
+        case 'master': return 'warning';
+        case 'user': return 'info';
+        default: return 'secondary';
+    }
+}
+
+function formatDateTime(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleString();
+}
+
+function showForceLogoutModal(userId, userName) {
+    currentLogoutUserId = userId;
+    document.getElementById('logout-user-name').textContent = userName;
+    document.getElementById('logout-reason').value = '';
+    $('#forceLogoutModal').modal('show');
+}
+
+function confirmForceLogout() {
+    if (!currentLogoutUserId) return;
+    
+    const reason = document.getElementById('logout-reason').value || 'admin_action';
+    
+    fetch('/api/admin/sessions/force-logout', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            user_id: currentLogoutUserId,
+            reason: reason
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert('Error: ' + data.error);
+            return;
+        }
+        
+        alert('User logged out successfully');
+        $('#forceLogoutModal').modal('hide');
+        refreshSessions();
+    })
+    .catch(error => {
+        console.error('Error forcing logout:', error);
+        alert('Error forcing logout');
+    });
+}
+
+// Load data on page load
+document.addEventListener('DOMContentLoaded', function() {
+    refreshSessions();
+    
+    // Auto-refresh every 30 seconds
+    setInterval(refreshSessions, 30000);
+});
+</script>
+{% endblock %}

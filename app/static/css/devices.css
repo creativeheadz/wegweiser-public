@@ -1,0 +1,996 @@
+/* Devices page specific styling enhancements
+   This ensures consistent styling for device cards and components
+*/
+
+/* OS Icon Circle - NATS Connection Status Indicator */
+.os-icon-circle {
+  transition: border-color 0.3s ease;
+}
+
+.os-icon-circle.border-success-nats {
+  border-color: #10b981 !important;
+  border-width: 2px;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+
+.os-icon-circle.border-secondary {
+  border-color: var(--border-light);
+  border-width: 1px;
+}
+
+/* OS icon new styling; green glow for online, amber for stale */
+.os-icon-wrap { background: transparent !important; border: none !important; box-shadow: none !important; }
+.os-icon { color: var(--text-secondary); transition: color 0.2s ease, text-shadow 0.2s ease, filter 0.2s ease; }
+.os-icon.os-online { color: #10b981; text-shadow: 0 0 6px rgba(16,185,129,0.45); filter: drop-shadow(0 0 3px rgba(16,185,129,0.25)); }
+.os-icon.os-stale { color: #f59e0b; text-shadow: 0 0 6px rgba(245,158,11,0.45); filter: drop-shadow(0 0 3px rgba(245,158,11,0.25)); }
+
+
+/* NIC list toggle */
+.nic-container:not(.show-all) .nic-item.nic-inactive { display: none; }
+.nic-toggle-btn { font-size: var(--font-size-base); }
+
+/* Status icon colors and glow for dashboard cards */
+.dashboard-stat .os-icon.os-online { color: #10b981; text-shadow: 0 0 6px rgba(16,185,129,0.45); filter: drop-shadow(0 0 3px rgba(16,185,129,0.25)); }
+.dashboard-stat .os-icon.os-stale { color: #f59e0b; text-shadow: 0 0 6px rgba(245,158,11,0.45); filter: drop-shadow(0 0 3px rgba(245,158,11,0.25)); }
+
+/* Devices group container */
+.devices-group-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Ensure device cards have proper structure */
+.devices-list .device-card {
+  margin-bottom: 1rem;
+}
+
+.devices-list .device-card:last-child {
+  margin-bottom: 0;
+}
+
+/* Device card styling - no hover effects per user preference */
+.devices-list .device-card {
+  /* Removed hover effects as user dislikes them */
+}
+
+/* Device name link styling */
+.device-name-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.device-name-link:hover {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+[data-bs-theme="dark"] .device-name-link {
+  color: var(--text-primary);
+}
+
+[data-bs-theme="dark"] .device-name-link:hover {
+  color: var(--primary);
+}
+
+/* Organization and group info styling */
+.org-name,
+.group-name {
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.org-name:hover,
+.group-name:hover {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.entity-path {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.entity-path .separator {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin: 0 0.25rem;
+}
+
+/* Device card row styling - enhanced glassmorphism for light theme */
+.devices-list .device-card > .row {
+  min-height: 80px;
+  /* Ensure glassmorphism is applied */
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-border-radius);
+  box-shadow: var(--glass-shadow);
+  margin: 0;
+  transition: all 0.2s ease;
+}
+
+/* Enhanced glassmorphism for light theme device cards - with important to override conflicts */
+[data-bs-theme="light"] .devices-list .device-card > .row {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* Dark theme device cards */
+[data-bs-theme="dark"] .devices-list .device-card > .row {
+  background: var(--glass-bg) !important;
+  border: 1px solid var(--glass-border) !important;
+  box-shadow: var(--glass-shadow) !important;
+}
+
+/* Refined glassmorphism styling for device cards */
+.devices-list .device-card > .row {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  padding: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+/* Enhanced light theme glassmorphism with better contrast */
+[data-bs-theme="light"] .devices-list .device-card > .row {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(0, 0, 0, 0.18) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Multi-line info sections for consistent height */
+.org-name-line,
+.group-count-line,
+.device-count-line,
+.org-path-line,
+.group-path-line {
+  line-height: 1.3;
+  margin-bottom: 0.1rem;
+}
+
+.org-name-line:last-child,
+.group-count-line:last-child,
+.device-count-line:last-child,
+.org-path-line:last-child,
+.group-path-line:last-child {
+  margin-bottom: 0;
+}
+
+/* Ensure consistent minimum height for info sections */
+.devices-list .entity-path,
+.groups-list .text-muted,
+.orgs-list .text-muted {
+  min-height: 2.8em; /* Accommodate two lines */
+  display: block;
+}
+
+/* Icon styling for info lines */
+.org-name-line i,
+.group-count-line i,
+.device-count-line i,
+.org-path-line i,
+.group-path-line i {
+  color: var(--text-muted);
+  font-size: 0.7em;
+  width: 12px;
+}
+
+/* Device avatar styling */
+.devices-list .avatar {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--body-bg);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius);
+}
+
+/* OS Icon and Health Gauge column styling */
+.devices-list .d-flex.flex-column.align-items-center {
+  min-width: 80px;
+  max-width: 80px;
+}
+
+/* Ensure both avatar and health gauge are centered and same width */
+.devices-list .d-flex.flex-column .avatar {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+}
+
+/* Adjust health gauge size when positioned under OS icon */
+.devices-list .d-flex.flex-column .health-gauge {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto;
+}
+
+.devices-list .d-flex.flex-column .health-gauge-text {
+  font-size: 0.6rem;
+}
+
+/* Center the health score compact container */
+.devices-list .d-flex.flex-column .health-score-compact {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Search container styling */
+.search-container {
+  max-width: 400px;
+}
+
+.search-container .input-group {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.search-container .input-group-text {
+  background-color: transparent;
+  border-right: none;
+}
+
+.search-container .form-control {
+  border-left: none;
+}
+
+/* Elegant glassmorphism health score display */
+.health-score-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 120px;
+}
+
+/* Circular progress gauge for health scores */
+.health-gauge {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.health-gauge-circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.health-gauge-progress {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.3) 0deg,
+    rgba(255, 255, 255, 0.6) var(--progress-angle, 0deg),
+    transparent var(--progress-angle, 0deg)
+  );
+  mask: radial-gradient(circle at center, transparent 65%, black 66%);
+  -webkit-mask: radial-gradient(circle at center, transparent 65%, black 66%);
+}
+
+.health-gauge-text {
+  position: relative;
+  z-index: 2;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  line-height: 1;
+}
+
+/* Health trend mini-chart */
+.health-trend {
+  display: flex;
+  align-items: end;
+  gap: 0.25rem;
+  opacity: 0.7;
+  height: 20px;
+  padding: 2px 0;
+}
+
+.health-trend-bar {
+  width: 3px;
+  min-height: 4px;
+  max-height: 16px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 1.5px;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: bottom;
+}
+
+.health-trend-bar.animate {
+  opacity: 0.8;
+  transform: scaleY(1);
+}
+
+/* Enhanced visibility for light theme */
+[data-bs-theme="light"] .health-trend-bar {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+[data-bs-theme="light"] .health-trend-bar.animate {
+  opacity: 0.6;
+}
+
+/* Responsive improvements for device cards */
+@media (max-width: 768px) {
+  .devices-list .device-card > .row {
+    padding: 0.75rem !important;
+  }
+
+  .entity-path-compact {
+    font-size: 0.75rem;
+  }
+
+  .health-gauge {
+    width: 50px;
+    height: 50px;
+  }
+
+  .health-gauge-text {
+    font-size: 0.6rem;
+  }
+
+  .health-trend {
+    height: 16px;
+    gap: 0.15rem;
+  }
+
+  .health-trend-bar {
+    width: 2px;
+    max-height: 12px;
+  }
+
+  /* Mobile adjustments for OS icon + health gauge layout */
+  .devices-list .d-flex.flex-column.align-items-center {
+    min-width: 70px;
+    max-width: 70px;
+  }
+
+  .devices-list .d-flex.flex-column .avatar {
+    width: 42px;
+    height: 42px;
+  }
+
+  .devices-list .d-flex.flex-column .health-gauge {
+    width: 36px;
+    height: 36px;
+  }
+
+  .devices-list .d-flex.flex-column .health-gauge-text {
+    font-size: 0.55rem;
+  }
+}
+
+/* Status indicator improvements */
+.status-indicator-compact {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.status-indicator-compact.online {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: rgb(34, 197, 94);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.status-indicator-compact.offline {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: rgb(239, 68, 68);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.status-indicator-compact .status-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-indicator-compact.online .status-indicator-dot {
+  background-color: rgb(34, 197, 94);
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
+}
+
+.status-indicator-compact.offline .status-indicator-dot {
+  background-color: rgb(239, 68, 68);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+}
+
+/* Health trend loading state */
+.health-trend-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  opacity: 0.6;
+}
+
+/* Utility classes for responsive text truncation */
+.min-width-0 {
+  min-width: 0;
+}
+
+/* Improved button spacing on mobile */
+@media (max-width: 576px) {
+  .btn .d-none.d-sm-inline {
+    display: none !important;
+  }
+}
+
+/* Legacy badge styling - now glassmorphism */
+.health-score-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  height: 32px;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  text-align: center;
+  box-shadow: var(--glass-shadow);
+}
+
+/* Remove all colored backgrounds - use glassmorphism only */
+.health-score-badge.health-high,
+.health-score-badge.health-medium,
+.health-score-badge.health-low,
+.health-score-badge.health-unknown {
+  background: var(--glass-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+}
+
+/* Elegant status indicators */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.status-indicator-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--glass-border);
+  transition: all 0.3s ease;
+}
+
+.status-indicator.online .status-indicator-dot {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+  animation: pulse-online 2s infinite;
+}
+
+.status-indicator.offline .status-indicator-dot {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+@keyframes pulse-online {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Compact entity path styling */
+.entity-path-compact {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.entity-path-compact .separator {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.entity-path-compact i {
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+/* Horizontal layout for entity path items on larger screens */
+.entity-path-compact > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+@media (min-width: 992px) {
+  .entity-path-compact > div {
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .entity-path-compact > div > div {
+    white-space: nowrap;
+  }
+}
+
+/* Elegant glassmorphism action buttons */
+.btn-outline-primary,
+.btn-outline-warning,
+.btn-outline-danger,
+.btn-outline-success {
+  background: var(--glass-bg) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid var(--glass-border) !important;
+  color: var(--text-primary) !important;
+  box-shadow: var(--glass-shadow) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-warning:hover,
+.btn-outline-danger:hover,
+.btn-outline-success:hover {
+  background: var(--glass-bg-hover) !important;
+  border: 1px solid var(--glass-border) !important;
+  color: var(--text-primary) !important;
+  /* DISABLED: Movement effect removed - original: transform: translateY(-1px); */
+}
+
+/* Legacy health indicator for backward compatibility */
+.health-indicator {
+  width: 100%;
+  height: 7px;
+  border-radius: 3.5px;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="dark"] .health-indicator {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.health-indicator .progress-bar {
+  height: 100%;
+  border-radius: 3.5px;
+}
+
+.health-value {
+  font-weight: 600;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Status badge styling */
+.devices-list .badge {
+  padding: 0.35em 0.65em;
+  font-size: 0.75em;
+}
+
+/* Device health ranges - consistent with groups.css */
+.health-high {
+  background-color: var(--success);
+}
+
+.health-medium {
+  background-color: var(--warning);
+}
+
+.health-low {
+  background-color: var(--danger);
+}
+
+/* Device detail section styling */
+.device-detail-section {
+  margin-bottom: 1.5rem;
+}
+
+.device-detail-section .card-header {
+  background-color: transparent;
+  border-bottom: 1px solid var(--border-light);
+  padding: 1rem 1.25rem;
+}
+
+.device-detail-section .card-body {
+  padding: 1.25rem;
+}
+
+/* Device info list styling */
+.device-info-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.device-info-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.device-info-list li:last-child {
+  border-bottom: none;
+}
+
+.device-info-list .info-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.device-info-list .info-value {
+  color: var(--text-primary);
+  font-weight: 400;
+  text-align: right;
+}
+
+/* Group section styling */
+.group-section {
+  margin-bottom: 2rem;
+}
+
+.group-section:last-child {
+  margin-bottom: 0;
+}
+
+.group-title {
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 0.5rem;
+}
+
+.group-title a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.group-title a:hover {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.group-title .device-count {
+  font-weight: 400;
+  font-size: 0.9em;
+  color: var(--text-muted);
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+  .devices-list .device-card>.row>div {
+    margin-bottom: 0.75rem;
+  }
+
+  .devices-list .device-card>.row>div:last-child {
+    margin-bottom: 0;
+  }
+}
+/* Device UUID input field styling - smaller, better looking font */
+#deviceUUID {
+  font-size: var(--font-size-xs) !important; /* was 0.65rem (approx 10.4px) */
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.5px !important;
+  color: var(--text-secondary) !important;
+  background-color: var(--glass-bg) !important;
+  border: 1px solid var(--glass-border) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;*/
+}
+
+/* Dark theme adjustments for device UUID input */
+[data-bs-theme="dark"] #deviceUUID {
+  color: var(--text-muted) !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Light theme adjustments for device UUID input */
+[data-bs-theme="light"] #deviceUUID {
+  color: var(--text-secondary) !important;
+  background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Removed card hover effects per user preference */
+
+/* ===== AI ANALYSES ACCORDION STYLING ===== */
+/* Consolidated AI analyses card with accordion sections */
+
+#analysisAccordion {
+  border: none;
+}
+
+/* Make analysis accordion items minimalist (no heavy outlines) */
+#analysisAccordion .accordion-item {
+  border: none;
+  margin-bottom: 0.75rem;
+  background: transparent;
+}
+
+#analysisAccordion .accordion-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="dark"] #analysisAccordion .accordion-item {
+  background-color: transparent;
+}
+
+/* Give the clickable header a thin, elegant border like the live counters */
+#analysisAccordion .accordion-button {
+  padding: 0.9rem 1rem;
+  font-weight: 500;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: none;
+  color: var(--text-primary);
+}
+
+#analysisAccordion .accordion-button:not(.collapsed) {
+  background-color: rgba(13, 110, 253, 0.06);
+  color: var(--text-primary);
+  box-shadow: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#analysisAccordion .accordion-button:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+[data-bs-theme="dark"] #analysisAccordion .accordion-button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+#analysisAccordion .accordion-button:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: var(--glass-border);
+}
+
+#analysisAccordion .accordion-body {
+  padding: 1.1rem;
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-top: none;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+[data-bs-theme="dark"] #analysisAccordion .accordion-body {
+  border-color: var(--border-dark);
+}
+
+/* Softer look for the consolidated analyses card wrapper */
+#dynamic-analyses-grid .card {
+  border: 1px solid var(--glass-border) !important;
+  border-radius: 12px !important;
+  background: var(--glass-bg) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  box-shadow: var(--glass-shadow) !important;
+}
+
+#dynamic-analyses-grid .card-header {
+  border-bottom: 1px solid var(--glass-border) !important;
+  background: transparent !important;
+}
+
+/* Make nested accordions visually lightweight if any appear */
+#dynamic-analyses-grid .accordion .accordion-item {
+  border-left-width: 2px;
+  border-radius: 8px;
+}
+
+/* Analysis content styling */
+.analysis-content {
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.analysis-content h1,
+.analysis-content h2,
+.analysis-content h3,
+.analysis-content h4,
+.analysis-content h5,
+.analysis-content h6 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.analysis-content p {
+  margin-bottom: 0.75rem;
+}
+
+.analysis-content ul,
+.analysis-content ol {
+  margin-left: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.analysis-content li {
+  margin-bottom: 0.25rem;
+}
+
+.analysis-content code {
+  background-color: var(--glass-bg);
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--primary);
+}
+
+.analysis-content pre {
+  background-color: var(--glass-bg);
+  padding: 1rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.analysis-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.analysis-content table th,
+.analysis-content table td {
+  padding: 0.75rem;
+  border: 1px solid var(--border-light);
+  text-align: left;
+}
+
+.analysis-content table th {
+  background-color: var(--glass-bg);
+  font-weight: 600;
+}
+
+[data-bs-theme="dark"] .analysis-content table td {
+  border-color: var(--border-dark);
+}
+
+/* Category-specific thin left accent on header and body (2px) */
+.accordion-item[data-category="System"] .accordion-button,
+.accordion-item[data-category="System"] .accordion-collapse .accordion-body { border-left: 2px solid #3b82f6; }
+.accordion-item[data-category="Security"] .accordion-button,
+.accordion-item[data-category="Security"] .accordion-collapse .accordion-body { border-left: 2px solid #ef4444; }
+.accordion-item[data-category="Applications"] .accordion-button,
+.accordion-item[data-category="Applications"] .accordion-collapse .accordion-body { border-left: 2px solid #8b5cf6; }
+.accordion-item[data-category="Hardware"] .accordion-button,
+.accordion-item[data-category="Hardware"] .accordion-collapse .accordion-body { border-left: 2px solid #f59e0b; }
+.accordion-item[data-category="Logs"] .accordion-button,
+.accordion-item[data-category="Logs"] .accordion-collapse .accordion-body { border-left: 2px solid #06b6d4; }
+.accordion-item[data-category="Other"] .accordion-button,
+.accordion-item[data-category="Other"] .accordion-collapse .accordion-body { border-left: 2px solid #6b7280; }
+
+/* Printer Cards - Equal Height Layout */
+.printer-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.printer-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Ensure all printer info sections take equal space */
+@media (min-width: 768px) {
+  .printer-cards-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+  }
+
+  .printer-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .printer-card > div {
+    flex-grow: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #analysisAccordion .accordion-item {
+    margin-bottom: 0.5rem;
+  }
+
+  #analysisAccordion .accordion-button {
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  #analysisAccordion .accordion-body {
+    padding: 1rem;
+  }
+
+  .analysis-content {
+    font-size: 0.95rem;
+  }
+}
+
+/* Overrides for horizontal OS icon + health gauge layout on large screens */
+.devices-list .os-gauge-wrap {
+  /* Allow enough width for 45px icon + 45px gauge + gap */
+  min-width: 110px !important;
+  max-width: none !important;
+}
+
+.devices-list .os-gauge-wrap .health-score-compact {
+  min-width: 0; /* override global 120px */
+  gap: 0.5rem;
+}
+
+.devices-list .os-gauge-wrap .health-gauge {
+  width: 45px !important;
+  height: 45px !important;
+}
+
+.devices-list .os-gauge-wrap .health-gauge-text {
+  font-size: 0.65rem;
+}
+
+@media (max-width: 991.98px) {
+  /* Keep the legacy stacked layout constraints for small screens */
+  .devices-list .os-gauge-wrap {
+    min-width: 80px;
+    max-width: 80px;
+  }
+}

@@ -1,0 +1,18 @@
+# Filepath: config/wegweiser-log-cleanup.service
+# Systemd service for Wegweiser log cleanup
+# Install to /etc/systemd/system/wegweiser-log-cleanup.service
+
+[Unit]
+Description=Wegweiser Log Cleanup Service
+After=network.target
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/opt/wegweiser/scripts/cleanup_logs.sh
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+

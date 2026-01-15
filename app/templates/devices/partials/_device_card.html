@@ -1,0 +1,13 @@
+<!-- Ensure device hostname/name is clickable and links to detail page -->
+<a href="{{ url_for('devices_bp.view_device', device_uuid=device.uuid) }}" class="device-name-link text-decoration-none">
+    <span class="device-name fw-semibold">
+        <i class="fas fa-{{ device.icon or 'desktop' }} me-2"></i>{{ device.hostname or device.name or device.uuid[:8] }}
+    </span>
+</a>
+
+<div class="device-card">
+    <a href="device-detail-page.html" class="device-card-title">
+        <!-- Device hostname/name will be dynamically inserted here -->
+    </a>
+    <!-- ...existing code for device card... -->
+</div>

@@ -1,0 +1,28 @@
+<service>
+  <id>WegweiserAgent</id>
+  <name>Wegweiser Agent Service</name>
+  <description>Wegweiser NATS-enabled persistent agent for MSP management</description>
+  <executable>C:\Program Files (x86)\Wegweiser\Agent\python-weg\python.exe</executable>
+  <arguments>"C:\Program Files (x86)\Wegweiser\Agent\nats_agent.py"</arguments>
+  <workingdirectory>C:\Program Files (x86)\Wegweiser\Agent</workingdirectory>
+
+  <!-- Icon file -->
+  <icon>C:\Program Files (x86)\Wegweiser\Assets\wegweiser.ico</icon>
+
+  <!-- Logging: Disable WinSW logging - agent handles its own logging to agent.log -->
+  <logmode>none</logmode>
+
+  <!-- Service behavior -->
+  <startmode>Automatic</startmode>
+  <delayedAutoStart>true</delayedAutoStart>
+
+  <!-- Environment variables for Python -->
+  <env name="PYTHONHOME" value="C:\Program Files (x86)\Wegweiser\Agent\python-weg"/>
+  <env name="PYTHONPATH" value="C:\Program Files (x86)\Wegweiser\Agent"/>
+  <env name="PYTHONUNBUFFERED" value="1"/>
+
+  <!-- Restart on failure -->
+  <onfailure action="restart" delay="60 sec"/>
+  <onfailure action="restart" delay="120 sec"/>
+  <onfailure action="none"/>
+</service>

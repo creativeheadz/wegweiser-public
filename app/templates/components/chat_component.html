@@ -1,0 +1,820 @@
+<!-- Filepath: app/templates/components/chat_component.html -->
+<!-- Unified Chat/Terminal Component -->
+<link href="{{ url_for('static', filename='css/unified-chat-terminal.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/osquery-fullscreen-modal.css') }}" rel="stylesheet">
+<!-- Highlight.js CSS will be dynamically loaded based on theme -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<!-- Add languages you want to support -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/powershell.min.js"></script>
+<!-- Dynamic theme loader script -->
+<script>
+    function loadSyntaxTheme() {
+        // Get current theme or default to light
+        const currentTheme = document.documentElement.getAttribute('data-bs-theme') || 'light';
+
+        // Remove any existing highlight.js theme
+        const existingTheme = document.querySelector('link[data-hljs-theme]');
+        if (existingTheme) existingTheme.remove();
+
+        // Select appropriate theme based on site theme
+        let syntaxTheme = 'github';
+        switch (currentTheme) {
+            case 'dark':
+                syntaxTheme = 'github-dark';
+                break;
+            case 'monochrome':
+                syntaxTheme = 'github-dark';
+                break;
+            case 'blue':
+                syntaxTheme = 'atom-one-dark';
+                break;
+            default:
+                syntaxTheme = 'github';
+        }
+
+        // Create and append the new theme link
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/${syntaxTheme}.min.css`;
+        link.setAttribute('data-hljs-theme', syntaxTheme);
+        document.head.appendChild(link);
+    }
+
+    // Load syntax theme on page load
+    document.addEventListener('DOMContentLoaded', loadSyntaxTheme);
+
+    // Watch for theme changes
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'data-bs-theme') {
+                loadSyntaxTheme();
+            }
+        });
+    });
+
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-bs-theme']
+    });
+</script>
+
+<!-- Unified Chat/Terminal Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="chatOffcanvas"
+    data-user-profile="{{ url_for('static', filename=user.profile_picture or 'images/profilepictures/default.png') }}"
+    data-device-uuid="{{ entity_uuid }}" data-entity-name="{{ entity_name }}"
+    data-entity-type="{{ entity_type }}"
+    style="width: 50vw;">
+    <div class="offcanvas-header border-bottom d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center flex-grow-1">
+            <div class="connectivity-indicator me-2" id="deviceConnectivityStatus">
+                <i class="fas fa-circle-notch fa-spin" title="Checking connection status..."></i>
+            </div>
+            <div>
+                <h5 class="mb-0" id="panelTitle">Chat about {{ entity_name }}</h5>
+                <small class="text-muted" id="panelSubtitle">AI Assistant</small>
+            </div>
+        </div>
+
+        <!-- Mode Toggle (only for devices) -->
+        {% if entity_type == 'device' %}
+        <div class="d-flex align-items-center gap-2 me-3">
+            <div class="mode-toggle-group">
+                <button type="button" class="mode-toggle-btn active" data-mode="chat" title="AI Chat Mode">
+                    <i class="fa-solid fa-comment"></i>
+                </button>
+                <button type="button" class="mode-toggle-btn" data-mode="terminal" title="Osquery Terminal">
+                    <i class="fas fa-terminal"></i>
+                </button>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Wegcoin Status and Close -->
+        <div class="d-flex align-items-center gap-2">
+            <div class="wegcoin-status" id="wegcoinStatus">
+                <span class="wegcoin-badge">
+                    <i class="fa-solid fa-gauge-high"></i>
+                    <span id="wegcoinBalance">--</span> WC
+                </span>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+    </div>
+
+    <div class="offcanvas-body d-flex flex-column p-0">
+        <!-- Chat Mode Content -->
+        <div id="chatModeContent" class="mode-content active d-flex flex-column h-100">
+            <div id="chatContainer" class="chat-container flex-grow-1 overflow-auto mb-3 p-3"></div>
+
+            <!-- Thought Process Display (initially hidden) -->
+            <div id="thoughtProcess" class="thought-process mb-2 d-none px-3">
+                <div class="thought-content small text-muted font-monospace"></div>
+                <div class="thought-indicators">
+                    <span class="indicator"></span>
+                    <span class="indicator"></span>
+                    <span class="indicator"></span>
+                </div>
+            </div>
+
+            <form id="chatForm" class="chat-input-container mt-auto p-3 border-top">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="d-flex gap-2">
+                    <input type="text" id="messageInput" class="form-control" placeholder="Type your message...">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Terminal Mode Content (only for devices) -->
+        {% if entity_type == 'device' %}
+        <div id="terminalModeContent" class="mode-content d-flex flex-column h-100">
+            <!-- Terminal Output Area -->
+            <div id="terminalOutput" class="terminal-output flex-grow-1 overflow-auto p-3 font-monospace">
+                <div class="terminal-welcome">
+                    <div class="text-success">Welcome to Osquery Terminal for {{ entity_name }}</div>
+                    <div class="text-muted small">Type SQL queries or use meta commands like .tables, .schema</div>
+                    <div class="text-muted small">Example: SELECT name, pid, cpu_time FROM processes LIMIT 10;</div>
+                    <hr class="my-3">
+                </div>
+            </div>
+
+            <!-- Terminal Input Area -->
+            <form id="terminalForm" class="terminal-input-container border-top p-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="d-flex gap-2 align-items-center mb-2">
+                    <span class="terminal-prompt text-success font-monospace">osquery></span>
+                    <input type="text" id="terminalInput" class="form-control font-monospace"
+                           placeholder="SELECT * FROM processes LIMIT 10;"
+                           autocomplete="off"
+                           spellcheck="false">
+                    <button type="submit" class="btn btn-success" id="terminalSubmit">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="clearTerminal()" title="Clear terminal">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <small class="text-muted">
+                    Press <kbd>↑</kbd>/<kbd>↓</kbd> for command history |
+                    <kbd>Tab</kbd> for table completion |
+                    <kbd>Ctrl+L</kbd> to clear
+                </small>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Sticky Side Tab Button -->
+<div class="floating-combined-tab animate__animated animate__pulse animate__infinite" onclick="toggleCombinedOffcanvas()" title="{% if entity_type == 'device' %}AI Chat & Terminal{% else %}AI Chat{% endif %}">
+    <div class="tab-icons">
+        <i class="fa-solid fa-robot ai-icon"></i>
+    </div>
+</div>
+
+<!-- Insufficient Wegcoins Modal -->
+<div class="modal fade" id="insufficientWegcoinsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Insufficient Wegcoins</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>You don't have enough Wegcoins to continue this conversation.</p>
+                <p>Each message typically costs 1-3 Wegcoins depending on length.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="{{ url_for('payments_bp.payment') }}" class="btn btn-primary">Purchase Wegcoins</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Mode toggle functionality - Initialize immediately
+    function initializeModeToggle() {
+        const modeToggleBtns = document.querySelectorAll('.mode-toggle-btn');
+        const chatModeContent = document.getElementById('chatModeContent');
+        const terminalModeContent = document.getElementById('terminalModeContent');
+        const panelTitle = document.getElementById('panelTitle');
+        const panelSubtitle = document.getElementById('panelSubtitle');
+        const entityName = '{{ entity_name }}';
+
+        if (!modeToggleBtns.length) {
+            console.log('No mode toggle buttons found - this is a non-device entity');
+            return;
+        }
+
+        console.log('Initializing mode toggle with', modeToggleBtns.length, 'buttons');
+
+        modeToggleBtns.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const mode = this.dataset.mode;
+                console.log('Mode toggle clicked:', mode);
+
+                // Update active button
+                modeToggleBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                // Update content visibility
+                if (mode === 'chat') {
+                    if (chatModeContent) {
+                        chatModeContent.style.display = 'flex';
+                        chatModeContent.classList.add('active');
+                    }
+                    if (terminalModeContent) {
+                        terminalModeContent.style.display = 'none';
+                        terminalModeContent.classList.remove('active');
+                    }
+                    if (panelTitle) panelTitle.textContent = `Chat about ${entityName}`;
+                    if (panelSubtitle) panelSubtitle.textContent = 'AI Assistant';
+                } else if (mode === 'terminal') {
+                    if (chatModeContent) {
+                        chatModeContent.style.display = 'none';
+                        chatModeContent.classList.remove('active');
+                    }
+                    if (terminalModeContent) {
+                        terminalModeContent.style.display = 'flex';
+                        terminalModeContent.classList.add('active');
+                    }
+                    if (panelTitle) panelTitle.textContent = `Osquery Terminal - ${entityName}`;
+                    if (panelSubtitle) panelSubtitle.textContent = 'Direct SQL Queries';
+                }
+            });
+        });
+    }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeModeToggle);
+    } else {
+        initializeModeToggle();
+    }
+
+    // Toggle combined offcanvas
+    function toggleCombinedOffcanvas() {
+        const chatOffcanvas = new bootstrap.Offcanvas(document.getElementById('chatOffcanvas'));
+        chatOffcanvas.toggle();
+    }
+
+    // Clear terminal function
+    function clearTerminal() {
+        const output = document.getElementById('terminalOutput');
+        if (!output) return;
+        const welcome = output.querySelector('.terminal-welcome');
+        output.innerHTML = '';
+        if (welcome) output.appendChild(welcome.cloneNode(true));
+    }
+</script>
+
+<script>
+    // Safe code block interaction handler with improved security
+    document.addEventListener('DOMContentLoaded', function () {
+        // Configure highlight.js to be more secure
+        if (window.hljs) {
+            // Disable warnings about unescaped HTML (optional, but helps clean up console)
+            window.hljs.configure({
+                ignoreUnescapedHTML: true,
+                languages: ['python', 'javascript', 'bash', 'powershell', 'html', 'css']
+            });
+        }
+
+        // Global function to safely copy code
+        window.copyCodeToClipboard = function (buttonElement) {
+            // Get the code from the data attribute
+            const code = buttonElement.getAttribute('data-code');
+
+            if (!code) {
+                // If data attribute is missing, safely extract code from the code block
+                const codeBlock = buttonElement.parentElement.querySelector('code');
+                if (codeBlock) {
+                    // Get raw text content for copying (without HTML tags)
+                    const safeCode = codeBlock.textContent;
+                    buttonElement.setAttribute('data-code', safeCode);
+                    copyToClipboard(safeCode, buttonElement);
+                } else {
+                    console.error('Could not find code element to copy');
+                }
+            } else {
+                // Use the pre-sanitized code from the data attribute
+                copyToClipboard(code, buttonElement);
+            }
+        };
+
+        // Helper function for clipboard operations
+        function copyToClipboard(text, buttonElement) {
+            navigator.clipboard.writeText(text).then(function () {
+                // Update button text temporarily
+                const statusElement = buttonElement.nextElementSibling;
+                statusElement.textContent = 'Copied!';
+                setTimeout(function () {
+                    statusElement.textContent = 'Copy';
+                }, 2000);
+            }).catch(function (err) {
+                console.error('Could not copy code: ', err);
+            });
+        }
+
+        // Use event delegation for copy buttons to avoid inline event handlers
+        document.body.addEventListener('click', function (event) {
+            const targetElement = event.target.closest('.copy-button');
+            if (targetElement) {
+                event.preventDefault();
+                event.stopPropagation();
+                copyCodeToClipboard(targetElement);
+            }
+        });
+
+        // Re-apply highlighting when theme changes - with additional safety measures
+        function applyHighlightingSafely() {
+            if (window.hljs) {
+                try {
+                    document.querySelectorAll('pre code').forEach(function (block) {
+                        // Save original content before highlighting
+                        const originalCode = block.textContent;
+
+                        // First escape any HTML tags within the code
+                        const hasUnescapedHTML = /<[^>]*>/g.test(originalCode) && !originalCode.includes('&lt;');
+                        if (hasUnescapedHTML) {
+                            block.textContent = originalCode
+                                .replace(/&/g, '&amp;')
+                                .replace(/</g, '&lt;')
+                                .replace(/>/g, '&gt;');
+                        }
+
+                        // Apply syntax highlighting
+                        window.hljs.highlightElement(block);
+
+                        // Update the copy button's data attribute with the original code
+                        const copyButton = block.parentElement.querySelector('.copy-button');
+                        if (copyButton) {
+                            copyButton.setAttribute('data-code', originalCode);
+                        }
+                    });
+                } catch (e) {
+                    console.error('Error applying syntax highlighting:', e);
+                }
+            }
+        }
+
+        // Apply highlighting on page load
+        setTimeout(applyHighlightingSafely, 100);
+
+        // Watch for theme changes
+        const themeObserver = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'data-bs-theme') {
+                    // Add a slight delay to allow CSS updates
+                    setTimeout(applyHighlightingSafely, 100);
+                }
+            });
+        });
+
+        themeObserver.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['data-bs-theme']
+        });
+    });
+
+    // Device connectivity status update
+    function updateDeviceConnectivity() {
+        if (!'{{ entity_type }}' || !'{{ entity_uuid }}' || '{{ entity_type }}' !== 'device') {
+            // Hide connectivity indicator if not a device chat
+            const connectivityIndicator = document.getElementById('deviceConnectivityStatus');
+            if (connectivityIndicator) {
+                connectivityIndicator.style.display = 'none';
+            }
+            return;
+        }
+
+        const deviceUuid = '{{ entity_uuid }}';
+        const indicatorElement = document.getElementById('deviceConnectivityStatus');
+
+        // Show loading indicator
+        if (indicatorElement) {
+            indicatorElement.innerHTML = '<i class="fas fa-circle-notch fa-spin" title="Checking connection status..."></i>';
+        }
+
+        // Fetch device status (prefer NATS-aware endpoint, fallback to generic)
+        const natsUrl = `/api/nats/device/${deviceUuid}/status`;
+        const legacyUrl = `/api/agents/${deviceUuid}/status`;
+
+        // Helper: if status is Offline/Stale, check if recent metrics imply the device is online
+        const inferOnlineFromMetrics = async () => {
+            try {
+                const m = await fetch(`/admin/nats-demo/api/metrics/${deviceUuid}/cpu_percent?limit=1`);
+                if (!m.ok) return false;
+                const j = await m.json();
+                const point = (j && (j.data?.[0] || j.metrics?.[0])) || null;
+                if (!point) return false;
+                const ts = point.timestamp || point.ts || point.time;
+                if (!ts) return false;
+                const ms = String(ts).length === 13 ? Number(ts) : Number(ts) * 1000;
+                return (Date.now() - ms) < 120000; // 2 minutes freshness
+            } catch (_) { return false; }
+        };
+
+        fetch(natsUrl)
+            .then(resp => resp.ok ? resp.json() : Promise.reject({fallback: true}))
+            .then(async data => {
+                if (!indicatorElement) return;
+                if (data && data.success) {
+                    const status = (data.status || (data.is_online ? 'Online' : 'Offline')).toLowerCase();
+                    if (status === 'online') {
+                        indicatorElement.innerHTML = '<i class="fas fa-plug text-success" title="Device Online (NATS)"></i>';
+                    } else {
+                        const metricsOnline = await inferOnlineFromMetrics();
+                        if (metricsOnline) {
+                            indicatorElement.innerHTML = '<i class="fas fa-plug text-success" title="Device Online (metrics activity)"></i>';
+                        } else if (status === 'stale') {
+                            indicatorElement.innerHTML = '<i class="fas fa-plug text-warning" title="Connection Stale (no recent heartbeat)"></i>';
+                        } else {
+                            indicatorElement.innerHTML = '<i class="fas fa-plug-circle-xmark text-danger" title="Device Offline"></i>';
+                        }
+                    }
+                } else {
+                    indicatorElement.innerHTML = '<i class="fas fa-question-circle text-warning" title="Unknown Status"></i>';
+                }
+            })
+            .catch(err => {
+                // Fallback to legacy status endpoint
+                fetch(legacyUrl)
+                    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+                    .then(async data => {
+                        if (!indicatorElement) return;
+                        if (data.success && data.is_online) {
+                            indicatorElement.innerHTML = '<i class="fas fa-plug text-success" title="Device Online"></i>';
+                        } else if (data.success) {
+                            const metricsOnline = await inferOnlineFromMetrics();
+                            if (metricsOnline) {
+                                indicatorElement.innerHTML = '<i class="fas fa-plug text-success" title="Device Online (metrics activity)"></i>';
+                            } else {
+                                indicatorElement.innerHTML = '<i class="fas fa-plug-circle-xmark text-danger" title="Device Offline"></i>';
+                            }
+                        } else {
+                            indicatorElement.innerHTML = '<i class="fas fa-question-circle text-warning" title="Unknown Status"></i>';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching device status:', error);
+                        if (indicatorElement) {
+                            indicatorElement.innerHTML = '<i class="fas fa-exclamation-circle text-warning" title="Error checking status"></i>';
+                        }
+                    });
+            });
+    }
+
+    // Update device connectivity when the chat opens
+    document.getElementById('chatOffcanvas').addEventListener('shown.bs.offcanvas', updateDeviceConnectivity);
+
+    // Refresh device connectivity status periodically if the chat is open
+    setInterval(() => {
+        const chatOffcanvas = document.getElementById('chatOffcanvas');
+        if (chatOffcanvas && chatOffcanvas.classList.contains('show') && '{{ entity_type }}' === 'device') {
+            updateDeviceConnectivity();
+        }
+    }, 30000); // Check every 30 seconds
+
+    // Terminal connectivity status
+    function updateTerminalConnectivity() {
+        if ('{{ entity_type }}' !== 'device') return;
+
+        const deviceUuid = '{{ entity_uuid }}';
+        const indicatorElement = document.getElementById('deviceConnectivityStatus');
+
+        if (indicatorElement) {
+            indicatorElement.innerHTML = '<i class="fas fa-circle-notch fa-spin" title="Checking connection status..."></i>';
+        }
+
+        const natsUrl = `/osquery/api/device/${deviceUuid}/status`;
+
+        fetch(natsUrl)
+            .then(resp => resp.ok ? resp.json() : Promise.reject(resp.status))
+            .then(data => {
+                if (!indicatorElement) return;
+                if (data && data.success) {
+                    const status = (data.status || 'Unknown').toLowerCase();
+                    if (status === 'online') {
+                        indicatorElement.innerHTML = '<i class="fas fa-plug text-success" title="Device Online"></i>';
+                    } else if (status === 'stale') {
+                        indicatorElement.innerHTML = '<i class="fas fa-plug text-warning" title="Connection Stale"></i>';
+                    } else {
+                        indicatorElement.innerHTML = '<i class="fas fa-plug-circle-xmark text-danger" title="Device Offline"></i>';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching terminal status:', error);
+                if (indicatorElement) {
+                    indicatorElement.innerHTML = '<i class="fas fa-exclamation-circle text-warning" title="Error checking status"></i>';
+                }
+            });
+    }
+
+    // Update connectivity when offcanvas is shown
+    document.getElementById('chatOffcanvas').addEventListener('shown.bs.offcanvas', updateDeviceConnectivity);
+    if ('{{ entity_type }}' === 'device') {
+        document.getElementById('chatOffcanvas').addEventListener('shown.bs.offcanvas', updateTerminalConnectivity);
+    }
+
+    // Keyboard shortcuts for terminal
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'l' && document.getElementById('chatOffcanvas').classList.contains('show')) {
+            const terminalModeContent = document.getElementById('terminalModeContent');
+            if (terminalModeContent && terminalModeContent.style.display !== 'none') {
+                e.preventDefault();
+                clearTerminal();
+                document.getElementById('terminalInput').focus();
+            }
+        }
+    });
+
+    // Global function for expanding osquery tables to fullscreen with DataTables
+    function expandOsqueryTable(tableId) {
+        try {
+            // Get data from global storage
+            const data = window.osqueryTableData && window.osqueryTableData[tableId];
+
+            if (!data || data.length === 0) {
+                alert('No data available for fullscreen view');
+                return;
+            }
+
+            // Create modal if it doesn't exist
+            let modal = document.getElementById('osqueryTableModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.className = 'modal fade osquery-fullscreen-modal';
+                modal.id = 'osqueryTableModal';
+                modal.setAttribute('tabindex', '-1');
+                modal.setAttribute('aria-hidden', 'true');
+                modal.innerHTML = `
+                    <div class="modal-dialog modal-fullscreen osquery-modal-dialog">
+                        <div class="modal-content bg-dark text-light osquery-modal-content">
+                            <div class="modal-header border-secondary osquery-modal-header">
+                                <h5 class="modal-title">Query Results - Fullscreen View</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body osquery-modal-body" id="osqueryTableModalBody"></div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+            }
+
+            const modalBody = document.getElementById('osqueryTableModalBody');
+            const columns = Object.keys(data[0]);
+            const stretch = columns.length <= 6;
+
+
+            // Helper function to escape HTML
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // Create container with controls, table, and footer as separate sections
+            let tableHTML = `
+                <div class="osquery-controls-top" id="osqueryControlsTop"></div>
+                <div class="osquery-table-wrapper">
+                    <table id="osqueryDataTable" class="table table-dark table-sm table-hover table-striped osquery-fullscreen-table${stretch ? ' osq-stretch' : ''}">
+                        <thead>
+                            <tr>${columns.map(col => `<th>${escapeHtml(col)}</th>`).join('')}</tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            // Add all rows
+            data.forEach(row => {
+                tableHTML += '<tr>';
+                columns.forEach(col => {
+                    const value = row[col];
+                    tableHTML += `<td title="${value !== null && value !== undefined ? escapeHtml(String(value)) : ''}">${value !== null && value !== undefined ? escapeHtml(String(value)) : ''}</td>`;
+                });
+                tableHTML += '</tr>';
+            });
+
+            tableHTML += `
+                        </tbody>
+                    </table>
+                </div>
+                <div class="osquery-controls-bottom" id="osqueryControlsBottom"></div>
+                <div class="osquery-table-footer mt-0 text-muted">
+                    <strong>${data.length}</strong> total rows |
+                    <strong>${columns.length}</strong> columns
+                </div>
+            `;
+
+            modalBody.innerHTML = tableHTML;
+
+            // Helper function to initialize DataTables once loaded
+            function initializeDataTable() {
+                try {
+                    if ($.fn.dataTable.isDataTable('#osqueryDataTable')) {
+                        $('#osqueryDataTable').DataTable().destroy();
+                    }
+
+                    let dataTable = $('#osqueryDataTable').DataTable({
+                        paging: true,
+                        pageLength: 25,
+                        searching: true,
+                        ordering: true,
+                        info: true,
+                        responsive: true,
+                        autoWidth: false,
+                        dom: 'rt',
+                        language: {
+                            search: "Filter results:",
+                            lengthMenu: "Show _MENU_ rows",
+                            info: "Showing _START_ to _END_ of _TOTAL_ rows",
+                            paginate: {
+                                first: "First",
+                                last: "Last",
+                                next: "Next",
+                                previous: "Previous"
+                            }
+                        },
+                        initComplete: function() {
+                            // Store reference to dataTable for use in event listeners
+                            const dt = this.api();
+
+                            // Manually build and insert the controls in the top container
+                            const controlsTop = document.getElementById('osqueryControlsTop');
+                            if (controlsTop) {
+                                const lengthDiv = document.createElement('div');
+                                lengthDiv.className = 'osquery-datatable-controls';
+                                lengthDiv.innerHTML = `
+                                    <div class="dataTables_length">
+                                        <label>
+                                            Show
+                                            <select name="osqueryDataTable_length" aria-controls="osqueryDataTable">
+                                                <option value="10">10</option>
+                                                <option value="25" selected>25</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
+                                            </select>
+                                            rows
+                                        </label>
+                                    </div>
+                                    <div class="dataTables_filter">
+                                        <label>
+                                            Filter results:
+                                            <input type="search" class="form-control form-control-sm osquery-search-input" placeholder="Search all columns..." aria-controls="osqueryDataTable">
+                                        </label>
+                                    </div>
+                                `;
+                                controlsTop.appendChild(lengthDiv);
+
+                                // Handle length change
+                                lengthDiv.querySelector('select').addEventListener('change', function() {
+                                    dt.page.len(this.value).draw();
+                                });
+
+                                // Handle search
+                                lengthDiv.querySelector('input').addEventListener('keyup', function() {
+                                    dt.search(this.value).draw();
+                                });
+                            }
+
+                            // Manually build and insert the controls in the bottom container
+                            const controlsBottom = document.getElementById('osqueryControlsBottom');
+                            if (controlsBottom) {
+                                const infoDiv = document.createElement('div');
+                                infoDiv.className = 'osquery-datatable-info';
+                                infoDiv.innerHTML = `
+                                    <div class="dataTables_info">
+                                        Showing 1 to 25 of ${dt.page.info().recordsTotal} rows
+                                    </div>
+                                    <div class="dataTables_paginate paging_simple_numbers">
+                                    </div>
+                                `;
+                                controlsBottom.appendChild(infoDiv);
+                            }
+
+                            // Update info and pagination on draw
+                            dt.on('draw', function() {
+                                const info = dt.page.info();
+                                const infoDiv = document.querySelector('.osquery-datatable-info .dataTables_info');
+                                if (infoDiv) {
+                                    infoDiv.textContent = `Showing ${info.start + 1} to ${info.end} of ${info.recordsTotal} rows`;
+                                }
+
+                                const paginateDiv = document.querySelector('.osquery-datatable-info .paging_simple_numbers');
+                                if (paginateDiv) {
+                                    paginateDiv.innerHTML = '';
+
+                                    // First button
+                                    if (info.page > 0) {
+                                        const btn = document.createElement('a');
+                                        btn.href = '#';
+                                        btn.className = 'paginate_button';
+                                        btn.textContent = 'First';
+                                        btn.addEventListener('click', (e) => { e.preventDefault(); dt.page(0).draw(false); });
+                                        paginateDiv.appendChild(btn);
+                                    }
+
+                                    // Previous button
+                                    if (info.page > 0) {
+                                        const btn = document.createElement('a');
+                                        btn.href = '#';
+                                        btn.className = 'paginate_button';
+                                        btn.textContent = 'Previous';
+                                        btn.addEventListener('click', (e) => { e.preventDefault(); dt.page('previous').draw(false); });
+                                        paginateDiv.appendChild(btn);
+                                    }
+
+                                    // Page numbers
+                                    const pageCount = Math.ceil(info.recordsTotal / info.length);
+                                    for (let i = 0; i < pageCount; i++) {
+                                        const btn = document.createElement('a');
+                                        btn.href = '#';
+                                        btn.className = 'paginate_button' + (i === info.page ? ' current' : '');
+                                        btn.textContent = i + 1;
+                                        btn.addEventListener('click', (e) => { e.preventDefault(); dt.page(i).draw(false); });
+                                        paginateDiv.appendChild(btn);
+                                    }
+
+                                    // Next button
+                                    if (info.page < pageCount - 1) {
+                                        const btn = document.createElement('a');
+                                        btn.href = '#';
+                                        btn.className = 'paginate_button';
+                                        btn.textContent = 'Next';
+                                        btn.addEventListener('click', (e) => { e.preventDefault(); dt.page('next').draw(false); });
+                                        paginateDiv.appendChild(btn);
+                                    }
+
+                                    // Last button
+                                    if (info.page < pageCount - 1) {
+                                        const btn = document.createElement('a');
+                                        btn.href = '#';
+                                        btn.className = 'paginate_button';
+                                        btn.textContent = 'Last';
+                                        btn.addEventListener('click', (e) => { e.preventDefault(); dt.page(pageCount - 1).draw(false); });
+                                        paginateDiv.appendChild(btn);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                } catch (e) {
+                    console.error('Error initializing DataTables:', e);
+                }
+            }
+
+            // Lazy load DataTables JS if not already loaded, then initialize
+            setTimeout(() => {
+                if (typeof $ !== 'undefined' && $.fn.dataTable) {
+                    // DataTables already loaded
+                    initializeDataTable();
+                } else if (typeof $ !== 'undefined') {
+                    // jQuery loaded but DataTables not - load it dynamically (using jsdelivr for CSP compliance)
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/datatables.net@1.13.7/js/jquery.dataTables.min.js';
+                    script.onload = function() {
+                        const script2 = document.createElement('script');
+                        script2.src = 'https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.7/js/dataTables.bootstrap5.min.js';
+                        script2.onload = initializeDataTable;
+                        document.head.appendChild(script2);
+                    };
+                    document.head.appendChild(script);
+                } else {
+                    console.warn('jQuery not available, skipping DataTables initialization');
+                }
+            }, 100);
+
+            // Add horizontal scroll detection
+            const tableWrapper = modalBody.querySelector('.osquery-table-wrapper');
+            if (tableWrapper) {
+                const updateScrollIndicator = () => {
+                    if (tableWrapper.scrollWidth > tableWrapper.clientWidth) {
+                        tableWrapper.classList.add('has-horizontal-scroll');
+                    } else {
+                        tableWrapper.classList.remove('has-horizontal-scroll');
+                    }
+                };
+
+                updateScrollIndicator();
+                tableWrapper.addEventListener('scroll', updateScrollIndicator);
+                window.addEventListener('resize', updateScrollIndicator);
+            }
+
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+        } catch (e) {
+            console.error('Error expanding table:', e);
+            alert('Failed to expand table: ' + e.message);
+        }
+    }
+</script>

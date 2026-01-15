@@ -1,0 +1,49 @@
+{# Storage Drives Card Component - Content Only #}
+{% if device.modular_data and device.modular_data.drives %}
+<div class="row mb-3">
+        <div class="col-md-4">
+            <p class="mb-1"><strong>Total Drives:</strong> {{ device.modular_data.drives.drive_count }}</p>
+        </div>
+        <div class="col-md-4">
+            {% if device.modular_data.drives.total_capacity_gb %}
+            <p class="mb-1"><strong>Total Capacity:</strong> {{ device.modular_data.drives.total_capacity_gb }} GB</p>
+            {% endif %}
+        </div>
+        <div class="col-md-4">
+            {% if device.modular_data.drives.overall_usage_percent %}
+            <p class="mb-1"><strong>Overall Usage:</strong>
+                <span class="badge {% if device.modular_data.drives.overall_usage_percent >= 90 %}bg-danger{% elif device.modular_data.drives.overall_usage_percent >= 80 %}bg-warning{% else %}bg-success{% endif %}">
+                    {{ "%.1f"|format(device.modular_data.drives.overall_usage_percent) }}%
+                </span>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if device.modular_data.drives.drives %}
+    <div class="row">
+        {% for drive in device.modular_data.drives.drives[:6] %}
+        <div class="col-md-6 col-lg-4 mb-2">
+            <div class="small p-2 border rounded">
+                <strong>{{ drive.drive_name }}:</strong>
+                {% if drive.drive_total_gb %}{{ drive.drive_total_gb }} GB{% endif %}
+                {% if drive.drive_used_percentage %}
+                <span class="badge {% if drive.drive_used_percentage >= 90 %}bg-danger{% elif drive.drive_used_percentage >= 80 %}bg-warning{% else %}bg-success{% endif %} ms-1">
+                    {{ "%.1f"|format(drive.drive_used_percentage) }}%
+                </span>
+                {% endif %}
+                <span class="ai-insight-icon" data-ai-insight="drive_usage" data-insight-value="Drive: {{ drive.drive_name }}, Total: {{ drive.drive_total_gb or 'N/A' }} GB, Usage: {{ drive.drive_used_percentage or 'N/A' }}%">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+        {% if device.modular_data.drives.drives|length > 6 %}
+        <div class="col-12">
+            <small class="text-muted">... and {{ device.modular_data.drives.drives|length - 6 }} more drives</small>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+{% endif %}
+

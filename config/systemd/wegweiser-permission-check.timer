@@ -1,0 +1,13 @@
+[Unit]
+Description=Wegweiser Permission Check Timer
+Documentation=man:wegweiser(8)
+Requires=wegweiser-permission-check.service
+
+[Timer]
+# Run every 5 minutes
+OnBootSec=1min
+OnUnitActiveSec=5min
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

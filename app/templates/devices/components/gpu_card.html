@@ -1,0 +1,31 @@
+{# GPU Information Card Component - Content Only #}
+{# Only show if GPU data is available and not "No data found" #}
+{% if device.modular_data and device.modular_data.gpu and (device.modular_data.gpu.gpu_vendor and device.modular_data.gpu.gpu_vendor != 'No data found') %}
+<div class="row">
+    <div class="col-md-6">
+        <p class="mb-1">
+            <strong>GPU:</strong>
+            <span class="ai-insight-icon-wrapper">
+                {{ device.modular_data.gpu.gpu_vendor or 'N/A' }} {{ device.modular_data.gpu.gpu_product or '' }}
+                {% if device.modular_data.gpu.gpu_vendor %}
+                <span class="ai-insight-icon" data-ai-insight="gpu_model" data-insight-value="GPU: {{ device.modular_data.gpu.gpu_vendor }} {{ device.modular_data.gpu.gpu_product or '' }}">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                </span>
+                {% endif %}
+            </span>
+        </p>
+        {% if device.modular_data.gpu.gpu_driver_version %}
+        <p class="mb-1"><strong>Driver:</strong> {{ device.modular_data.gpu.gpu_driver_version }}</p>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        {% if device.modular_data.gpu.gpu_memory_gb %}
+        <p class="mb-1"><strong>Memory:</strong> {{ device.modular_data.gpu.gpu_memory_gb }} GB</p>
+        {% endif %}
+        {% if device.modular_data.gpu.gpu_resolution %}
+        <p class="mb-1"><strong>Resolution:</strong> {{ device.modular_data.gpu.gpu_resolution }}</p>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+

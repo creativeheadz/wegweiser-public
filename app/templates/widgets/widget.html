@@ -1,0 +1,83 @@
+<!-- Filepath: app/templates/widgets/widget.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Load Widget</title>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/chart.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="col d-flex">
+            <div class="card rounded-4 w-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-start justify-content-between mb-3">
+                        <div class="">
+                            <h5 class="mb-0">CPU</h5>
+                            <p class="mb-0">Load Percentage</p>
+                        </div>
+                        <div class="dropdown">
+                            <a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-ellipsis-vertical fs-5"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="chart-container2" style="height: 400px;">
+                        <canvas id="cpu_load"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(function() {
+            var ctx = document.getElementById('cpu_load').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: [
+                        'Red',
+                        'Purple',
+                        'Yellow',
+                        'Grey',
+                        'Green'
+                    ],
+                    datasets: [{
+                        label: 'CPU Load Distribution',
+                        data: [11, 16, 7, 3, 14],
+                        backgroundColor: [
+                            '#0d6efd',
+                            '#6f42c1',
+                            '#d63384',
+                            '#fd7e14',
+                            '#15ca20',
+                            '#0dcaf0'
+                        ]
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            display: true
+                        }
+                    },
+                    elements: {
+                        line: {
+                            borderWidth: 3
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

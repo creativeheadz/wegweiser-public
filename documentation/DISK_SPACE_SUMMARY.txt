@@ -1,0 +1,142 @@
+=============================================================================
+           WEGWEISER DISK SPACE ANALYSIS - EXECUTIVE SUMMARY
+=============================================================================
+
+CURRENT STATUS:
+  Total Disk:     29GB
+  Used:           26GB (89%)
+  Available:      3.5GB
+  Status:         CRITICAL - Immediate action required
+
+=============================================================================
+TOP SPACE CONSUMERS (Grouped by Location)
+=============================================================================
+
+1. /opt/wegweiser/deviceFiles - 4.1GB (14% of disk)
+   ├─ 112 device directories
+   ├─ 326 total files
+   ├─ 190 files older than 30 days
+   ├─ 48 Security event logs (20-713MB each)
+   ├─ 5 dummy.txt test files (150MB total)
+   └─ Recommendation: Implement 60-day retention policy
+      POTENTIAL SAVINGS: 2-3GB
+
+2. /opt/wegweiser/.git - 2.2GB (8% of disk)
+   ├─ 4 pack files (984MB + 387MB + 272MB + 68MB)
+   ├─ Large binary files likely in history
+   └─ Recommendation: Run git gc --aggressive
+      POTENTIAL SAVINGS: 500MB-1GB
+
+3. /home/andrei/.vscode-server - 3.6GB (12% of disk)
+   ├─ 1.3GB workspace data/caches
+   ├─ 1.2GB extensions
+   ├─ 1.1GB CLI servers (5 versions)
+   └─ Recommendation: Keep latest 2 versions only
+      POTENTIAL SAVINGS: 1-2GB
+
+4. /home/andrei/wegweiser_old_20251010_192545.tar.gz - 984MB (3% of disk)
+   └─ Recommendation: Delete old backup
+      POTENTIAL SAVINGS: 984MB
+
+5. /var/lib/postgresql - 2.3GB (8% of disk)
+   ├─ Production database
+   └─ Recommendation: Archive old data, run VACUUM
+      POTENTIAL SAVINGS: 500MB-1GB
+
+6. /home/andrei/.nvm - 1.1GB (4% of disk)
+   └─ Node.js v22.21.1 installation
+      Status: Normal if Node.js required
+
+7. /home/andrei/.npm - 387MB (1% of disk)
+   └─ Recommendation: npm cache clean --force
+      POTENTIAL SAVINGS: 200-300MB
+
+=============================================================================
+IMMEDIATE ACTIONS (Can execute now)
+=============================================================================
+
+Action                              Size      Command
+--------------------------------------------------------------------------------
+Delete dummy.txt test files         150MB     Included in cleanup script
+Delete old wegweiser backup         984MB     Included in cleanup script
+Delete unknown file (zi3fm04N)      112MB     Included in cleanup script
+Delete test_agent directory         80MB      Included in cleanup script
+Clean NPM cache                     300MB     Included in cleanup script
+Clean old device logs (>60 days)    1-2GB     Included in cleanup script
+--------------------------------------------------------------------------------
+TOTAL IMMEDIATE SAVINGS:            2.5-3.5GB
+
+Run: sudo /opt/wegweiser/scripts/cleanup_disk_space.sh
+
+=============================================================================
+HIGH PRIORITY ACTIONS (Requires planning)
+=============================================================================
+
+Action                              Size      Effort
+--------------------------------------------------------------------------------
+Implement device file retention     2-3GB     Medium (policy decision)
+Clean VSCode server versions        1-2GB     Low (automated script)
+Optimize Git repository             500MB-1GB Medium (git gc + review)
+Archive old PostgreSQL data         500MB-1GB High (requires DB analysis)
+--------------------------------------------------------------------------------
+TOTAL HIGH PRIORITY SAVINGS:        4-6GB
+
+=============================================================================
+PROJECTED DISK USAGE AFTER CLEANUP
+=============================================================================
+
+Current:                    26GB / 29GB (89% full) - 3.5GB free
+After Immediate Actions:    23GB / 29GB (79% full) - 6GB free
+After High Priority:        18GB / 29GB (62% full) - 11GB free
+
+Target: Keep disk usage below 70% (20GB used, 9GB free)
+
+=============================================================================
+SCRIPTS CREATED
+=============================================================================
+
+1. /opt/wegweiser/scripts/cleanup_disk_space.sh
+   - Comprehensive cleanup (immediate + high priority actions)
+   - Saves 2.5-3.5GB immediately
+
+2. /opt/wegweiser/scripts/cleanup_device_files.sh
+   - Device file retention management
+   - Supports dry-run mode
+   - Configurable retention periods
+
+3. /opt/wegweiser/scripts/cleanup_logs.sh (already exists)
+   - Daily automated cleanup at 2:00 AM
+   - Cleans application logs and payloads
+
+=============================================================================
+RECOMMENDED NEXT STEPS
+=============================================================================
+
+1. IMMEDIATE (Do now):
+   ☐ Run: sudo /opt/wegweiser/scripts/cleanup_disk_space.sh
+   ☐ Verify disk space freed: df -h /
+   ☐ Check application still running: systemctl status wegweiser
+
+2. SHORT TERM (This week):
+   ☐ Review device file retention policies
+   ☐ Run: sudo /opt/wegweiser/scripts/cleanup_device_files.sh --dry-run
+   ☐ If satisfied, run without --dry-run
+   ☐ Optimize git repository: git gc --aggressive --prune=now
+
+3. MEDIUM TERM (This month):
+   ☐ Set up disk space monitoring alerts
+   ☐ Review PostgreSQL database for archival opportunities
+   ☐ Consider disk expansion if usage remains >70%
+   ☐ Schedule monthly disk space reviews
+
+4. ONGOING:
+   ☐ Monitor disk usage weekly
+   ☐ Review cleanup logs: journalctl -u wegweiser-log-cleanup.service
+   ☐ Adjust retention policies based on business needs
+
+=============================================================================
+
+For detailed analysis, see:
+- /opt/wegweiser/documentation/DISK_SPACE_ANALYSIS_2025-11-08.md
+- /opt/wegweiser/documentation/DISK_SPACE_INCIDENT_2025-11-08.md
+- /opt/wegweiser/documentation/LOG_MANAGEMENT.md

@@ -1,0 +1,65 @@
+{# Network Interfaces Card Component - Content Only #}
+{% if device.modular_data and device.modular_data.networks %}
+<div class="row mb-3">
+        <div class="col-md-3">
+            <p class="mb-1"><strong>Total:</strong> {{ device.modular_data.networks.network_count }}</p>
+        </div>
+        <div class="col-md-3">
+            <p class="mb-1"><strong>Active:</strong> {{ device.modular_data.networks.active_networks }}</p>
+        </div>
+        <div class="col-md-3">
+            {% if device.modular_data.networks.wired_networks %}
+            <p class="mb-1"><strong>Wired:</strong> {{ device.modular_data.networks.wired_networks }}</p>
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            {% if device.modular_data.networks.wireless_networks %}
+            <p class="mb-1"><strong>Wireless:</strong> {{ device.modular_data.networks.wireless_networks }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if device.modular_data.networks.networks %}
+    {% set networks = device.modular_data.networks.networks or [] %}
+    {% set active_networks = networks | selectattr('is_active') | list %}
+    {% set total = networks|length %}
+    {% set active_count = active_networks|length %}
+    {% set show_toggle = total > active_count %}
+
+    <div class="d-flex justify-content-end mb-2">
+        {% if show_toggle %}
+        <button type="button" class="btn btn-sm btn-outline-secondary nic-toggle-btn" id="nic-toggle-{{ device.deviceuuid }}">Show all ({{ total }})</button>
+        {% endif %}
+    </div>
+
+    <div class="row nic-container" id="nic-container-{{ device.deviceuuid }}">
+        {% for network in networks %}
+        <div class="col-md-6 col-lg-4 mb-2 nic-item {% if not network.is_active %}nic-inactive{% endif %}">
+            <div class="small p-2 border rounded">
+                <strong>{{ network.network_name }}:</strong>
+                {% if network.address_4 %}<br><small class="text-muted">{{ network.address_4 }}</small>{% endif %}
+                <span class="badge bg-success ms-1">{{ network.connection_type }}</span>
+                {% if not network.is_active %}<span class="badge bg-secondary ms-1">Inactive</span>{% endif %}
+                <span class="ai-insight-icon" data-ai-insight="network_interface" data-insight-value="Network: {{ network.network_name }}, Address: {{ network.address_4 or 'N/A' }}, Type: {{ network.connection_type or 'N/A' }}"><i class="fas fa-wand-magic-sparkles"></i></span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if show_toggle %}
+    <script>
+    (function() {
+        const container = document.getElementById('nic-container-{{ device.deviceuuid }}');
+        const btn = document.getElementById('nic-toggle-{{ device.deviceuuid }}');
+        if (!container || !btn) return;
+        container.classList.remove('show-all'); // default: only active
+        btn.addEventListener('click', function() {
+            const showAll = container.classList.toggle('show-all');
+            btn.textContent = showAll ? 'Show active only' : 'Show all ({{ total }})';
+        });
+    })();
+    </script>
+    {% endif %}
+    {% endif %}
+{% endif %}
+

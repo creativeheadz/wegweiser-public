@@ -1,0 +1,4 @@
+Contact: mailto:a.trimbitas@oldforge.tech
+Expires: 2026-08-05T22:56:00.000Z
+Acknowledgments: https://oldforge.tech/news
+Preferred-Languages: en

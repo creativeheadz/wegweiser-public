@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /
+
+# This is a private web application requiring authentication.
+# No content is publicly accessible or intended for crawling.

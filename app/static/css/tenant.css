@@ -1,0 +1,350 @@
+/* Tenant Page Specific Styling */
+
+/* Health Score Overview Row - Equal Height Columns */
+.health-overview-row {
+  align-items: stretch;
+}
+
+.health-overview-row .col-lg-6 {
+  display: flex;
+  flex-direction: column;
+}
+
+.health-overview-row .col-lg-6 > .card,
+.health-overview-row .col-lg-6 > div {
+  height: 100%;
+}
+
+/* Enhanced Settings Button Group */
+.btn-group .btn-primary {
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.9), rgba(var(--primary-rgb), 0.7)) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid rgba(var(--primary-rgb), 0.3) !important;
+  border-radius: var(--glass-border-radius) !important;
+  box-shadow: var(--glass-shadow) !important;
+  color: white !important;
+  font-weight: 600;
+  padding: 0.5rem 1.25rem;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-group .btn-primary:hover {
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 1), rgba(var(--primary-rgb), 0.8)) !important;
+  /* DISABLED: Movement effect removed - original: transform: translateY(-1px); */
+  box-shadow: var(--glass-shadow), 0 4px 12px rgba(var(--primary-rgb), 0.3) !important;
+  color: white !important;
+}
+
+.btn-group .btn-primary:focus,
+.btn-group .btn-primary:active {
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 1), rgba(var(--primary-rgb), 0.8)) !important;
+  box-shadow: var(--glass-shadow), 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25) !important;
+  color: white !important;
+  outline: none !important;
+}
+
+/* Enhanced Dropdown Toggle for Split Button */
+.btn-group .dropdown-toggle-split {
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.9), rgba(var(--primary-rgb), 0.7)) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid rgba(var(--primary-rgb), 0.3) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-group .dropdown-toggle-split:hover {
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 1), rgba(var(--primary-rgb), 0.8)) !important;
+  /* DISABLED: Movement effect removed - original: transform: translateY(-1px); */
+  color: white !important;
+}
+
+.btn-group .dropdown-toggle-split:focus,
+.btn-group .dropdown-toggle-split:active,
+.btn-group .dropdown-toggle-split.show {
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 1), rgba(var(--primary-rgb), 0.8)) !important;
+  box-shadow: var(--glass-shadow), 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25) !important;
+  color: white !important;
+  outline: none !important;
+}
+
+/* Ensure the button group maintains proper border radius */
+.btn-group .btn:first-child {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.btn-group .btn:last-child {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+/* Enhanced User Action Buttons */
+.btn-secondary {
+  background: var(--glass-bg) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--glass-border-radius) !important;
+  box-shadow: var(--glass-shadow) !important;
+  color: var(--text-primary) !important;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-secondary:hover {
+  background: var(--glass-bg-hover) !important;
+  /* DISABLED: Movement effect removed - original: transform: translateY(-1px); */
+  box-shadow: var(--glass-shadow), 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Tenant Overview Cards Enhancement */
+.card {
+  background: var(--glass-bg) !important;
+  backdrop-filter: var(--glass-blur) !important;
+  -webkit-backdrop-filter: var(--glass-blur) !important;
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--glass-border-radius) !important;
+  box-shadow: var(--glass-shadow) !important;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  /* DISABLED: Movement effect removed - original: transform: translateY(-2px); */
+  box-shadow: var(--glass-shadow), 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.card-header {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  border-bottom: 1px solid var(--glass-border) !important;
+  color: var(--text-primary) !important;
+  font-weight: 600;
+}
+
+/* User List Styling */
+.list-group-item {
+  background: var(--glass-bg) !important;
+  border: 1px solid var(--glass-border) !important;
+  color: var(--text-primary) !important;
+  transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+  background: var(--glass-bg-hover) !important;
+  /* DISABLED: Movement effect removed - original: transform: translateX(2px); */
+}
+
+/* Avatar Styling */
+.rounded-circle {
+  border: 2px solid var(--glass-border) !important;
+  box-shadow: var(--glass-shadow) !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .btn-group .btn-primary,
+  .btn-group .dropdown-toggle-split {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .card {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Dark Theme Adjustments */
+[data-bs-theme="dark"] .card-header {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-bs-theme="dark"] .list-group-item:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Health Score Overview Card - Improved Layout */
+.card .chart-section {
+  min-height: 300px;
+}
+
+.card .chart-container {
+  min-height: 250px;
+  width: 100%;
+}
+
+/* Gauge sizing in header */
+.health-gauge-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure card body takes full available space */
+.card-body {
+  padding: 1.5rem;
+}
+
+/* Make history cards equal height */
+.history-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-card .card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-card .chart-container {
+  flex-grow: 1;
+  min-height: 200px;
+}
+
+/* Stats Grid Styling - Individual Rows */
+.stats-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.stat-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.stat-item .stat-value {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-right: 1rem;
+}
+
+.stat-item .stat-label {
+  font-size: var(--font-size-base);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  flex-grow: 1;
+}
+
+/* Gauge Section Styling */
+.gauge-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Gauge Container Styling */
+.health-gauge-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 200px;
+}
+
+.stat-item {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+}
+
+.stat-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.stat-value {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+/* Responsive Stats Grid */
+@media (max-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .stat-value {
+    font-size: var(--font-size-xl);
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+  }
+}
+
+/* Entity Row Styling */
+.entity-row {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.2s ease;
+}
+
+.entity-row:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.entity-row a {
+  transition: color 0.2s ease;
+}
+
+.entity-row a:hover {
+  color: var(--primary-color) !important;
+}
+
+.entity-row h6 {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.entity-row .text-muted {
+  color: var(--text-secondary) !important;
+}
+
+.entity-row .text-muted:hover {
+  color: var(--primary-color) !important;
+}

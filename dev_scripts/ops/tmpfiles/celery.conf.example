@@ -1,0 +1,6 @@
+# Place this at /etc/tmpfiles.d/celery.conf and apply with:
+#   systemctl daemon-reload
+#   systemd-tmpfiles --create /etc/tmpfiles.d/celery.conf
+# Ensures the runtime directory exists at boot with correct perms/ownership.
+
+d /run/celery 0750 wegweiser www-data - -

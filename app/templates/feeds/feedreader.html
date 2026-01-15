@@ -1,0 +1,257 @@
+<!-- Filepath: app/templates/feeds/feedreader.html -->
+{% extends "base.html" %}
+{% block title %}RSS Reader - Wegweiser{% endblock %}
+{% block content %}
+
+<div class="main-content">
+    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div class="breadcrumb-title pe-3">
+            Components
+        </div>
+        <div class="ps-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 p-0">
+                    <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+                    <li class="breadcrumb-item active" aria-current="page">RSS Reader</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="ms-auto">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary">Settings</button>
+                <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
+                    <a class="dropdown-item" href="javascript:;">Action</a>
+                    <a class="dropdown-item" href="javascript:;">Another action</a>
+                    <a class="dropdown-item" href="javascript:;">Something else here</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="javascript:;">Separated link</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card rounded-4">
+        <div class="card-body">
+            <h1 class="card-title">RSS Reader</h1>
+
+            <div class="mb-4">
+                <h2 class="h4">Add New Feed</h2>
+                <form id="addFeedForm" class="row g-3">
+                    {{ form.csrf_token }}
+                    <div class="col-md-5">
+                        {{ form.name(class="form-control", placeholder="Feed Name") }}
+                    </div>
+                    <div class="col-md-5">
+                        {{ form.url(class="form-control", placeholder="Feed URL") }}
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Add Feed</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="mb-4">
+                <h2 class="h4">Your Feeds 
+                    <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse"
+                        data-bs-target="#feedList" aria-expanded="false" aria-controls="feedList">
+                        Toggle Feeds
+                    </button>
+                </h2>
+                <ul id="feedList" class="list-group collapse">
+                    {% for feed in feeds %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ feed.name }}
+                        <div class="form-check form-switch">
+                            <input class="form-check-input feed-toggle" type="checkbox" id="feed-{{ feed.id }}" 
+                                data-feed-id="{{ feed.id }}" {% if feed.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="feed-{{ feed.id }}">Active</label>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div id="feedItems" class="row">
+                <!-- Feed articles will be loaded here -->
+            </div>
+            <div id="loadingSpinner" class="text-center d-none">
+                <div class="spinner-border" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <!-- Pagination Controls -->
+            <nav>
+                <ul class="pagination justify-content-center" id="paginationControls">
+                    <!-- Pagination buttons will be inserted dynamically here -->
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Debounce function to limit feed updates
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+let currentPage = 1;
+let hasMore = true;
+
+// Load RSS feed articles with debouncing
+const debouncedLoadFeeds = debounce(loadFeeds, 500);
+
+// Load RSS feeds from the server
+function loadFeeds(page = 1) {
+    $('#loadingSpinner').removeClass('d-none');
+    
+    $.ajax({
+        url: '/api/rss-feeds',
+        method: 'GET',
+        data: { page: page },
+        success: function(response) {
+            if (page === 1) {
+                $('#feedItems').empty(); // Clear items only when loading the first page
+            }
+            response.items.forEach(function(item) {
+                $('#feedItems').append(`
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">${item.title}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">${item.source} - ${item.published}</h6>
+                                <p class="card-text">${item.summary}</p>
+                                <a href="${item.link}" class="card-link" target="_blank">Read More</a>
+                            </div>
+                        </div>
+                    </div>
+                `);
+            });
+
+            hasMore = response.has_more;
+            $('#loadingSpinner').addClass('d-none');
+            updatePaginationControls(page);
+        },
+        error: function() {
+            $('#loadingSpinner').addClass('d-none');
+            displayNotification('Error loading feeds. Please try again.', 'danger');
+        }
+    });
+}
+
+// Update pagination controls
+function updatePaginationControls(page) {
+    $('#paginationControls').empty(); // Clear existing controls
+    
+    for (let i = 1; i <= page + 1; i++) {
+        $('#paginationControls').append(`
+            <li class="page-item ${i === page ? 'active' : ''}">
+                <a class="page-link" href="javascript:void(0);" onclick="debouncedLoadFeeds(${i})">${i}</a>
+            </li>
+        `);
+    }
+}
+
+// Display notifications
+function displayNotification(message, type = 'danger') {
+    var notificationContainer = $('#notification-container');
+    var notificationContent = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            <div class="notification-content">
+                <p>${message}</p>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+
+    notificationContainer.html(notificationContent);
+    notificationContainer.addClass('show');
+
+    // Hide the notification after 5 seconds
+    setTimeout(function () {
+        notificationContainer.removeClass('show');
+    }, 5000);
+}
+
+// Handle adding a new feed
+$('#addFeedForm').submit(function(e) {
+    e.preventDefault();
+    var formData = $(this).serializeArray();
+    var jsonData = {};
+    
+    $.each(formData, function(i, field){
+        jsonData[field.name] = field.value;
+    });
+    
+    $.ajax({
+        url: '/api/rss-feeds',
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': $('input[name=csrf_token]').val()
+        },
+        contentType: 'application/json',
+        data: JSON.stringify(jsonData),
+        success: function(response) {
+            displayNotification('Feed added successfully!', 'success');
+            location.reload(); // Reload to show new feed
+        },
+        error: function(xhr, status, error) {
+            var errorMessage = xhr.responseJSON && xhr.responseJSON.errors 
+                ? xhr.responseJSON.errors 
+                : 'Error adding feed. Please try again.';
+            displayNotification(errorMessage, 'danger');
+        }
+    });
+});
+
+// Handle enabling/disabling feeds
+$('.feed-toggle').change(function() {
+    const feedId = $(this).data('feed-id');
+    const isActive = $(this).prop('checked');
+    
+    $.ajax({
+        url: `/api/rss-feeds/${feedId}`,
+        method: 'PUT',
+        headers: {
+            'X-CSRFToken': $('input[name=csrf_token]').val()
+        },
+        contentType: 'application/json',
+        data: JSON.stringify({ is_active: isActive }),
+        success: function() {
+            displayNotification('Feed updated successfully!', 'success');
+            loadFeeds(); // Reload articles without reloading the whole page
+        },
+        error: function() {
+            displayNotification('Error updating feed. Please try again.', 'danger');
+            $(this).prop('checked', !isActive);
+        }
+    });
+});
+
+// Infinite scrolling with debounce
+$(window).scroll(debounce(function() {
+    if ($(window).scrollTop() + $(window).height() > $(document).height() - 100 && hasMore) {
+        currentPage++;
+        debouncedLoadFeeds(currentPage);
+    }
+}, 300));
+
+// Initial load of feeds
+$(document).ready(function() {
+    debouncedLoadFeeds(); // Load the first page of feeds
+});
+
+</script>
+{% endblock %}

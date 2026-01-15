@@ -1,0 +1,382 @@
+<!-- Filepath: app/templates/tenant/tenantprofile.html -->
+{% extends "base.html" %}
+{% from 'components/guided_tour.html' import tour_breadcrumb_button, include_tour_system %}
+
+{% block title %}Tenant Profile - Wegweiser{% endblock %}
+{% block content %}
+
+
+<div class="main-content">
+    {% call breadcrumb(title='Administration', items=[
+   {'text': 'Tenant', 'icon': 'fas fa-building', 'url': url_for('tenant.get_tenants_overview')},
+   {'text': 'Tenant Profile'}
+]) %}
+        {{ tour_breadcrumb_button(tour_data) }}
+    {% endcall %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-info-circle me-2"></i>Basic Tenant Information</h5>
+                <p class="mb-0">Enter your tenant's basic details</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <!-- {{ form.tenantname.label(class="form-label") }} -->
+                        {{ form.tenantname(class="form-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        <!-- {{ form.email.label(class="form-label") }} -->
+                        {{ form.email(class="form-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        <!-- {{ form.phone.label(class="form-label") }} -->
+                        {{ form.phone(class="form-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        <!-- {{ form.address.label(class="form-label") }} -->
+                        {{ form.address(class="form-control") }}
+                    </div>
+                    <div class="col-md-12">
+                        <!-- {{ form.logo.label(class="form-label") }} -->
+                        {{ form.logo(class="form-control") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-building me-2"></i>Company Details</h5>
+                <p class="mb-0">Tell us more about your MSP</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <!-- {{ form.company_size.label(class="form-label") }} -->
+                        {{ form.company_size(class="form-select") }}
+                    </div>
+                    <div class="col-md-6">
+                        <!-- {{ form.primary_focus.label(class="form-label") }} -->
+                        {{ form.primary_focus(class="form-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        <!-- {{ form.rmm_type.label(class="form-label") }} -->
+                        {{ form.rmm_type(class="form-select") }}
+                    </div>
+                    <div class="col-md-6">
+                        <!-- {{ form.preferred_communication_style.label(class="form-label") }} -->
+                        {{ form.preferred_communication_style(class="form-select") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-boxes-stacked me-2"></i>Software Bundles and Suites, RMM & PSA</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.software_bundles.label(class="form-label") }} -->
+                        {{ form.software_bundles(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-headset me-2"></i>Remote Support, RMM & Device Monitoring</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.remote_support.label(class="form-label") }} -->
+                        {{ form.remote_support(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-ticket-alt me-2"></i>PSA, Service Desk & CX</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.psa_service_desk.label(class="form-label") }} -->
+                        {{ form.psa_service_desk(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-database me-2"></i>BDR</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.bdr.label(class="form-label") }} -->
+                        {{ form.bdr(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-globe me-2"></i>DNS Filtering and Web Security</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.dns_filtering.label(class="form-label") }} -->
+                        {{ form.dns_filtering(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-envelope-open-text me-2"></i>Email Security</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.email_security.label(class="form-label") }} -->
+                        {{ form.email_security(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-shield-alt me-2"></i>Endpoint Protection and EDR</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.endpoint_protection.label(class="form-label") }} -->
+                        {{ form.endpoint_protection(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-user-shield me-2"></i>Security Suites, Platforms and MDRs</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.security_suites.label(class="form-label") }} -->
+                        {{ form.security_suites(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-book me-2"></i>IT Documentation</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.it_documentation.label(class="form-label") }} -->
+                        {{ form.it_documentation(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-network-wired me-2"></i>Network Monitoring</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.network_monitoring.label(class="form-label") }} -->
+                        {{ form.network_monitoring(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-comments me-2"></i>Communication and Collaboration</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.communication_collaboration.label(class="form-label") }} -->
+                        {{ form.communication_collaboration(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-graduation-cap me-2"></i>Training and Certification</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.training_certification.label(class="form-label") }} -->
+                        {{ form.training_certification(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-cloud me-2"></i>Cloud Management</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.cloud_management.label(class="form-label") }} -->
+                        {{ form.cloud_management(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-mobile-alt me-2"></i>Mobile Device Management (MDM)</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.mdm.label(class="form-label") }} -->
+                        {{ form.mdm(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-tasks me-2"></i>Asset Management</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.asset_management.label(class="form-label") }} -->
+                        {{ form.asset_management(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-key me-2"></i>Password Management</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.password_management.label(class="form-label") }} -->
+                        {{ form.password_management(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-phone-volume me-2"></i>VoIP and Telephony</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.voip_telephony.label(class="form-label") }} -->
+                        {{ form.voip_telephony(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-sync-alt me-2"></i>Patch Management</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.patch_management.label(class="form-label") }} -->
+                        {{ form.patch_management(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-id-badge me-2"></i>Identity and Access Management (IAM)</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.iam.label(class="form-label") }} -->
+                        {{ form.iam(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-print me-2"></i>Managed Print Services</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.managed_print_services.label(class="form-label") }} -->
+                        {{ form.managed_print_services(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold mb-2"><i class="fas fa-desktop me-2"></i>Virtual Desktop Infrastructure (VDI)</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.vdi.label(class="form-label") }} -->
+                        {{ form.vdi(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-briefcase me-2"></i>Business Resources</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.business_resources.label(class="form-label") }} -->
+                        {{ form.business_resources(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-users me-2"></i>Communities & Forums</h5>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <!-- {{ form.communities_forums.label(class="form-label") }} -->
+                        {{ form.communities_forums(class="form-select", multiple="multiple") }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card rounded-4 mb-4">
+            <div class="card-body p-4">
+                <div class="d-md-flex d-grid align-items-center gap-3">
+                    {{ form.submit(class="btn btn-primary px-4") }}
+                    <button type="reset" class="btn btn-light px-4">Reset</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('select[multiple]').forEach(select => {
+            select.size = Math.min(select.options.length, 8);
+        });
+
+        document.querySelectorAll('select:not([multiple])').forEach(select => {
+            const initialValue = select.getAttribute('value');
+            if (initialValue) {
+                select.value = initialValue;
+            }
+        });
+    });
+</script>
+    {{ include_tour_system(tour_data.page_identifier if tour_data else 'tenant-profile', tour_data) }}
+
+{% endblock %}
+

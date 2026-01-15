@@ -1,0 +1,344 @@
+<!-- Filepath: app/templates/devices/_lynis_security.html -->
+<!-- Lynis Security Audit Section -->
+<!-- Only show on Linux and macOS devices -->
+{% if ('Linux' in device.hardwareinfo or 'Darwin' in device.hardwareinfo or 'MacOS' in device.hardwareinfo) and latest_lynis_audit %}
+<div class="row g-4 mt-4">
+    <div class="col-12">
+        <div class="card h-100 shadow">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    <h6 class="card-title mb-0">Security Audit (Lynis)</h6>
+                </div>
+                {% if latest_lynis_audit.processing_status == 'processed' %}
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge {% if latest_lynis_audit.score >= 80 %}bg-success{% elif latest_lynis_audit.score >= 60 %}bg-warning{% else %}bg-danger{% endif %} fs-6">
+                        Hardening Score: {{ latest_lynis_audit.score }}/100
+                    </span>
+                    <small class="text-muted">
+                        <i class="fas fa-clock me-1"></i>
+                        Last scan: {{ latest_lynis_audit.created_at|timestamp_to_datetime }}
+                    </small>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="card-body">
+                {% if latest_lynis_audit.processing_status == 'pending' %}
+                    <!-- Processing State -->
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">Processing...</span>
+                        </div>
+                        <p class="text-muted">Security audit is being processed...</p>
+                        <small class="text-muted">Results will appear shortly</small>
+                    </div>
+                {% elif latest_lynis_audit.processing_status == 'error' %}
+                    <!-- Error State -->
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Error processing security audit</strong>
+                        <p class="mb-0 mt-2">{{ latest_lynis_audit.ai_analysis|safe }}</p>
+                    </div>
+                {% elif latest_lynis_audit.processing_status == 'processed' %}
+                    <!-- Processed State - Show Results -->
+                    <div class="row mb-4">
+                        <!-- Hardening Score Gauge -->
+                        <div class="col-md-3">
+                            <div class="d-flex flex-column align-items-center">
+                                <div class="hardening-score-circle {% if latest_lynis_audit.score >= 80 %}score-high{% elif latest_lynis_audit.score >= 60 %}score-medium{% else %}score-low{% endif %}">
+                                    <div class="score-inner">
+                                        <span class="score-value">{{ latest_lynis_audit.score }}</span>
+                                        <span class="score-label">/100</span>
+                                    </div>
+                                </div>
+                                <p class="text-center mt-2 mb-0">
+                                    <strong>Hardening Index</strong>
+                                </p>
+                                <small class="text-muted">
+                                    {% set lynis_data = latest_lynis_audit.metalogos %}
+                                    {{ lynis_data.suggestions|length if lynis_data.suggestions else 0 }} recommendations
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="col-md-9">
+                            <div class="row g-3">
+                                {% set lynis_data = latest_lynis_audit.metalogos %}
+                                <div class="col-md-4">
+                                    <div class="stat-card">
+                                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                                        <div>
+                                            <h4>{{ lynis_data.warnings|length if lynis_data.warnings else 0 }}</h4>
+                                            <p class="text-muted mb-0">Warnings</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-card">
+                                        <i class="fas fa-lightbulb text-info"></i>
+                                        <div>
+                                            <h4>{{ lynis_data.suggestions|length if lynis_data.suggestions else 0 }}</h4>
+                                            <p class="text-muted mb-0">Suggestions</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="stat-card">
+                                        <i class="fas fa-tasks text-success"></i>
+                                        <div>
+                                            <h4>{{ lynis_data.tests_performed if lynis_data.tests_performed else 0 }}</h4>
+                                            <p class="text-muted mb-0">Tests Performed</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Info -->
+                            <div class="mt-3 p-3 rounded" style="background: var(--glass-bg); border: 1px solid var(--border-color);">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <small class="text-muted">OS:</small><br>
+                                        <strong>{{ lynis_data.os }} {{ lynis_data.os_version }}</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted">Hostname:</small><br>
+                                        <strong>{{ lynis_data.hostname }}</strong>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted">Lynis Version:</small><br>
+                                        <strong>{{ lynis_data.lynis_version }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Recommendations (Pre-rendered HTML from parser) -->
+                    <div class="lynis-report-container">
+                        {{ latest_lynis_audit.ai_analysis|safe }}
+                    </div>
+
+                    <!-- View History Button -->
+                    <div class="mt-4 text-center">
+                        <button type="button" class="btn btn-outline-primary" onclick="showLynisHistory('{{ device.deviceuuid }}')">
+                            <i class="fas fa-history me-2"></i>View Audit History
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% elif 'Linux' in device.hardwareinfo or 'Darwin' in device.hardwareinfo or 'MacOS' in device.hardwareinfo %}
+<!-- No Lynis Audit Available (Linux/macOS only) -->
+<div class="row g-4 mt-4">
+    <div class="col-12">
+        <div class="card h-100 shadow">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-shield-alt me-2"></i>
+                <h6 class="card-title mb-0">Security Audit (Lynis)</h6>
+            </div>
+            <div class="card-body">
+                <div class="text-center py-5">
+                    <i class="fas fa-shield-alt fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">No security audits available yet</p>
+                    <small class="text-muted">
+                        Lynis audits run automatically when enabled in
+                        <a href="{{ url_for('settings_bp.settings_index') }}">Analysis Settings</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+/* Lynis Security Audit Styles - Theme Aware */
+.hardening-score-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 8px solid;
+    position: relative;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.hardening-score-circle.score-high {
+    border-color: var(--success);
+}
+
+.hardening-score-circle.score-medium {
+    border-color: var(--warning);
+}
+
+.hardening-score-circle.score-low {
+    border-color: var(--danger);
+}
+
+.score-inner {
+    text-align: center;
+}
+
+.score-value {
+    font-size: 3rem;
+    font-weight: bold;
+    display: block;
+    line-height: 1;
+    color: var(--text-primary);
+}
+
+.score-label {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+}
+
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.stat-card i {
+    font-size: 2rem;
+}
+
+.stat-card h4 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.stat-card p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+/* Lynis Report Styling - Theme Aware */
+.lynis-report-container {
+    margin-top: 2rem;
+}
+
+.lynis-report .lynis-summary {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    margin-bottom: 1.5rem;
+}
+
+.lynis-report .lynis-warnings {
+    margin-bottom: 2rem;
+}
+
+.lynis-report .warning-list,
+.lynis-report .suggestion-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.lynis-report .warning-item,
+.lynis-report .suggestion-item {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid var(--warning);
+    background: var(--notification-warning-bg);
+    border-radius: 0.25rem;
+    color: var(--text-primary);
+}
+
+.lynis-report .suggestion-item {
+    border-left-color: var(--info);
+    background: var(--notification-info-bg);
+}
+
+.lynis-report .category-card {
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    overflow: hidden;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.lynis-report .category-header {
+    background: rgba(var(--primary-rgb), 0.05);
+    padding: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-primary);
+}
+
+.lynis-report .category-header:hover {
+    background: rgba(var(--primary-rgb), 0.1);
+}
+
+.lynis-report .category-header h5 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.lynis-report .badge {
+    font-size: 0.875rem;
+}
+
+.lynis-report .category-content {
+    padding: 1rem;
+    display: none;
+    color: var(--text-primary);
+}
+
+.lynis-report .category-card.expanded .category-content {
+    display: block;
+}
+
+.lynis-report .suggestion-solution {
+    margin-top: 0.5rem;
+    padding-left: 1rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+</style>
+
+<script>
+// Toggle category expand/collapse
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.lynis-report .category-header').forEach(header => {
+        header.addEventListener('click', function() {
+            this.parentElement.classList.toggle('expanded');
+        });
+
+        // Expand first category by default
+        if (this === header.parentElement.parentElement.querySelector('.category-card:first-child .category-header')) {
+            this.click();
+        }
+    });
+});
+
+function showLynisHistory(deviceId) {
+    // Placeholder for history modal
+    alert('Lynis history feature coming soon!\nWill show trend chart of hardening scores over time.');
+    // TODO: Implement modal with Chart.js showing historical trend
+}
+</script>

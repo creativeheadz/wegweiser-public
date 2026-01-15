@@ -1,0 +1,20 @@
+# MCP Tools Configuration
+
+# List of enabled tools
+# Tools not listed here will be skipped during discovery
+enabled_tools:
+  - osquery
+  - system  # Example: System information tool
+
+# osquery tool configuration
+osquery:
+  timeout: 30
+  max_results: 1000
+
+# system tool configuration
+system:
+  collect_sensitive: false
+
+# Example configuration for future tools
+# network:
+#   timeout: 10

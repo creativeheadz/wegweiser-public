@@ -1,0 +1,73 @@
+<!-- Filepath: app/templates/administration/admin_snippets.html -->
+<!-- app/templates/admin/snippets.html -->
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Create Snippet</h2>
+
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    <label>Snippet Name</label>
+                    {{ form.snippet_name(class="form-control") }}
+                </div>
+
+                <div class="mb-3">
+                    <label>Script Type</label>
+                    {{ form.script_type(class="form-select") }}
+                </div>
+
+                <div class="mb-3">
+                    <label>Script Content</label>
+                    {{ form.script_content(class="form-control", rows=10) }}
+                </div>
+
+                <div class="mb-3">
+                    <label>Metalogos Type</label>
+                    {{ form.metalogos_type(class="form-control") }}
+                </div>
+
+                <div class="mb-3">
+                    <label>Private Key File</label>
+                    {{ form.private_key(class="form-control") }}
+                    <small class="text-muted">Key will be used only for signing and immediately discarded</small>
+                </div>
+
+                <div class="mb-3">
+                    <label>Schedule Recurrence</label>
+                    {{ form.schedule_recurrence(class="form-control", placeholder="e.g., 1h, 2d") }}
+                    <small class="text-muted">Leave empty for manual execution</small>
+                </div>
+
+                <div class="mb-3">
+                    <label>Target Devices</label>
+                    {{ form.target_devices(class="form-select") }}
+                </div>
+
+                <div class="mb-3">
+                    <label>Maximum Execution Time (seconds)</label>
+                    {{ form.max_exec_secs(class="form-control") }}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Create Snippet</button>
+            </form>
+        </div>
+
+        <div class="col-md-4">
+            <h3>Existing Snippets</h3>
+            <div class="list-group">
+                {% for snippet in snippets %}
+                <div class="list-group-item">
+                    <h5 class="mb-1">{{ snippet.snippetname }}</h5>
+                    <small>Created: {{ snippet.formatted_date }}</small>
+                    <p class="mb-1">Max Execution: {{ snippet.max_exec_secs }}s</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

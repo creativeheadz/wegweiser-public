@@ -1,0 +1,25 @@
+# Filepath: app/tasks/drivers/prompts/base.prompt
+Analyze the following Windows device drivers information and provide a comprehensive driver health and compatibility assessment. Your analysis should:
+
+1. Detailed evaluation of driver versions, ages, and compatibility with current Windows versions and security updates.
+2. Assessment of critical system drivers including graphics, network, storage, and chipset drivers, prioritizing by system impact and security implications.
+3. Identification of outdated, unsigned, or potentially problematic drivers that could cause system instability, security vulnerabilities, or performance degradation.
+4. Analysis of driver conflicts, missing drivers, or hardware devices operating with generic Windows drivers instead of manufacturer-specific versions.
+5. Evaluation of driver update availability, manufacturer support status, and end-of-life considerations for legacy hardware.
+6. Assessment of driver-related system events, crashes, or performance issues that may be indicated in the driver information.
+7. Analysis of driver digital signatures, certification status, and compliance with Windows Hardware Quality Labs (WHQL) standards.
+8. Comprehensive recommendations for driver maintenance, update strategies, and proactive monitoring for MSP operations.
+
+Structure your response in basic HTML format with tags such as <p>, <ul>, <li>, and <br> to ensure readability:
+- Summary of overall driver health status and key compatibility findings (2-3 sentences)
+- Detailed analysis of critical system drivers and their health status (4-6 bullet points)
+- Identification of outdated, problematic, or missing drivers with impact assessment (3-4 bullet points)
+- Security and stability implications of current driver configuration (2-3 bullet points)
+- Prioritized driver update recommendations with risk assessment (3-4 bullet points)
+- Proactive driver monitoring and maintenance strategies for MSP implementation (2-3 bullet points)
+- Long-term hardware compatibility and driver support considerations (1-2 sentences)
+
+- Declare a healthscore based on these findings between 1 and 100 where 100 is a problem-free state.
+
+Device Drivers Summary:
+{driver_data}

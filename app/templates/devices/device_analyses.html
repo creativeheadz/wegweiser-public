@@ -1,0 +1,125 @@
+<!-- Filepath: app/templates/devices/deviceanalyses.html -->
+<!-- Consolidated AI Analyses Card with Collapsible Sections -->
+{% if analyses %}
+<div class="col-12">
+    <div class="card shadow">
+        <!-- Card Header -->
+        <div class="card-header d-flex align-items-center">
+            <i class="fas fa-brain me-2"></i>
+            <h6 class="card-title mb-0">AI Analysis Summary</h6>
+            <small class="text-muted ms-2">({{ analyses|length }} analysis types)</small>
+            <div class="ms-auto d-flex align-items-center gap-2">
+                <button type="button" id="expandAllAnalyses" class="btn btn-sm btn-outline-secondary" title="Expand all">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <button type="button" id="collapseAllAnalyses" class="btn btn-sm btn-outline-secondary" title="Collapse all">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="card-body">
+            {# Friendly display names for certain analyses #}
+            {% set friendly_names = {
+                'lynis_audit': 'Lynis Security Audit',
+                'journalFiltered': 'System Journal'
+            } %}
+            <!-- Category Summary Badges -->
+            <div class="mb-4 d-flex flex-wrap gap-2">
+                {% set categories_seen = [] %}
+                {% for category, items in analyses.items() %}
+                    {% if category not in categories_seen %}
+                        {% set _ = categories_seen.append(category) %}
+                        <span class="badge bg-primary d-flex align-items-center">
+                            <i class="fa {{ category_icons.get(category, 'fa-layer-group') }} me-1"></i>
+                            {{ category }} ({{ analysis_counts[category] }})
+                        </span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <!-- Accordion with Categorized Analyses -->
+            <div class="accordion" id="analysisAccordion">
+                {% for category, items in analyses.items() %}
+                    {# Capture the outer loop index explicitly to avoid relying on loop.parent #}
+                    {% set cat_index = loop.index0 %}
+                    {% for analysis in items %}
+                        {% set collapse_id = 'collapseAnalysis-' ~ cat_index ~ '-' ~ loop.index0 %}
+                        <div class="accordion-item" data-category="{{ category }}">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed"
+                                        type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#{{ collapse_id }}"
+                                        aria-expanded="false"
+                                        aria-controls="{{ collapse_id }}">
+                                    <!-- Analysis Type Icon and Title -->
+                                    <div class="d-flex align-items-center flex-grow-1">
+                                        <i class="fa {{ category_icons.get(category, 'fa-layer-group') }} me-2 text-primary"></i>
+                                        <div class="d-flex flex-column justify-content-center">
+                                            {% set display_key = analysis.type %}
+                                            {% set display_name = friendly_names.get(display_key, (analysis.name or analysis.type) | replace('_', ' ') | title) %}
+                                            <strong>{{ display_name }}</strong>
+                                            <small class="text-muted">{{ category }}</small>
+                                        </div>
+                                    </div>
+
+                                    <!-- Health Score Badge (Right-aligned) -->
+                                    <div class="ms-auto d-flex align-items-center gap-2">
+                                        <span class="badge {% if analysis.score >= 80 %}bg-success{% elif analysis.score >= 60 %}bg-warning{% else %}bg-danger{% endif %}">
+                                            Score: {{ analysis.score }}%
+                                        </span>
+                                        <span class="badge bg-light text-dark">
+                                            <small>{{ analysis.timestamp_str }}</small>
+                                        </span>
+                                    </div>
+                                </button>
+                            </h2>
+
+                       <!-- Accordion Body with Full Analysis Content -->
+                       <div id="{{ collapse_id }}" class="accordion-collapse collapse">
+                                <div class="accordion-body">
+                                    <!-- Analysis Content -->
+                                    <div class="analysis-content mb-3">
+                                        {{ analysis.content|safe }}
+                                    </div>
+
+                                    <!-- Footer with Score Details -->
+                                    <div class="mt-3 pt-3 border-top">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-6">
+                                                <div class="modern-gauge-info">
+                                                    <div class="modern-gauge-label">Health Score</div>
+                                                    <div class="modern-gauge-value" id="health-score-value-analysis-{{ loop.index0 }}">{{ analysis.score }}%</div>
+                                                    <div class="modern-gauge-bar">
+                                                        <div class="modern-gauge-bar-fill" id="health-score-bar-analysis-{{ loop.index0 }}" style="width: {{ analysis.score }}%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 text-end">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-clock me-1"></i>
+                                                    Last analyzed: {{ analysis.timestamp_str }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="col-12">
+    <div class="card shadow alert alert-info">
+        <div class="card-body">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>No analyses available yet.</strong> Analyses will appear here once the AI system processes device data.
+        </div>
+    </div>
+</div>
+{% endif %}

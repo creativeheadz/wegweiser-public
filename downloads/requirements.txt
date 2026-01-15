@@ -1,0 +1,9 @@
+certifi==2024.7.4
+charset-normalizer==3.3.2
+dnspython==2.6.1
+idna==3.7
+logzero==1.7.0
+nats-py>=2.6.0
+psutil==6.0.0
+requests>=2.32.4
+urllib3==2.6.1

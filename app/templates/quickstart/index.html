@@ -1,0 +1,621 @@
+{% extends "base.html" %}
+{% from 'components/guided_tour.html' import tour_breadcrumb_button, include_tour_system %}
+
+{% block title %}Quick Start - Wegweiser{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Timeline styling */
+    .timeline-connector {
+        position: relative;
+    }
+
+    .timeline-connector::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 3px;
+        background: linear-gradient(to bottom, var(--primary), var(--info));
+        transform: translateX(-50%);
+        border-radius: 2px;
+    }
+
+    .timeline-badge {
+        position: relative;
+        z-index: 1;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--glass-bg);
+        border: 2px solid var(--primary);
+    }
+
+    .timeline-badge.completed {
+        background: var(--success);
+        border-color: var(--success);
+    }
+
+    /* Enhanced card styling */
+    .step-card {
+        border: 1px solid var(--glass-border);
+        background: var(--glass-bg);
+        backdrop-filter: var(--glass-blur);
+        -webkit-backdrop-filter: var(--glass-blur);
+        transition: all 0.3s ease;
+        border-radius: var(--border-radius-lg);
+    }
+
+    .step-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--glass-shadow), 0 8px 25px rgba(0, 0, 0, 0.15);
+        border-color: var(--primary);
+    }
+
+    .step-card.completed {
+        border-color: var(--success);
+        background: rgba(var(--success-rgb), 0.05);
+    }
+
+    [data-bs-theme="dark"] .step-card.completed {
+        background: rgba(var(--success-rgb), 0.1);
+    }
+
+    .step-icon {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--glass-bg);
+        border-radius: var(--border-radius);
+        border: 1px solid var(--glass-border);
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .step-status i {
+        font-size: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .step-status .fa-check-circle {
+        color: var(--success);
+    }
+
+    .progress-indicator .progress {
+        background-color: rgba(var(--primary-rgb), 0.2);
+    }
+
+    .progress-indicator .progress-bar {
+        background: linear-gradient(90deg, var(--primary), var(--info));
+        transition: width 0.5s ease;
+    }
+
+    .code-block {
+        font-family: 'Courier New', monospace;
+        font-size: 0.875rem;
+        line-height: 1.4;
+        word-break: break-all;
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+        }
+
+        .timeline-connector {
+            display: none !important;
+        }
+
+        .progress-indicator {
+            margin-top: 1rem;
+        }
+    }
+
+    /* Animation for completion */
+    @keyframes bounce {
+        0%, 20%, 53%, 80%, 100% {
+            transform: translate3d(0,0,0);
+        }
+        40%, 43% {
+            transform: translate3d(0,-30px,0);
+        }
+        70% {
+            transform: translate3d(0,-15px,0);
+        }
+        90% {
+            transform: translate3d(0,-4px,0);
+        }
+    }
+
+    .completion-animation {
+        animation: bounce 1s ease;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content p-4">
+    <!-- Breadcrumb Navigation -->
+    {% call breadcrumb(title='Help & Support', items=[
+        {'text': 'Quick Start Guide', 'icon': 'fas fa-rocket'}
+    ]) %}
+        {{ tour_breadcrumb_button(tour_data) }}
+    {% endcall %}
+
+    <!-- Progress Indicator -->
+    <div class="card mb-4">
+        <div class="card-body py-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h5 class="mb-1">Getting Started with Wegweiser</h5>
+                    <p class="mb-0 text-muted">Follow these steps to set up your MSP monitoring solution</p>
+                </div>
+                <div class="progress-indicator">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted small">Progress:</span>
+                        <div class="progress" style="width: 120px; height: 8px;">
+                            <div class="progress-bar" role="progressbar" style="width: 0%" id="overall-progress"></div>
+                        </div>
+                        <span class="text-muted small" id="progress-text">0/4</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid py-2">
+        <!-- timeline item 1 -->
+        <div class="row">
+            <div class="col-auto text-center flex-column d-none d-sm-flex timeline-connector">
+                <div class="row h-50">
+                    <div class="col">&nbsp;</div>
+                    <div class="col">&nbsp;</div>
+                </div>
+                <h5 class="m-2">
+                    <span class="badge rounded-pill border timeline-badge">&nbsp;</span>
+                </h5>
+                <div class="row h-50">
+                    <div class="col border-end">&nbsp;</div>
+                    <div class="col">&nbsp;</div>
+                </div>
+            </div>
+            <div class="col py-2">
+                <div class="card timeline-card step-card" id="step1" data-step="1">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="step-icon">
+                                <i class="fas fa-sitemap text-primary"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <h4 class="card-title mb-0">Create your customer structure</h4>
+                                    <div class="step-status">
+                                        <i class="fas fa-circle text-muted" id="status-1"></i>
+                                    </div>
+                                </div>
+                                <p class="card-text">As an MSP using Wegweiser, your first step is creating the
+                                    essential structure needed for agent deployment. Here's the required hierarchy:</p>
+                                <ul class="card-text mt-2">
+                                    <li><strong>Organizations:</strong> Create these first to represent your end
+                                        customers (the businesses you manage)</li>
+                                    <li><strong>Groups:</strong> Within each organization, create groups for their
+                                        different sites or locations</li>
+                                    <li><strong>Agents:</strong> Can only be deployed once you have a group set up, as
+                                        each agent installation requires a specific group UUID</li>
+                                </ul>
+                                <p class="card-text mt-2">This structure is essential - you'll need at least one
+                                    organization and one group before you can deploy your first agent. Each agent must
+                                    belong to a group, each group must belong to an organization, and all organizations
+                                    exist within your MSP tenant.</p>
+                                <div class="mt-3">
+                                    <a href="{{ url_for('organisations_bp.organisations_page') }}" class="btn btn-outline-primary btn-sm me-2">
+                                        <i class="fas fa-building me-1"></i> Manage Organizations
+                                    </a>
+                                    <a href="{{ url_for('groups_bp.groups_page') }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-layer-group me-1"></i> Manage Groups
+                                    </a>
+                                    <button class="btn btn-success btn-sm ms-2" onclick="markStepComplete(1)">
+                                        <i class="fas fa-check me-1"></i> Mark Complete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- timeline item 2 -->
+        <div class="row">
+            <div class="col-auto text-center flex-column d-none d-sm-flex timeline-connector">
+                <div class="row h-50">
+                    <div class="col border-end">&nbsp;</div>
+                    <div class="col">&nbsp;</div>
+                </div>
+                <h5 class="m-2">
+                    <span class="badge rounded-pill border timeline-badge">&nbsp;</span>
+                </h5>
+                <div class="row h-50">
+                    <div class="col border-end">&nbsp;</div>
+                    <div class="col">&nbsp;</div>
+                </div>
+            </div>
+            <div class="col py-2">
+                <div class="card timeline-card step-card" id="step2" data-step="2">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="step-icon">
+                                <i class="fas fa-download text-info"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <h4 class="card-title mb-0">Deploy Agents to Your Customer Devices</h4>
+                                    <div class="step-status">
+                                        <i class="fas fa-circle text-muted" id="status-2"></i>
+                                    </div>
+                                </div>
+                                <p class="card-text">Now that you've set up your organization and group structure, you
+                                    can deploy agents to start monitoring your customer devices. Each agent requires the
+                                    specific group UUID from your chosen group - this ensures the device data is
+                                    properly organized within your customer hierarchy. Our lightweight agent
+                                    automatically collects comprehensive system metrics while maintaining minimal system
+                                    impact.</p>
+                                <p class="card-text">Key features of the Wegweiser agent:</p>
+                                <ul class="card-text">
+                                    <li>Silent installation option for easy mass deployment</li>
+                                    <li>Automatic data collection with no manual configuration needed</li>
+                                    <li>Secure, encrypted communication with Wegweiser servers</li>
+                                    <li>Detailed logging for troubleshooting if needed</li>
+                                </ul>
+                                <div class="mt-3">
+                                    <button class="btn btn-outline-secondary btn-sm me-2" type="button" data-bs-target="#t2_details"
+                                        data-bs-toggle="collapse">
+                                        <i class="fas fa-code me-1"></i> Show Installation Command
+                                    </button>
+                                    <a href="{{ url_for('devices_bp.handle_devices') }}" class="btn btn-outline-primary btn-sm me-2">
+                                        <i class="fas fa-desktop me-1"></i> View Devices
+                                    </a>
+                                    <button class="btn btn-success btn-sm" onclick="markStepComplete(2)">
+                                        <i class="fas fa-check me-1"></i> Mark Complete
+                                    </button>
+                                </div>
+                                <div class="collapse mt-3" id="t2_details">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h6 class="card-title">Windows Installation Command</h6>
+                                            <div class="code-block p-3 rounded bg-dark text-light">
+                                                <code>
+curl -o %temp%\wegweiserAgentInstaller.exe https://app.wegweiser.tech/download/wegweiserAgentInstaller.exe && %temp%\wegweiserAgentInstaller.exe /groupuuid=f3ff013b-ec03-4405-8ca5-9ead6869a533 /serverAddr=app.wegweiser.tech /LOG=%temp%\WegweiserSetup.log /SILENT
+                                                </code>
+                                            </div>
+                                            <small class="text-muted">Replace the groupuuid with your actual group UUID from the Groups page.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- timeline item 3 -->
+        <div class="row">
+            <div class="col-auto text-center flex-column d-none d-sm-flex timeline-connector">
+                <div class="row h-50">
+                    <div class="col border-end">&nbsp;</div>
+                    <div class="col">&nbsp;</div>
+                </div>
+                <h5 class="m-2">
+                    <span class="badge rounded-pill border timeline-badge">&nbsp;</span>
+                </h5>
+                <div class="row h-50">
+                    <div class="col border-end">&nbsp;</div>
+                    <div class="col">&nbsp;</div>
+                </div>
+            </div>
+            <div class="col py-2">
+                <div class="card timeline-card step-card" id="step3" data-step="3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="step-icon">
+                                <i class="fas fa-chart-line text-success"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <h4 class="card-title mb-0">Explore Data & Monitor Health Scores</h4>
+                                    <div class="step-status">
+                                        <i class="fas fa-circle text-muted" id="status-3"></i>
+                                    </div>
+                                </div>
+                                <p>Within the first 24 hours of installing your agents, our sophisticated AI-driven
+                                    system analyzes over 200 critical metrics on each device. Each device receives an
+                                    individual health score based on multiple factors including system performance,
+                                    security status, and resource utilization.</p>
+                                <p>Health scores cascade upward through your organizational structure:</p>
+                                <ul>
+                                    <li>Individual device scores form the foundation</li>
+                                    <li>Group scores aggregate from their member devices</li>
+                                    <li>Organization scores reflect the overall health of all groups</li>
+                                    <li>Your tenant dashboard shows the complete health status across all customers</li>
+                                </ul>
+                                <p>Use these insights to proactively identify potential issues, prioritize maintenance,
+                                    and demonstrate value to your customers through data-driven reporting.</p>
+                                <div class="mt-3">
+                                    <a href="{{ url_for('dashboard_bp.dashboard') }}" class="btn btn-outline-primary btn-sm me-2">
+                                        <i class="fas fa-tachometer-alt me-1"></i> View Dashboard
+                                    </a>
+                                    <a href="{{ url_for('devices_bp.handle_devices') }}" class="btn btn-outline-primary btn-sm me-2">
+                                        <i class="fas fa-heartbeat me-1"></i> Health Scores
+                                    </a>
+                                    <button class="btn btn-success btn-sm" onclick="markStepComplete(3)">
+                                        <i class="fas fa-check me-1"></i> Mark Complete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- timeline item 4 -->
+        <div class="row">
+            <div class="col-auto text-center flex-column d-none d-sm-flex timeline-connector">
+                <div class="row h-50">
+                    <div class="col border-end">&nbsp;</div>
+                    <div class="col">&nbsp;</div>
+                </div>
+                <h5 class="m-2">
+                    <span class="badge rounded-pill border timeline-badge">&nbsp;</span>
+                </h5>
+                <div class="row h-50">
+                    <div class="col">&nbsp;</div>
+                    <div class="col">&nbsp;</div>
+                </div>
+            </div>
+            <div class="col py-2">
+                <div class="card timeline-card step-card" id="step4" data-step="4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="step-icon">
+                                <i class="fas fa-coins text-warning"></i>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <h4 class="card-title mb-0">Unlock Premium Features with WegCoins</h4>
+                                    <div class="step-status">
+                                        <i class="fas fa-circle text-muted" id="status-4"></i>
+                                    </div>
+                                </div>
+                                <p>Enhance your MSP capabilities with our premium features, powered by WegCoins. Each
+                                    feature is designed to save you time and add value to your service offering:</p>
+                                <ul>
+                                    <li><strong>AI-Driven Device Analysis:</strong> Get deep insights and predictive
+                                        maintenance recommendations for your managed devices</li>
+                                    <li><strong>Advanced Security Scanning:</strong> YARA-based threat detection and
+                                        security assessment tools</li>
+                                    <li><strong>Smart News Digest:</strong> AI-curated TL;DR summaries from your chosen
+                                        IT and security RSS feeds, keeping you informed efficiently</li>
+                                    <li><strong>Intelligent Assistant:</strong> Engage with Weg, our AI assistant, at
+                                        every level of your organization:</li>
+                                    <ul>
+                                        <li>Device level: Detailed technical analysis and troubleshooting</li>
+                                        <li>Group level: Site-specific performance strategies</li>
+                                        <li>Organization level: Customer-specific improvement recommendations</li>
+                                        <li>Tenant level: Overall business optimization insights</li>
+                                    </ul>
+                                </ul>
+                                <p>WegCoins provide flexible access to these premium features - purchase only what you
+                                    need, when you need it. Start with a small package to explore the capabilities, and
+                                    scale up as you discover the value.</p>
+                                <div class="mt-3">
+                                    <a href="{{ url_for('payments_bp.payment') }}" class="btn btn-outline-warning btn-sm me-2">
+                                        <i class="fas fa-coins me-1"></i> Manage WegCoins
+                                    </a>
+                                    <a href="{{ url_for('dashboard_bp.dashboard') }}" class="btn btn-outline-primary btn-sm me-2">
+                                        <i class="fas fa-robot me-1"></i> AI Features
+                                    </a>
+                                    <button class="btn btn-success btn-sm" onclick="markStepComplete(4)">
+                                        <i class="fas fa-check me-1"></i> Mark Complete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completion Section -->
+    <div class="card mt-4" id="completion-section" style="display: none;">
+        <div class="card-body text-center py-5">
+            <div class="mb-4">
+                <i class="fas fa-trophy fa-4x text-warning mb-3"></i>
+                <h3 class="text-success">Congratulations!</h3>
+                <p class="lead">You've completed the Wegweiser Quick Start Guide</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <p class="mb-4">You're now ready to make the most of your Wegweiser MSP monitoring solution. Here are some next steps to consider:</p>
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                        <a href="{{ url_for('dashboard_bp.dashboard') }}" class="btn btn-primary">
+                            <i class="fas fa-tachometer-alt me-1"></i> Go to Dashboard
+                        </a>
+                        <a href="{{ url_for('tickets_bp.support_dashboard') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-life-ring me-1"></i> Get Support
+                        </a>
+                        <a href="{{ url_for('faq_bp.faq') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-question-circle me-1"></i> View FAQ
+                        </a>
+                        <button class="btn btn-outline-info" onclick="resetProgress()">
+                            <i class="fas fa-redo me-1"></i> Reset Progress
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Include the new modular tour system -->
+{{ include_tour_system('quickstart', tour_data) }}
+
+<script>
+    // Enhanced timeline and progress functionality
+    document.addEventListener('DOMContentLoaded', function () {
+        // Load saved progress
+        loadProgress();
+        updateProgressDisplay();
+
+        // Get all timeline steps
+        const timelineSteps = document.querySelectorAll('.step-card');
+        const timelineBadges = document.querySelectorAll('.timeline-badge');
+
+        // Function to highlight a specific step
+        function highlightStep(stepIndex) {
+            // Reset all steps
+            timelineSteps.forEach((step, index) => {
+                step.classList.remove('border-primary', 'shadow');
+                timelineBadges[index].classList.remove('bg-primary');
+                timelineBadges[index].classList.add('border');
+            });
+
+            // Highlight the selected step
+            if (stepIndex >= 0 && stepIndex < timelineSteps.length) {
+                timelineSteps[stepIndex].classList.add('border-primary', 'shadow');
+                timelineBadges[stepIndex].classList.remove('border');
+                timelineBadges[stepIndex].classList.add('bg-primary');
+            }
+        }
+
+        // Add click event listeners to each step
+        timelineSteps.forEach((step, index) => {
+            step.addEventListener('click', function () {
+                highlightStep(index);
+            });
+        });
+
+        // Initialize with no step highlighted
+        highlightStep(-1);
+    });
+
+    // Progress management functions
+    function getCompletedSteps() {
+        const saved = localStorage.getItem('quickstart-progress');
+        return saved ? JSON.parse(saved) : [];
+    }
+
+    function saveProgress(completedSteps) {
+        localStorage.setItem('quickstart-progress', JSON.stringify(completedSteps));
+    }
+
+    function markStepComplete(stepNumber) {
+        const completedSteps = getCompletedSteps();
+        if (!completedSteps.includes(stepNumber)) {
+            completedSteps.push(stepNumber);
+            saveProgress(completedSteps);
+
+            // Update UI
+            updateStepStatus(stepNumber, true);
+            updateProgressDisplay();
+
+            // Add animation
+            const stepCard = document.querySelector(`[data-step="${stepNumber}"]`);
+            stepCard.classList.add('completion-animation');
+            setTimeout(() => stepCard.classList.remove('completion-animation'), 1000);
+
+            // Trigger storage event to update dashboard teaser
+            window.dispatchEvent(new StorageEvent('storage', {
+                key: 'quickstart-progress',
+                newValue: localStorage.getItem('quickstart-progress')
+            }));
+
+            // Check if all steps are complete
+            if (completedSteps.length === 4) {
+                showCompletionSection();
+            }
+        }
+    }
+
+    function updateStepStatus(stepNumber, completed) {
+        const statusIcon = document.getElementById(`status-${stepNumber}`);
+        const stepCard = document.querySelector(`[data-step="${stepNumber}"]`);
+        const timelineBadge = document.querySelectorAll('.timeline-badge')[stepNumber - 1];
+
+        if (completed) {
+            statusIcon.className = 'fas fa-check-circle text-success';
+            stepCard.classList.add('completed');
+            timelineBadge.classList.add('completed');
+        } else {
+            statusIcon.className = 'fas fa-circle text-muted';
+            stepCard.classList.remove('completed');
+            timelineBadge.classList.remove('completed');
+        }
+    }
+
+    function updateProgressDisplay() {
+        const completedSteps = getCompletedSteps();
+        const progressBar = document.getElementById('overall-progress');
+        const progressText = document.getElementById('progress-text');
+
+        const percentage = (completedSteps.length / 4) * 100;
+        progressBar.style.width = percentage + '%';
+        progressText.textContent = `${completedSteps.length}/4`;
+
+        // Update step statuses
+        for (let i = 1; i <= 4; i++) {
+            updateStepStatus(i, completedSteps.includes(i));
+        }
+    }
+
+    function loadProgress() {
+        updateProgressDisplay();
+    }
+
+    function showCompletionSection() {
+        const completionSection = document.getElementById('completion-section');
+        completionSection.style.display = 'block';
+        completionSection.scrollIntoView({ behavior: 'smooth' });
+
+        // Add celebration animation
+        const trophy = completionSection.querySelector('.fa-trophy');
+        trophy.classList.add('completion-animation');
+
+        // Hide the dashboard teaser since quickstart is complete
+        localStorage.removeItem('quickstart-teaser-dismissed');
+
+        // Trigger storage event to update other tabs (like dashboard)
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'quickstart-progress',
+            newValue: localStorage.getItem('quickstart-progress')
+        }));
+    }
+
+    function resetProgress() {
+        if (confirm('Are you sure you want to reset your progress? This will mark all steps as incomplete.')) {
+            // Use the new tour system's reset functionality if available
+            if (window.guidedTourManager && window.guidedTourManager.isAvailable()) {
+                window.guidedTourManager.resetProgress();
+            } else {
+                // Fallback to localStorage for backward compatibility
+                localStorage.removeItem('quickstart-progress');
+                updateProgressDisplay();
+                document.getElementById('completion-section').style.display = 'none';
+            }
+        }
+    }
+
+    // The new guided tour system will handle tour functionality automatically
+    // when tour_data is available from the backend
+</script>
+{% endblock %}

@@ -1,0 +1,77 @@
+<!-- Filepath: app/templates/user/scripts.html -->
+{% block extra_scripts %}
+<script>
+    $(document).ready(function () {
+        // Use the same theme-switcher.js functionality for consistency
+        $('input[name="theme-options"]').change(function () {
+            var selectedTheme = $(this).attr('id');
+            var themeValue;
+
+            switch (selectedTheme) {
+                case 'LightTheme':
+                    themeValue = 'light';
+                    break;
+                case 'DarkTheme':
+                    themeValue = 'dark';
+                    break;
+            }
+
+            if (themeValue) {
+                console.log('Setting theme:', themeValue);
+
+                // Use the global setTheme function if available
+                if (typeof window.setTheme === 'function') {
+                    window.setTheme(themeValue);
+                } else {
+                    // Fallback if global function not available
+                    document.documentElement.setAttribute('data-bs-theme', themeValue);
+                }
+
+                // Use the global sendThemeToServer function if available
+                if (typeof window.sendThemeToServer === 'function') {
+                    window.sendThemeToServer(themeValue);
+                } else {
+                    // Fallback AJAX call
+                    $.ajax({
+                        url: "{{ url_for('account_bp.set_theme') }}",
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ theme: themeValue }),
+                        success: function (response) {
+                            console.log('Theme updated successfully');
+                            // Update header theme switcher active state
+                            $('.theme-switcher .theme-option').removeClass('active');
+                            $(`.theme-switcher .theme-option.theme-${themeValue}`).addClass('active');
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error updating theme:', error);
+                        }
+                    });
+                }
+
+                // Save to localStorage for consistency
+                localStorage.setItem('theme', themeValue);
+
+                // Update header theme switcher active state
+                $('.theme-switcher .theme-option').removeClass('active');
+                $(`.theme-switcher .theme-option.theme-${themeValue}`).addClass('active');
+            }
+        });
+
+        // Get theme from session with localStorage as fallback
+        var currentTheme = "{{ session.get('theme', 'light') }}";
+        var localStorageTheme = localStorage.getItem('theme');
+
+        // Use localStorage theme if it exists and differs from session theme
+        if (localStorageTheme && localStorageTheme !== currentTheme) {
+            currentTheme = localStorageTheme;
+        }
+
+        // Set theme on HTML element
+        $('html').attr('data-bs-theme', currentTheme);
+
+        // Update radio button
+        $('input[name="theme-options"][value="' + currentTheme + '"]').prop('checked', true);
+    });
+</script>
+{% endblock %}

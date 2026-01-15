@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+{% block title %}Device Management - Wegweiser{% endblock %}
+{% block extra_head %}
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+<!-- uPlot CSS already loaded in base.html - removed duplicate -->
+<link href="{{ url_for('static', filename='css/devices.css') }}" rel="stylesheet">
+<!-- unified_gauges_charts.css already loaded in base.html - removed duplicate -->
+<link href="{{ url_for('static', filename='css/ai-insights.css') }}" rel="stylesheet">
+{% if session.get('role') == 'admin' %}
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    {% call breadcrumb(title='Administration', items=[
+    {'text': 'Device Management', 'icon': 'fas fa-server', 'url': url_for('devices_bp.handle_devices')},
+    {'text': device.devicename}
+    ]) %}
+
+    {% endcall %}
+
+    {# Header Component #}
+    {% include "devices/components/header.html" %}
+
+    {# Health Score Component #}
+    {% include "devices/components/health_score.html" %}
+<!-- 
+    {# Device Details Component #}
+    {% include "devices/components/device_details.html" %}
+
+    {# Hardware Components - Individual Includes #}
+    {% if device.modular_data %}
+    <link href="{{ url_for('static', filename='css/ai-insights.css') }}" rel="stylesheet">
+
+    {# Users Section #}
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card h-100 shadow">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-users me-2"></i>
+                    <h6 class="card-title mb-0">User Accounts</h6>
+                </div>
+                <div class="card-body">
+                    {% include "devices/components/users_card.html" %}
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    {# USB Devices Section - Only show if USB devices exist #}
+    {% if device.modular_data and device.modular_data.usb_devices and device.modular_data.usb_devices.device_count is not none and device.modular_data.usb_devices.device_count > 0 %}
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card h-100 shadow">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-plug me-2"></i>
+                    <h6 class="card-title mb-0">USB Devices</h6>
+                </div>
+                <div class="card-body">
+                    {% include "devices/components/usb_devices_card.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- {# Printers Section - Only show if printers exist #}
+    {% if device.modular_data and device.modular_data.printers and device.modular_data.printers.printer_count is not none and device.modular_data.printers.printer_count > 0 %}
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card h-100 shadow">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-print me-2"></i>
+                    <h6 class="card-title mb-0">Printers</h6>
+                </div>
+                <div class="card-body">
+                    {% include "devices/components/printers_card.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# CPU Section #}
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card h-100 shadow">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-microchip me-2"></i>
+                    <h6 class="card-title mb-0">CPU Information</h6>
+                </div>
+                <div class="card-body">
+                    {% include "devices/components/cpu_card.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Memory Section #}
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card h-100 shadow">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-memory me-2"></i>
+                    <h6 class="card-title mb-0">Memory Information</h6>
+                </div>
+                <div class="card-body">
+                    {% include "devices/components/memory_card.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# GPU Section - Only show if GPU data exists #}
+    {% if device.modular_data and device.modular_data.gpu and device.modular_data.gpu.gpu_vendor and device.modular_data.gpu.gpu_vendor != 'No data found' %}
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card h-100 shadow">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-video me-2"></i>
+                    <h6 class="card-title mb-0">Graphics/GPU</h6>
+                </div>
+                <div class="card-body">
+                    {% include "devices/components/gpu_card.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+ -->
+    {# Battery Section - Only show if battery is installed #}
+    {% if device.modular_data and device.modular_data.battery and device.modular_data.battery.battery_installed == True %}
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card h-100 shadow">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-battery-full me-2"></i>
+                    <h6 class="card-title mb-0">Battery Information</h6>
+                </div>
+                <div class="card-body">
+                    {% include "devices/components/battery_card.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# BIOS Section - Only show if BIOS data exists and is not just placeholders like 'n/a' #}
+    {% if device.modular_data and device.modular_data.bios %}
+        {% set _bios = device.modular_data.bios %}
+        {% set _vendor = _bios.bios_vendor %}
+        {% set _version = _bios.bios_version %}
+        {% set _has_vendor = _vendor and _vendor not in ['Unknown', 'n/a', 'N/A'] %}
+        {% set _has_version = _version and _version not in ['Unknown', 'n/a', 'N/A'] %}
+        {% set _has_system = _bios.system_manufacturer %}
+        {% set _has_date = _bios.bios_date_formatted %}
+        {% if _has_vendor or _has_version or _has_system or _has_date %}
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card h-100 shadow">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-microchip me-2"></i>
+                    <h6 class="card-title mb-0">BIOS/UEFI</h6>
+                </div>
+                <div class="card-body">
+                    {% include "devices/components/bios_card.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+        {% endif %}
+    {% endif %}
+
+    <!-- {# Storage Drives Section #}
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card h-100 shadow">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-hdd me-2"></i>
+                    <h6 class="card-title mb-0">Storage Drives</h6>
+                </div>
+                <div class="card-body">
+                    {% include "devices/components/storage_drives_card.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Network Interfaces Section #}
+    <div class="row g-4 mt-4">
+        <div class="col-12">
+            <div class="card h-100 shadow">
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-network-wired me-2"></i>
+                    <h6 class="card-title mb-0">Network Interfaces</h6>
+                </div>
+                <div class="card-body">
+                    {% include "devices/components/network_interfaces_card.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %} -->
+
+    {# System Metrics Component with Dynamic Analyses #}
+    {% include "devices/components/ai_analyses.html" %}
+
+    {# Loki Malware & IOC Scan Section #}
+    {#% include "devices/_loki_scan.html" %#}
+
+    {# Real-time Metrics Component #}
+    {#% include "devices/components/realtime_metrics.html" %#}
+
+    {# Tags Component #}
+    {% include "devices/components/tags.html" %}
+
+          {# Lynis Security Audit Section removed to avoid duplication with main analyses accordion
+              The Lynis results are rendered inside the consolidated analyses accordion loaded via
+              devices/scripts.html -> loadDeviceAnalyses(). Keeping only one source prevents nested
+              accordions and fixes toggle/expand issues. #}
+
+        {# Unified Chat/Terminal Component #}
+       {% with entity_type='device', entity_uuid=device.deviceuuid, entity_name=device.devicename %}
+
+        {% include "components/chat_component.html" %}
+        {% endwith %}
+
+</div>
+{% endblock %}
+
+    {% block extra_scripts %}
+    <!-- Device Scripts -->
+    {% include "devices/scripts.html" %}
+
+    {# Include the shared chat initialization script #}
+    {% with entity_type='device', entity_uuid=device.deviceuuid, entity_name=device.devicename %}
+    {% include "components/chat_init.html" %}
+    {% endwith %}
+
+    {# Include the terminal JavaScript #}
+    <script src="{{ url_for('static', filename='js/terminal/osquery-terminal.js') }}"></script>
+
+    {# Include AI Insights JavaScript #}
+    <script src="{{ url_for('static', filename='js/ai-insights.js') }}"></script>
+    {% endblock %}
+
+    {% block modals %}
+    {% include "devices/modal.html" %}
+    {# If you have other modals, include or write them here too #}
+    {% endblock %}

@@ -1,0 +1,206 @@
+<!-- Filepath: app/templates/components/guided_tour.html -->
+<!-- Guided Tour Component Macros -->
+
+{% macro tour_button(tour_data=None, button_text="Start Guided Tour", button_class="btn btn-outline-secondary", icon_class="fas fa-play") %}
+    {% if tour_data and tour_data.is_active %}
+        <button type="button" class="{{ button_class }}" data-tour-start>
+            <i class="{{ icon_class }} me-1"></i> {{ button_text }}
+        </button>
+    {% endif %}
+{% endmacro %}
+
+{% macro tour_progress_indicator(tour_data=None) %}
+    {% if tour_data and tour_data.is_active and tour_data.user_progress %}
+        {% set progress = tour_data.user_progress %}
+        {% set total_steps = tour_data.steps|length %}
+        {% set completed_steps = progress.completed_steps|length %}
+        {% set progress_percentage = (completed_steps / total_steps * 100) if total_steps > 0 else 0 %}
+        
+        <div class="tour-progress-indicator">
+            <div class="d-flex align-items-center gap-2">
+                <span class="text-muted small">Tour Progress:</span>
+                <div class="progress" style="width: 120px; height: 8px;">
+                    <div class="progress-bar bg-primary" role="progressbar" 
+                         style="width: {{ progress_percentage }}%" 
+                         aria-valuenow="{{ progress_percentage }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100"></div>
+                </div>
+                <span class="text-muted small">{{ completed_steps }}/{{ total_steps }}</span>
+                {% if progress.is_completed %}
+                    <i class="fas fa-check-circle text-success" title="Tour completed"></i>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro tour_reset_button(tour_data=None, button_text="Reset Tour", button_class="btn btn-outline-warning btn-sm") %}
+    {% if tour_data and tour_data.is_active and tour_data.user_progress and tour_data.user_progress.completed_steps %}
+        <button type="button" class="{{ button_class }}" data-tour-reset>
+            <i class="fas fa-redo me-1"></i> {{ button_text }}
+        </button>
+    {% endif %}
+{% endmacro %}
+
+{% macro tour_scripts(page_identifier, tour_data=None) %}
+    {% if tour_data and tour_data.is_active %}
+        <!-- Guided Tour Scripts -->
+        <script src="{{ url_for('static', filename='js/common/guided-tour.js') }}"></script>
+        <script>
+            // Set global tour data for the guided tour manager
+            window.tourData = {{ tour_data|tojson }};
+            window.pageIdentifier = {{ page_identifier|tojson }};
+        </script>
+    {% endif %}
+{% endmacro %}
+
+{% macro tour_breadcrumb_button(tour_data=None) %}
+    {% if tour_data and tour_data.is_active %}
+        {{ tour_button(tour_data, "Start Tour", "btn btn-outline-secondary btn-sm", "fas fa-play") }}
+    {% endif %}
+{% endmacro %}
+
+{% macro tour_card(tour_data=None, show_description=True, show_progress=True) %}
+    {% if tour_data and tour_data.is_active %}
+        <div class="card tour-info-card mb-3">
+            <div class="card-body">
+                <div class="d-flex align-items-start justify-content-between">
+                    <div class="flex-grow-1">
+                        <h6 class="card-title mb-1">
+                            <i class="fas fa-route me-2 text-primary"></i>
+                            {{ tour_data.tour_name }}
+                        </h6>
+                        {% if show_description and tour_data.tour_description %}
+                            <p class="card-text text-muted small mb-2">{{ tour_data.tour_description }}</p>
+                        {% endif %}
+                        {% if show_progress %}
+                            {{ tour_progress_indicator(tour_data) }}
+                        {% endif %}
+                    </div>
+                    <div class="d-flex gap-2">
+                        {{ tour_button(tour_data, "Start", "btn btn-primary btn-sm", "fas fa-play") }}
+                        {{ tour_reset_button(tour_data) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro tour_dropdown_item(tour_data=None) %}
+    {% if tour_data and tour_data.is_active %}
+        <li>
+            <a class="dropdown-item" href="#" data-tour-start>
+                <i class="fas fa-play me-2"></i>Start Guided Tour
+            </a>
+        </li>
+    {% endif %}
+{% endmacro %}
+
+{% macro tour_sidebar_widget(tour_data=None) %}
+    {% if tour_data and tour_data.is_active %}
+        <div class="sidebar-widget tour-widget mb-3">
+            <div class="widget-header">
+                <h6 class="widget-title">
+                    <i class="fas fa-route me-2"></i>
+                    Page Guide
+                </h6>
+            </div>
+            <div class="widget-body">
+                <p class="small text-muted mb-2">{{ tour_data.tour_description or "Learn how to use this page effectively." }}</p>
+                {{ tour_progress_indicator(tour_data) }}
+                <div class="d-flex gap-2 mt-2">
+                    {{ tour_button(tour_data, "Start Tour", "btn btn-outline-primary btn-sm", "fas fa-play") }}
+                    {{ tour_reset_button(tour_data) }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro tour_floating_button(tour_data=None) %}
+    {% if tour_data and tour_data.is_active and not (tour_data.user_progress and tour_data.user_progress.is_completed) %}
+        <div class="tour-floating-button position-fixed" style="bottom: 20px; right: 20px; z-index: 1050;">
+            <button type="button" class="btn btn-primary rounded-circle shadow" 
+                    data-tour-start 
+                    data-bs-toggle="tooltip" 
+                    data-bs-placement="left" 
+                    title="Start guided tour">
+                <i class="fas fa-question"></i>
+            </button>
+        </div>
+        
+        <style>
+            .tour-floating-button .btn {
+                width: 50px;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .tour-floating-button .btn:hover {
+                transform: scale(1.1);
+                transition: transform 0.2s ease;
+            }
+        </style>
+    {% endif %}
+{% endmacro %}
+
+{% macro tour_completion_badge(tour_data=None) %}
+    {% if tour_data and tour_data.is_active and tour_data.user_progress and tour_data.user_progress.is_completed %}
+        <span class="badge bg-success tour-completion-badge">
+            <i class="fas fa-check me-1"></i>Tour Completed
+        </span>
+    {% endif %}
+{% endmacro %}
+
+{% macro tour_step_indicator(tour_data=None, current_step=None) %}
+    {% if tour_data and tour_data.is_active and tour_data.steps %}
+        <div class="tour-step-indicator">
+            <div class="d-flex align-items-center gap-1">
+                {% for step in tour_data.steps %}
+                    {% set is_completed = tour_data.user_progress and step.id in tour_data.user_progress.completed_steps %}
+                    {% set is_current = current_step and step.id == current_step %}
+                    
+                    <div class="step-dot {{ 'completed' if is_completed else '' }} {{ 'current' if is_current else '' }}"
+                         title="{{ step.title or step.text[:50] + '...' if step.text|length > 50 else step.text }}">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <style>
+            .tour-step-indicator .step-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background-color: #dee2e6;
+                transition: all 0.2s ease;
+            }
+            
+            .tour-step-indicator .step-dot.completed {
+                background-color: #28a745;
+            }
+            
+            .tour-step-indicator .step-dot.current {
+                background-color: #007bff;
+                transform: scale(1.5);
+            }
+        </style>
+    {% endif %}
+{% endmacro %}
+
+<!-- Helper macro to include all necessary tour functionality -->
+{% macro include_tour_system(page_identifier, tour_data=None, include_floating_button=False) %}
+    {% if tour_data and tour_data.is_active %}
+        <!-- Include tour scripts in the page -->
+        {{ tour_scripts(page_identifier, tour_data) }}
+        
+        <!-- Optional floating help button -->
+        {% if include_floating_button %}
+            {{ tour_floating_button(tour_data) }}
+        {% endif %}
+    {% endif %}
+{% endmacro %}

@@ -1,0 +1,8 @@
+{
+  "version": "3.0.2",
+  "build_date": "2025-12-06T21:14:54Z",
+  "platform": "Windows",
+  "changelog": "Add io/tarfile/tempfile to validator safe modules for agent updates",
+  "builder": "andrei@WegweiserAppServer",
+  "build_machine": "Linux WegweiserAppServer 6.14.0-1014-azure #14~24.04.1-Ubuntu SMP Fri Oct  3 20:52:11 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux"
+}

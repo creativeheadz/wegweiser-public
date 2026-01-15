@@ -1,0 +1,50 @@
+{# BIOS Information Card Component - Content Only #}
+{# Only show if BIOS data is available and not just placeholders like 'n/a' #}
+{% if device.modular_data and device.modular_data.bios %}
+    {% set bios = device.modular_data.bios %}
+    {% set vendor = bios.bios_vendor %}
+    {% set version = bios.bios_version %}
+    {% set vendor_placeholder = vendor in ['Unknown', 'n/a', 'N/A'] %}
+    {% set version_placeholder = version in ['Unknown', 'n/a', 'N/A'] %}
+    {% set has_vendor = vendor and not vendor_placeholder %}
+    {% set has_version = version and not version_placeholder %}
+    {% set has_date = bios.bios_date_formatted %}
+    {% set has_system = bios.system_manufacturer %}
+    {% if has_vendor or has_version or has_date or has_system %}
+<div class="row">
+    <div class="col-md-6">
+        {% if has_vendor %}
+        <p class="mb-1">
+            <strong>Vendor:</strong>
+            <span class="ai-insight-icon-wrapper">
+                {{ vendor }}
+                <span class="ai-insight-icon" data-ai-insight="bios_vendor" data-insight-value="BIOS Vendor: {{ vendor }}">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                </span>
+            </span>
+        </p>
+        {% endif %}
+        {% if has_version %}
+        <p class="mb-1">
+            <strong>Version:</strong>
+            <span class="ai-insight-icon-wrapper">
+                {{ version }}
+                <span class="ai-insight-icon" data-ai-insight="bios_version" data-insight-value="BIOS Version: {{ version }}, Vendor: {{ vendor }}">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                </span>
+            </span>
+        </p>
+        {% endif %}
+    </div>
+    <div class="col-md-6">
+        {% if has_date %}
+        <p class="mb-1"><strong>Date:</strong> {{ bios.bios_date_formatted }}</p>
+        {% endif %}
+        {% if has_system %}
+        <p class="mb-1"><strong>System:</strong> {{ bios.system_manufacturer }} {{ bios.system_product or '' }}</p>
+        {% endif %}
+    </div>
+</div>
+    {% endif %}
+{% endif %}
+

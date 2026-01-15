@@ -1,0 +1,12 @@
+[Unit]
+Description=Check Wegweiser pending queue and alert on threshold
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=wegweiser
+WorkingDirectory=/opt/wegweiser
+ExecStart=/opt/wegweiser/venv/bin/python3.12 /opt/wegweiser/dev_scripts/diagnostics/monitor_pending.py --threshold 50 --quiet
+# Non-zero exit triggers a failed state visible to systemctl and alerting
+Restart=no

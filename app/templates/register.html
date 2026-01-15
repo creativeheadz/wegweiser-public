@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<!-- Filepath: app/templates/register.html -->
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Wegweiser</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Font Awesome for icons -->
+    <link href="{{ url_for('static', filename='fontawesome/css/all.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='fontawesome/css/fontawesome.min.css') }}" rel="stylesheet">
+
+    <!-- Base CSS for variables -->
+    <link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lcf1h8qAAAAANlEbsHJBsdWDdr824KEaRkr0Mmk"></script>
+    <script>
+        // Ensure the form is only submitted after the token is generated
+        function onSubmit(event) {
+            event.preventDefault();  // Prevent the default form submission
+            grecaptcha.ready(function () {
+                grecaptcha.execute('6Lcf1h8qAAAAANlEbsHJBsdWDdr824KEaRkr0Mmk', { action: 'register' }).then(function (token) {
+                    document.getElementById('g-recaptcha-response').value = token;
+                    document.getElementById('register-form').submit();  // Submit the form after token is set
+                });
+            });
+        }
+
+        function checkCapsLock(event) {
+            var capsLockWarning = document.getElementById("caps-lock-warning");
+            if (event.getModifierState("CapsLock")) {
+                capsLockWarning.style.display = "block";
+            } else {
+                capsLockWarning.style.display = "none";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var passwordField = document.getElementById('password');
+            passwordField.addEventListener('keydown', checkCapsLock);
+        });
+    </script>
+    <style>
+        .caps-lock-warning {
+            display: none;
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+
+    </style>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon-32x32.png') }}" type="image/png">
+</head>
+
+<body class="auth-page">
+    <!-- Floating particles background -->
+    <div class="auth-particles">
+        <div class="particle particle-1"></div>
+        <div class="particle particle-2"></div>
+        <div class="particle particle-3"></div>
+        <div class="particle particle-4"></div>
+        <div class="particle particle-5"></div>
+        <div class="particle particle-6"></div>
+    </div>
+
+    <!-- Central Notification Container -->
+    <div id="notification-container" class="notification-container auth-notifications">
+        {% for notification in get_all_notifications() %}
+        {{ notification|safe }}
+        {% endfor %}
+    </div>
+
+	    <div class="auth-card auth-card-wide">
+        <!-- Mascot Character -->
+        {% include 'components/mascot-guide.html' %}
+
+        <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Wegweiser Logo" class="auth-logo">
+        <h1>Register</h1>
+        <form method="POST" id="register-form" onsubmit="onSubmit(event)">
+            {{ form.hidden_tag() }}
+            <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+            <input type="text" name="website" id="website" value="" style="position:absolute;left:-9999px;width:1px;height:1px;" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+            <!-- Name fields side by side -->
+            <div class="auth-form-row">
+                <div class="auth-form-col">
+                    <label for="firstname">First Name</label>
+                    {{ form.firstname(class_="auth-form-control", id="firstname", placeholder="First Name") }}
+                    <i class="fas fa-user auth-form-icon"></i>
+                </div>
+                <div class="auth-form-col">
+                    <label for="lastname">Last Name</label>
+                    {{ form.lastname(class_="auth-form-control", id="lastname", placeholder="Last Name") }}
+                    <i class="fas fa-user auth-form-icon"></i>
+                </div>
+            </div>
+
+            <!-- Company and Email side by side -->
+            <div class="auth-form-row">
+                <div class="auth-form-col">
+                    <label for="companyname">Company Name</label>
+                    {{ form.companyname(class_="auth-form-control", id="companyname", placeholder="Company Name") }}
+                    <i class="fas fa-building auth-form-icon"></i>
+                </div>
+                <div class="auth-form-col">
+                    <label for="companyemail">Email</label>
+                    {{ form.companyemail(class_="auth-form-control", id="companyemail", placeholder="Email") }}
+                    <i class="fas fa-envelope auth-form-icon"></i>
+                </div>
+            </div>
+
+            <!-- Password fields side by side -->
+            <div class="auth-form-row">
+                <div class="auth-form-col">
+                    <label for="password">Password</label>
+                    {{ form.password(class_="auth-form-control", id="password", placeholder="Password") }}
+                    <i class="fas fa-lock auth-form-icon"></i>
+                    <div id="caps-lock-warning" class="caps-lock-warning">Your Caps Lock is ON</div>
+                </div>
+                <div class="auth-form-col">
+                    <label for="confirm_password">Confirm Password</label>
+                    {{ form.confirm_password(class_="auth-form-control", id="confirm_password", placeholder="Confirm Password") }}
+                    <i class="fas fa-lock auth-form-icon"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="auth-btn auth-btn-primary">Register</button>
+        </form>
+
+
+
+        <p class="auth-footer">Already have an account? <a href="{{ url_for('login_bp.login') }}"
+                class="auth-link">Login here.</a></p>
+
+        <div class="auth-legal-links">
+            <a href="{{ url_for('index.privacy_policy') }}" class="auth-legal-link">Privacy Policy</a>
+            <span class="auth-legal-separator">|</span>
+            <a href="{{ url_for('index.terms_of_service') }}" class="auth-legal-link">Terms of Service</a>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/compass-tracker.js') }}"></script>
+</body>
+
+</html>

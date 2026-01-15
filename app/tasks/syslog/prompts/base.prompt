@@ -1,0 +1,26 @@
+# Filepath: app/tasks/syslog/prompts/base.prompt
+Analyze the following syslog data summary from a Linux system and provide a comprehensive system health and operational assessment. Your analysis should include:
+
+1. Detailed identification and categorization of critical, warning, and informational log events, with emphasis on frequency patterns and severity trends.
+2. Analysis of system service health, including daemon status, startup/shutdown sequences, and service dependency issues.
+3. Assessment of kernel-level events, hardware interactions, and low-level system operations that could indicate stability concerns.
+4. Evaluation of security-related events within syslog, including authentication attempts, privilege escalations, and potential intrusion indicators.
+5. Analysis of system performance indicators visible in logs, including resource utilization patterns, memory pressure, and I/O bottlenecks.
+6. Identification of recurring error patterns, their potential root causes, and impact on system reliability and user experience.
+7. Assessment of log rotation, retention policies, and logging configuration adequacy for troubleshooting and compliance requirements.
+8. Comprehensive recommendations for enhanced monitoring, alerting strategies, and proactive maintenance procedures.
+
+Structure the report in basic HTML format using tags such as <p>, <ul>, <li>, and <br> to ensure readability:
+- Summary of system health status and key operational findings (2-3 sentences)
+- Detailed analysis of critical and frequent log events with categorization (4-6 bullet points)
+- System service and kernel-level assessment (2-3 bullet points)
+- Security implications and threat indicators from log analysis (2-3 bullet points)
+- Performance and stability assessment with trend analysis (2-3 sentences)
+- Proactive monitoring and alerting recommendations for MSP implementation (3-4 bullet points)
+- Log management and retention optimization suggestions (1-2 sentences)
+
+- Declare a healthscore based on these findings between 1 and 100 where 100 is a problem-free state.
+
+
+Syslog Data Summary:
+{syslog_data}

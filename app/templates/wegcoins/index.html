@@ -1,0 +1,375 @@
+<!-- Filepath: app/templates/wegcoins/index.html -->
+{% extends "base.html" %}
+{% from 'components/guided_tour.html' import tour_breadcrumb_button, include_tour_system %}
+
+{% block title %}Wegcoin Bazaar - Wegweiser{% endblock %}
+{% block content %}
+{% block head_extra %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+
+<div class="main-content">
+    {% from "components/breadcrumb.html" import breadcrumb %}
+    {% call breadcrumb(title='Wegcoins', items=[
+    {'text': 'Wegcoin Bazaar', 'icon': 'fas fa-coins'}
+    ]) %}
+        {{ tour_breadcrumb_button(tour_data) }}
+    {% endcall %}
+
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary bg-opacity-10 border-0">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center">
+                        <div class="wegcoin-icon-container me-4">
+                            <i class="fas fa-coins fa-3x text-primary"></i>
+                        </div>
+                        <div>
+                            <h2 class="mb-2 text-primary fw-bold">Wegcoin Bazaar</h2>
+                            <p class="mb-0 lead text-dark">Power up your experience with Wegcoins - the currency for all analytics
+                                and insights.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Explanation Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title"><i class="fas fa-info-circle me-2 text-primary"></i>How Wegcoins Work</h4>
+                    <p>Wegcoins are the universal currency within Wegweiser that allow you to perform any analysis on
+                        your devices and servers. All features are available to all users - you simply need Wegcoins to
+                        use them.</p>
+
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-desktop text-primary fs-4 me-3"></i>
+                                </div>
+                                <div>
+                                    <h5>Device Analysis</h5>
+                                    <p class="text-muted mb-0">Analyze workstations, servers, and network devices</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-chart-line text-primary fs-4 me-3"></i>
+                                </div>
+                                <div>
+                                    <h5>Advanced Metrics</h5>
+                                    <p class="text-muted mb-0">Access detailed performance and health metrics</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-file-alt text-primary fs-4 me-3"></i>
+                                </div>
+                                <div>
+                                    <h5>Detailed Reports</h5>
+                                    <p class="text-muted mb-0">Generate comprehensive analysis reports</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Wegcoin Packages -->
+    <div class="row g-4 pricing-container">
+        <!-- Small Package -->
+        <div class="col-12 col-md-6 col-xl-4 pricing-card">
+            <div class="card h-100 shadow-sm position-relative">
+                <div class="position-absolute top-0 start-50 translate-middle-x" style="transform: translateY(-50%);">
+                    <span class="badge bg-primary px-3 py-2 rounded-pill">Small</span>
+                </div>
+                <div class="card-body p-4 pt-5 mt-3">
+                    <div class="wegcoin-amount d-flex align-items-center justify-content-center mb-4">
+                        <div class="d-flex align-items-center bg-primary bg-opacity-25 px-4 py-2 rounded-pill">
+                            <i class="fas fa-coins text-primary me-2"></i>
+                            <span class="fw-bold">250 Wegcoins</span>
+                        </div>
+                    </div>
+
+                    <div class="price-tag text-center my-4">
+                        <span class="text-muted fs-6">$</span>
+                        <span class="display-4 fw-bold text-primary">499</span>
+                    </div>
+
+                    <div class="text-center mb-4">
+                        <p class="text-muted">Perfect for getting started with basic analysis needs</p>
+                    </div>
+
+                    <div class="d-grid">
+                        <button class="btn btn-primary btn-lg checkout-button" data-amount="250" data-price="499">
+                            <i class="fas fa-shopping-cart me-2"></i>Purchase
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medium Package -->
+        <div class="col-12 col-md-6 col-xl-4 pricing-card">
+            <div class="card h-100 shadow border-primary border-2 position-relative">
+                <div class="position-absolute top-0 start-50 translate-middle-x" style="transform: translateY(-50%);">
+                    <span class="badge bg-primary px-3 py-2 rounded-pill">Medium</span>
+                </div>
+                <div class="card-body p-4 pt-5 mt-3">
+                    <div class="wegcoin-amount d-flex align-items-center justify-content-center mb-4">
+                        <div class="d-flex align-items-center bg-primary bg-opacity-25 px-4 py-2 rounded-pill">
+                            <i class="fas fa-coins text-primary me-2"></i>
+                            <span class="fw-bold">600 Wegcoins</span>
+                        </div>
+                    </div>
+
+                    <div class="price-tag text-center my-4">
+                        <span class="text-muted fs-6">$</span>
+                        <span class="display-4 fw-bold text-primary">999</span>
+                    </div>
+
+                    <div class="text-center mb-4">
+                        <p class="text-muted">Our most popular option for regular users</p>
+                    </div>
+
+                    <div class="d-grid">
+                        <button class="btn btn-primary btn-lg checkout-button" data-amount="600" data-price="999">
+                            <i class="fas fa-shopping-cart me-2"></i>Purchase
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Large Package -->
+        <div class="col-12 col-md-6 col-xl-4 pricing-card mx-auto">
+            <div class="card h-100 shadow-sm position-relative">
+                <div class="position-absolute top-0 start-50 translate-middle-x" style="transform: translateY(-50%);">
+                    <span class="badge bg-warning px-3 py-2 rounded-pill text-dark">Large</span>
+                </div>
+                <div class="card-body p-4 pt-5 mt-3">
+                    <div class="wegcoin-amount d-flex align-items-center justify-content-center mb-4">
+                        <div class="d-flex align-items-center bg-warning bg-opacity-25 px-4 py-2 rounded-pill">
+                            <i class="fas fa-coins text-warning me-2"></i>
+                            <span class="fw-bold text-dark">1500 Wegcoins</span>
+                        </div>
+                    </div>
+
+                    <div class="price-tag text-center my-4">
+                        <span class="text-muted fs-6">$</span>
+                        <span class="display-4 fw-bold text-warning">799</span>
+                    </div>
+
+                    <div class="text-center mb-4">
+                        <p class="text-muted">Best value for power users and enterprises</p>
+                    </div>
+
+                    <div class="d-grid">
+                        <button class="btn btn-warning btn-lg checkout-button" data-amount="1500" data-price="799">
+                            <i class="fas fa-shopping-cart me-2"></i>Purchase
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize Stripe
+        var stripe = Stripe('pk_test_51NaByOH1Sxioj281qXJay1N3PwUWQJvSdonf6YE7dU1IhJDX4fv7rfXDIJpQo9UDcPHnyHblrcfZjkYwAMqH6cnc00sY43VH5L');
+        var checkoutButtons = document.querySelectorAll('.checkout-button');
+
+        // Get the CSRF token from the meta tag
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        // Add loading state to buttons
+        function setLoading(button, isLoading) {
+            if (isLoading) {
+                button.setAttribute('disabled', 'disabled');
+                button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Processing...';
+            } else {
+                button.removeAttribute('disabled');
+                button.innerHTML = '<i class="fas fa-shopping-cart me-2"></i>Purchase';
+            }
+        }
+
+        // Add hover effects to pricing cards
+        const pricingCards = document.querySelectorAll('.pricing-card .card');
+        pricingCards.forEach(card => {
+            card.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateY(-10px)';
+            });
+
+            card.addEventListener('mouseleave', function () {
+                this.style.transform = '';
+            });
+        });
+
+        // Handle checkout button clicks
+        checkoutButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                setLoading(this, true);
+
+                var amount = this.getAttribute('data-amount');
+                var price = this.getAttribute('data-price');
+
+                fetch(`/create-checkout-session/${amount}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({
+                        price: price
+                    })
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(function (session) {
+                        return stripe.redirectToCheckout({ sessionId: session.id });
+                    })
+                    .then(function (result) {
+                        if (result.error) {
+                            // Show error in console
+                            console.error(result.error.message);
+
+                            // Show error to user
+                            const errorElement = document.createElement('div');
+                            errorElement.className = 'alert alert-danger mt-3';
+                            errorElement.textContent = result.error.message;
+                            button.parentNode.appendChild(errorElement);
+
+                            // Reset button
+                            setLoading(button, false);
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Error:', error);
+
+                        // Show error to user
+                        const errorElement = document.createElement('div');
+                        errorElement.className = 'alert alert-danger mt-3';
+                        errorElement.textContent = 'There was an error processing your request. Please try again.';
+                        button.parentNode.appendChild(errorElement);
+
+                        // Reset button
+                        setLoading(button, false);
+                    });
+            });
+        });
+    });
+</script>
+
+<!-- Add custom CSS for additional styling -->
+<style>
+    /* Pricing card hover effects */
+    .pricing-card .card {
+        transition: all 0.3s ease;
+    }
+
+    /* Badge positioning */
+    .pricing-card .badge {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Wegcoin amount pill */
+    .wegcoin-amount .rounded-pill {
+        transition: all 0.2s ease;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .pricing-card:hover .wegcoin-amount .rounded-pill {
+        transform: scale(1.05);
+    }
+
+    /* Ensure better contrast in all themes */
+    [data-bs-theme="dark"] .wegcoin-amount .rounded-pill {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    [data-bs-theme="dark"] .wegcoin-amount .fw-bold {
+        color: #fff !important;
+    }
+
+    /* Header text contrast improvements */
+    .bg-primary.bg-opacity-10 h2 {
+        color: var(--primary) !important;
+        font-weight: 700;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .bg-primary.bg-opacity-10 p.lead {
+        color: var(--text-primary) !important;
+        font-weight: 500;
+    }
+
+    /* Dark theme header adjustments */
+    [data-bs-theme="dark"] .bg-primary.bg-opacity-10 h2 {
+        color: var(--primary) !important;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-bs-theme="dark"] .bg-primary.bg-opacity-10 p.lead {
+        color: var(--text-primary) !important;
+    }
+
+    /* Feature list styling */
+    .pricing-card ul li {
+        transition: all 0.2s ease;
+    }
+
+    .pricing-card:hover ul li {
+        transform: translateX(5px);
+        transition-delay: calc(0.05s * var(--i, 0));
+    }
+
+    /* Price tag emphasis */
+    .price-tag .display-4 {
+        transition: all 0.3s ease;
+    }
+
+    .pricing-card:hover .price-tag .display-4 {
+        transform: scale(1.1);
+    }
+
+    /* FAQ section styling */
+    .accordion-button:not(.collapsed) {
+        background-color: rgba(var(--primary-rgb), 0.05);
+        color: var(--primary);
+    }
+
+    .accordion-button:focus {
+        box-shadow: 0 0 0 0.25rem rgba(var(--primary-rgb), 0.25);
+    }
+
+</style>
+
+{% endblock %}
+
+{% block extra_scripts %}
+{{ include_tour_system(tour_data.page_identifier if tour_data else 'wegcoins', tour_data) }}
+{% endblock %}

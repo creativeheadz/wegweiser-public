@@ -1,0 +1,23 @@
+# Filepath: app/tasks/auth/prompts/base.prompt
+Analyze the following Linux authentication log summary and provide a comprehensive security-focused report. Your analysis should include:
+
+1. Detailed examination of authentication patterns, including successful and failed login attempts, timing analysis, and user behavior patterns.
+2. Identification of security threats such as brute force attacks, privilege escalation attempts, unusual root access patterns, or suspicious user activities.
+3. Assessment of authentication methods in use (SSH keys, passwords, multi-factor authentication) and their security implications.
+4. Analysis of source IP addresses, geographic locations, and connection patterns to identify potential unauthorized access attempts.
+5. Evaluation of system accounts, service accounts, and their authentication activities for anomalies.
+6. Comprehensive security recommendations including access controls, monitoring enhancements, and incident response procedures.
+7. Compliance considerations and audit trail adequacy for regulatory requirements.
+
+Structure your response in basic HTML format using tags like <p>, <ul>, <li>, and <br> to ensure readability:
+- Summary of authentication landscape and key security findings (2-3 sentences)
+- Detailed analysis of authentication events and patterns (4-6 bullet points)
+- Critical security concerns and threat assessment (2-3 sentences)
+- Immediate security actions required (2-3 bullet points)
+- Long-term security improvements and monitoring recommendations (3-4 bullet points)
+- Compliance and audit considerations for MSP documentation (1-2 sentences)
+
+- Declare a healthscore based on these findings between 1 and 100 where 100 is a problem-free state.
+
+Authentication Log Summary:
+{log_data}

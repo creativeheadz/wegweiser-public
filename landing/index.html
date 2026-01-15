@@ -1,0 +1,1260 @@
+<!-- Filepath: landing/index.html -->
+<!DOCTYPE html>
+<html data-bs-theme="dark_mode" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; frame-src 'self' https://www.google.com https://maps.google.com https://maps.googleapis.com; connect-src 'self' https://maps.googleapis.com https://app.wegweiser.tech https://cdn.jsdelivr.net;">
+  <title>
+    Wegweiser | AI-Powered Device Intelligence for MSPs
+  </title>
+  <!--favicon-->
+  <link href="assets/images/favicon-32x32.png" rel="icon" type="image/png" />
+  <!-- loader-->
+  <link href="assets/css/pace.min.css" rel="stylesheet" />
+  <script src="assets/js/pace.min.js">
+  </script>
+  <!-- SweetAlert2 for notifications -->
+  <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-material-ui/material-ui.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+  </script>
+  <!--plugins-->
+  <link href="assets/plugins/OwlCarousel/css/owl.carousel.min.css" rel="stylesheet" />
+  <link href="assets/plugins/lightbox/dist/css/glightbox.min.css" rel="stylesheet" />
+  <!--bootstrap css-->
+  <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&amp;display=swap"
+    rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Material+Icons+Outlined" rel="stylesheet" />
+  <!-- FontAwesome for carousel navigation -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <!--main css-->
+  <link href="assets/css/bootstrap-extended.css" rel="stylesheet" />
+  <link href="sass/main.css" rel="stylesheet" />
+  <link href="assets/css/horizontal-menu.css" rel="stylesheet" />
+  <link href="sass/dark-theme.css" rel="stylesheet" />
+  <link href="sass/semi-dark.css" rel="stylesheet" />
+  <link href="sass/blue-theme.css" rel="stylesheet" />
+  <link href="sass/bordered-theme.css" rel="stylesheet" />
+
+  <!-- Custom styles for carousel navigation -->
+  <style>
+    .owl-nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      padding: 0 10px;
+      pointer-events: none;
+    }
+
+    .owl-nav button {
+      pointer-events: auto;
+      z-index: 10;
+    }
+
+    .owl-nav button.owl-prev,
+    .owl-nav button.owl-next {
+      width: 40px;
+      height: 40px;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50% !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+
+    .owl-nav button.owl-prev button,
+    .owl-nav button.owl-next button {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      padding: 0;
+      margin: 0;
+    }
+
+    .owl-nav button.owl-prev i,
+    .owl-nav button.owl-next i {
+      font-size: 16px;
+    }
+
+    .owl-nav button span {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <!--start header-->
+  <header class="top-header" id="Parent_Scroll_Div">
+    <nav class="navbar navbar-expand-xl align-items-center gap-3 container px-4 px-lg-0">
+      <div class="logo-header d-none d-xl-flex align-items-center gap-2">
+        <div class="logo-icon">
+          <img alt="" class="logo-img" src="assets/images/logo-icon.png" width="45" />
+        </div>
+        <div class="logo-name">
+          <h5 class="mb-0">
+            Wegweiser
+          </h5>
+        </div>
+      </div>
+      <div class="btn-toggle d-xl-none" data-bs-target="#offcanvasNavbar" data-bs-toggle="offcanvas">
+        <a href="javascript:;">
+          <i class="material-icons-outlined">
+            menu
+          </i>
+        </a>
+      </div>
+      <div class="offcanvas offcanvas-start w-260" id="offcanvasNavbar" tabindex="-1">
+        <div class="offcanvas-header border-bottom h-70">
+          <div class="d-flex align-items-center gap-2">
+            <div class="">
+              <img alt="logo icon" class="logo-icon" src="assets/images/logo-icon.png" width="45" />
+            </div>
+            <div class="">
+              <h4 class="logo-text">
+                Wegweiser
+              </h4>
+            </div>
+          </div>
+          <a class="primaery-menu-close" data-bs-dismiss="offcanvas" href="javascript:;">
+            <i class="material-icons-outlined">
+              close
+            </i>
+          </a>
+        </div>
+        <div class="offcanvas-body p-0 primary-menu">
+          <ul class="navbar-nav align-items-center mx-auto gap-0 gap-xl-1">
+            <li class="nav-item">
+              <a class="nav-link" href="#home">
+                <div class="parent-icon">
+                  <i class="material-icons-outlined">
+                    home
+                  </i>
+                </div>
+                <div class="menu-title">
+                  Home
+                </div>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#About">
+                <div class="parent-icon">
+                  <i class="material-icons-outlined">
+                    info
+                  </i>
+                </div>
+                <div class="menu-title">
+                  About
+                </div>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#Services">
+                <div class="parent-icon">
+                  <i class="material-icons-outlined">
+                    work_outline
+                  </i>
+                </div>
+                <div class="menu-title">
+                  Services
+                </div>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#Contact">
+                <div class="parent-icon">
+                  <i class="material-icons-outlined">
+                    call
+                  </i>
+                </div>
+                <div class="menu-title">
+                  Contact
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="">
+        <a href="https://app.wegweiser.tech/login" target="_self">
+          <button class="btn btn-grd btn-grd-primary raised d-flex align-items-center rounded-5 gap-2 px-4"
+            type="button">
+            <i class="material-icons-outlined">
+              account_circle
+            </i>
+            Login
+          </button>
+        </a>
+      </div>
+    </nav>
+  </header>
+  <!--end top header-->
+  <!--start main wrapper-->
+  <main class="main-wrapper" data-bs-smooth-scroll="false" data-bs-spy="scroll" data-bs-target="#Parent_Scroll_Div"
+    tabindex="0">
+    <div class="main-content">
+      <!--start banner-->
+      <section class="py-5" id="home">
+        <div class="container py-4 px-4 px-lg-0">
+          <div class="row align-items-center justify-content-center g-4">
+            <div class="col-12 col-xl-6 order-xl-first order-last">
+              <h1 class="fw-bold mb-3 banner-heading">
+                Introducing Wegweiser: AI-Powered Device Intelligence for MSPs
+              </h1>
+              <h5 class="mb-0 banner-paragraph">
+                Your intelligent pathfinder through complex system landscapes. Transform how you onboard, understand and manage your clients' systems with AI-powered insights that go beyond traditional RMM capabilities.
+              </h5>
+              <div class="d-flex flex-column flex-lg-row align-items-center gap-3 mt-5">
+                <a class="btn btn-lg btn-grd btn-grd-primary d-flex align-items-center rounded-5 gap-2 raised px-4 py-3"
+                  href="https://app.wegweiser.tech/register" target="_blank" style="white-space: nowrap;">
+                  <i class="material-icons-outlined">
+                    speed
+                  </i>
+                  <span>Register Now and get 250 FREE Wegcoins</span>
+                </a>
+               <!-- <a class="btn btn-lg btn-light d-flex align-items-center rounded-5 gap-2 raised px-4 py-3" href="#About">
+                  <i class="material-icons-outlined">
+                    info_outline
+                  </i>
+                  Learn More
+                </a>-->
+              </div>
+            </div>
+            <div class="col-12 col-xl-6 text-center">
+              <div id="bannerCarousel" class="owl-carousel owl-theme">
+                <div class="item">
+                  <div class="card rounded-4 border-0 " style="min-height: 400px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); backdrop-filter: blur(10px);">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-5">
+                      <div class="d-flex align-items-center justify-content-center rounded-circle mb-4 shadow-lg"
+                           style="width: 120px; height: 120px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <i class="material-icons-outlined text-white" style="font-size: 60px;">analytics</i>
+                      </div>
+                      <h4 class="mb-3" >AI-Powered Analysis</h4>
+                      <p class="text-center" style="color: var(--bs-secondary-color);">Deep insights into Windows event logs, Linux journals, and system health patterns</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 border-0 " style="min-height: 400px; background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%); backdrop-filter: blur(10px);">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-5">
+                      <div class="d-flex align-items-center justify-content-center rounded-circle mb-4 shadow-lg"
+                           style="width: 120px; height: 120px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <i class="material-icons-outlined text-white" style="font-size: 60px;">security</i>
+                      </div>
+                      <h4 class="mb-3"">Security Intelligence</h4>
+                      <p class="text-center" style="color: var(--bs-secondary-color);">Detect unauthorized access, privilege escalations, and suspicious activities automatically</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 border-0 " style="min-height: 400px; background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%); backdrop-filter: blur(10px);">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-5">
+                      <div class="d-flex align-items-center justify-content-center rounded-circle mb-4 shadow-lg"
+                           style="width: 120px; height: 120px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <i class="material-icons-outlined text-white" style="font-size: 60px;">health_and_safety</i>
+                      </div>
+                      <h4 class="mb-3" >Health Scoring</h4>
+                      <p class="text-center" style="color: var(--bs-secondary-color);">AI-calculated health scores with prioritized recommendations that cascade up to tenant level</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--end row-->
+          <div class="row g-4 mt-4">
+            <div class="col-12 col-lg-6 col-xl-4 d-flex">
+              <div class="card rounded-4 mb-0 w-100">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-start gap-3">
+                    <div
+                      class="d-flex align-items-center justify-content-center rounded-circle wh-64 btn-grd-info text-white flex-shrink-0">
+                      <i class="material-icons-outlined fs-2">
+                        emoji_events
+                      </i>
+                    </div>
+                    <div class="">
+                      <h5>
+                        RMM Agnostic
+                      </h5>
+                      <p class="mb-0">
+                        Our lightweight agent deploys through ANY RMM platform. Works with Windows workstations, servers, Linux systems, and networked devices to provide comprehensive insights.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-lg-6 col-xl-4 d-flex">
+              <div class="card rounded-4 mb-0 w-100">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-start gap-3">
+                    <div
+                      class="d-flex align-items-center justify-content-center rounded-circle wh-64 btn-grd-danger text-white flex-shrink-0">
+                      <i class="material-icons-outlined fs-2">
+                        privacy_tip
+                      </i>
+                    </div>
+                    <div class="">
+                      <h5>
+                        Intelligent Health Scoring
+                      </h5>
+                      <p class="mb-0">
+                        Each device receives an AI-calculated health score with prioritized recommendations. Scores cascade up through groups and organizations for complete visibility into your client infrastructure.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-lg-12 col-xl-4 d-flex">
+              <div class="card rounded-4 mb-0 w-100">
+                <div class="card-body p-4">
+                  <div class="d-flex align-items-start gap-3">
+                    <div
+                      class="d-flex align-items-center justify-content-center rounded-circle wh-64 btn-grd-success text-white flex-shrink-0">
+                      <i class="material-icons-outlined fs-2">
+                        try
+                      </i>
+                    </div>
+                    <div class="">
+                      <h5>
+                        Beyond Traditional RMM
+                      </h5>
+                      <p class="mb-0">
+                        Identify critical patterns over the past 30 days that traditional automation misses. Our AI supplements your team's expertise with deep log analysis and pattern recognition.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--end row-->
+        </div>
+      </section>
+      <!--end banner-->
+      <!--start about us-->
+      <section class="py-5 bg-section" id="About">
+        <div class="container py-4 px-4 px-lg-0">
+          <div class="section-title text-center mb-5">
+            <h1 class="mb-0 section-title-name">
+              About Us
+            </h1>
+          </div>
+          <div class="row g-4">
+            <div class="col-12 col-xl-6">
+              <h6 class="text-uppercase mb-3">
+                Why We Built This
+              </h6>
+              <h2 class="mb-3">
+                Solving Critical MSP Bottlenecks
+              </h2>
+              <p class="mb-3">
+                We identified two critical bottlenecks in every MSP's lifecycle: <strong>Client Onboarding Hell</strong> - where larger customers hide critical issues beneath the surface, and <strong>The Knowledge Gap</strong> - where nobody can know everything about every hardware type or event log. We use AI to supplement your team's expertise.
+              </p>
+              <div class="d-flex flex-column gap-2">
+                <p class="d-flex align-items-start gap-3 mb-0">
+                  <i class="material-icons-outlined fs-5">
+                    check_circle
+                  </i>
+                  Security Events - Unauthorized access, privilege escalations
+                </p>
+                <p class="d-flex align-items-start gap-3 mb-0">
+                  <i class="material-icons-outlined fs-5">
+                    check_circle
+                  </i>
+                  System Events - Hardware issues, driver problems, boot performance
+                </p>
+                <p class="d-flex align-items-start gap-3 mb-0">
+                  <i class="material-icons-outlined fs-5">
+                    check_circle
+                  </i>
+                  Application Crashes - Stability patterns and problematic applications
+                </p>
+                <p class="d-flex align-items-start gap-3 mb-0">
+                  <i class="material-icons-outlined fs-5">
+                    check_circle
+                  </i>
+                  Driver Analysis - Outdated, unsigned, or problematic drivers
+                </p>
+                <p class="d-flex align-items-start gap-3 mb-0">
+                  <i class="material-icons-outlined fs-5">
+                    check_circle
+                  </i>
+                  Journal/System Logs - Linux systemd journals for service issues
+                </p>
+              </div>
+              <div class="mt-4">
+                <!-- <a href="javascript:;" class="btn btn-grd btn-grd-primary">Read More</a> -->
+                <a class="btn btn-grd btn-grd-primary rounded-5 d-flex align-items-center gap-2 raised px-4"
+                  href="javascript:;">
+                  Read More
+                  <i class="material-icons-outlined">
+                    east
+                  </i>
+                </a>
+              </div>
+            </div>
+            <div class="col-12 col-xl-6">
+              <div id="imageGallery" class="owl-carousel owl-theme">
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/screen-01.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/screen-01.png" alt="Wegweiser Dashboard Overview" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/screen-02.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/screen-02.png" alt="Device Management Interface" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/screen-03.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/screen-03.png" alt="AI Analysis Features" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/screen-04.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/screen-04.png" alt="Organizational Structure" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/screen-05.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/screen-05.png" alt="Detailed Analytics" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/screen-06.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/screen-06.png" alt="System Monitoring" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/screen-07.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/screen-07.png" alt="Advanced Configuration" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/screen-08.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/screen-08.png" alt="Comprehensive Reporting" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/2025-10-29 20_03_39-.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/2025-10-29 20_03_39-.png" alt="Dashboard Screenshot" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/2025-10-29 20_34_18-.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/2025-10-29 20_34_18-.png" alt="System Overview" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/2025-10-29 20_34_39-WSL2 Linux Kernel Identifier Explained.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/2025-10-29 20_34_39-WSL2 Linux Kernel Identifier Explained.png" alt="Linux Kernel Analysis" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/2025-10-29 20_34_48-WSL2 Linux Kernel Identifier Explained.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/2025-10-29 20_34_48-WSL2 Linux Kernel Identifier Explained.png" alt="Kernel Details" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/2025-10-29 20_34_55-WSL2 Linux Kernel Identifier Explained.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/2025-10-29 20_34_55-WSL2 Linux Kernel Identifier Explained.png" alt="Kernel Information" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/2025-10-29 20_41_42-.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/2025-10-29 20_41_42-.png" alt="Analytics Dashboard" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/2025-10-29 20_42_18-WSL2 Linux Kernel Identifier Explained.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/2025-10-29 20_42_18-WSL2 Linux Kernel Identifier Explained.png" alt="Advanced Analytics" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/2025-10-29 20_42_35-WSL2 Linux Kernel Identifier Explained.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/2025-10-29 20_42_35-WSL2 Linux Kernel Identifier Explained.png" alt="System Analysis" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+                <div class="item">
+                  <div class="card rounded-4 overflow-hidden shadow-lg">
+                    <a href="assets/images/gallery/2025-10-29 20_42_55-.png" class="glightbox-gallery" data-gallery="gallery">
+                      <img src="assets/images/gallery/2025-10-29 20_42_55-.png" alt="Final Dashboard View" class="img-fluid w-100" style="object-fit: contain; max-height: 500px; cursor: pointer;">
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--start services-->
+          <section class="py-5" id="Services">
+            <div class="container py-4 px-4 px-lg-0">
+              <div class="section-title text-center mb-5">
+                <h1 class="mb-0 section-title-name">
+                  Services
+                </h1>
+              </div>
+              <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+                <div class="col d-flex">
+                  <div class="card rounded-4 mb-0 w-100">
+                    <div class="card-body text-center p-4">
+                      <div class="d-flex flex-column gap-4">
+                        <div
+                          class="d-flex align-items-center justify-content-center rounded-circle wh-64 bg-grd-primary text-white flex-shrink-0 mx-auto">
+                          <i class="material-icons-outlined fs-2">
+                            favorite_border
+                          </i>
+                        </div>
+                        <div class="">
+                          <h5>
+                            Client Onboarding Efficiency
+                          </h5>
+                          <p class="mb-0">
+                            Identify machines with critical issues lurking beneath the surface. Our AI is clever enough to identify repeating critical patterns over the past 30 days.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col d-flex">
+                  <div class="card rounded-4 mb-0 w-100">
+                    <div class="card-body text-center p-4">
+                      <div class="d-flex flex-column gap-4">
+                        <div
+                          class="d-flex align-items-center justify-content-center rounded-circle wh-64 bg-grd-danger text-white flex-shrink-0 mx-auto">
+                          <i class="material-icons-outlined fs-2">
+                            paid
+                          </i>
+                        </div>
+                        <div class="">
+                          <h5>
+                            Impress Your Customers
+                          </h5>
+                          <p class="mb-0">
+                            Demonstrate deep insights and knowledge about their systems. Show them patterns and issues they never knew existed.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col d-flex">
+                  <div class="card rounded-4 mb-0 w-100">
+                    <div class="card-body text-center p-4">
+                      <div class="d-flex flex-column gap-4">
+                        <div
+                          class="d-flex align-items-center justify-content-center rounded-circle wh-64 bg-grd-warning text-white flex-shrink-0 mx-auto">
+                          <i class="material-icons-outlined fs-2">
+                            language
+                          </i>
+                        </div>
+                        <div class="">
+                          <h5>
+                            Beyond Static Data
+                          </h5>
+                          <p class="mb-0">
+                            Move beyond the 2-dimensional insights of static data collection. Get intelligent interpretation of what your data actually means.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col d-flex">
+                  <div class="card rounded-4 mb-0 w-100">
+                    <div class="card-body text-center p-4">
+                      <div class="d-flex flex-column gap-4">
+                        <div
+                          class="d-flex align-items-center justify-content-center rounded-circle wh-64 bg-grd-branding text-white flex-shrink-0 mx-auto">
+                          <i class="material-icons-outlined fs-2">
+                            account_balance
+                          </i>
+                        </div>
+                        <div class="">
+                          <h5>
+                            Enhance Your Stack
+                          </h5>
+                          <p class="mb-0">
+                            Make your existing tools intelligent by adding Wegweiser's AI-powered perspective. Supplement, don't replace your current workflow.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col d-flex">
+                  <div class="card rounded-4 mb-0 w-100">
+                    <div class="card-body text-center p-4">
+                      <div class="d-flex flex-column gap-4">
+                        <div
+                          class="d-flex align-items-center justify-content-center rounded-circle wh-64 bg-grd-success text-white flex-shrink-0 mx-auto">
+                          <i class="material-icons-outlined fs-2">
+                            security
+                          </i>
+                        </div>
+                        <div class="">
+                          <h5>
+                            Advanced Security
+                          </h5>
+                          <p class="mb-0">
+                            Detect unauthorized access, privilege escalations, and suspicious activities. YARA rules-based scans and NIST powered hash reviews complement your security stack.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col d-flex">
+                  <div class="card rounded-4 mb-0 w-100">
+                    <div class="card-body text-center p-4">
+                      <div class="d-flex flex-column gap-4">
+                        <div
+                          class="d-flex align-items-center justify-content-center rounded-circle wh-64 bg-grd-deep-blue text-white flex-shrink-0 mx-auto">
+                          <i class="material-icons-outlined fs-2">
+                            leaderboard
+                          </i>
+                        </div>
+                        <div class="">
+                          <h5>
+                            Future-Ready Platform
+                          </h5>
+                          <p class="mb-0">
+                            Coming soon: Agentic AI Chat with MCP servers, osquery integration, real-time data streaming, and customizable AI prompts for your specific needs.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--end row-->
+            </div>
+          </section>
+          <!--end services-->
+
+          <!--start who should try this-->
+          <section class="py-5">
+            <div class="container py-4 px-4 px-lg-0">
+              <div class="section-title text-center mb-5">
+                <h1 class="mb-0 section-title-name">
+                  Who Should Try Wegweiser?
+                </h1>
+              </div>
+              <div class="row g-4">
+                <div class="col-12 col-md-4">
+                  <div class="card rounded-4 h-100">
+                    <div class="card-body p-4 text-center">
+                      <div class="d-flex align-items-center justify-content-center rounded-circle wh-64 bg-grd-primary text-white flex-shrink-0 mx-auto mb-3">
+                        <i class="material-icons-outlined fs-2">business</i>
+                      </div>
+                      <h5 class="mb-3">MSPs Struggling with Client Onboarding</h5>
+                      <p class="mb-0">The larger the customer, the harder it becomes to identify machines with critical issues lurking beneath the surface.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-4">
+                  <div class="card rounded-4 h-100">
+                    <div class="card-body p-4 text-center">
+                      <div class="d-flex align-items-center justify-content-center rounded-circle wh-64 bg-grd-danger text-white flex-shrink-0 mx-auto mb-3">
+                        <i class="material-icons-outlined fs-2">groups</i>
+                      </div>
+                      <h5 class="mb-3">Teams Wanting AI-Assisted Insights</h5>
+                      <p class="mb-0">Nobody can know everything about every hardware type or event log. Let AI supplement your team's expertise.</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-4">
+                  <div class="card rounded-4 h-100">
+                    <div class="card-body p-4 text-center">
+                      <div class="d-flex align-items-center justify-content-center rounded-circle wh-64 bg-grd-success text-white flex-shrink-0 mx-auto mb-3">
+                        <i class="material-icons-outlined fs-2">psychology</i>
+                      </div>
+                      <h5 class="mb-3">Forward-Thinking MSPs</h5>
+                      <p class="mb-0">Anyone curious about the future of intelligent RMM supplements and centrally managed AI intelligence.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!--end who should try this-->
+
+          <!-- start call to action-->
+          <section class="py-5 bg-call-to-action">
+            <div class="container py-4 px-4 px-lg-0">
+              <div class="text-center">
+                <h1 class="text-white">
+                  Ready to Transform Your MSP Operations?
+                </h1>
+                <p class="mb-1 text-white">
+                  Join MSPs who are already using Wegweiser to identify critical issues, impress customers, and supplement their team's expertise.
+                  <br />
+                  <strong>Special Launch Offer:</strong> Register now and receive 250 FREE Wegcoins (enough to evaluate multiple devices) plus early access to shape our product roadmap.
+                </p>
+                <div class="mt-4">
+                  <a class="btn btn-grd btn-lg btn-grd-primary rounded-5 px-4 py-3 raised" href="https://app.wegweiser.tech/register" target="_blank" style="white-space: nowrap;">
+                    <span>Register Now<br><small>250 FREE Wegcoins</small></span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!--end call to action-->
+          <!--start contact form-->
+          <section class="py-5 bg-section" id="Contact">
+            <div class="container py-4 px-4 px-lg-0">
+              <div class="section-title text-center mb-5">
+                <h1 class="mb-0 section-title-name">
+                  Contact
+                </h1>
+              </div>
+              <div class="row g-4">
+                <div class="col-12 col-xl-5">
+                  <div class="card rounded-4">
+                    <div class="card-body p-4">
+                      <div class="d-flex flex-column gap-4">
+                        <div class="d-flex align-items-center gap-3">
+                          <div
+                            class="wh-48 bg-info bg-opacity-10 text-info rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="material-icons-outlined">
+                              house
+                            </i>
+                          </div>
+                          <div class="">
+                            <h5 class="mb-0">
+                              Address
+                            </h5>
+                            <p class="mb-0">
+                              Old Forge, Newmarket Road, United Kingdom, CB87PP
+                            </p>
+                          </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                          <div
+                            class="wh-48 bg-danger bg-opacity-10 text-danger rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="material-icons-outlined">
+                              call
+                            </i>
+                          </div>
+                          <div class="">
+                            <h5 class="mb-0">
+                              Phone
+                            </h5>
+                            <p class="mb-0">
+                              +44-1638 336909
+                            </p>
+                          </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                          <div
+                            class="wh-48 bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center">
+                            <i class="material-icons-outlined">
+                              email
+                            </i>
+                          </div>
+                          <div class="">
+                            <h5 class="mb-0">
+                              Email
+                            </h5>
+                            <p class="mb-0">
+                              info@wegweiser.tech
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card rounded-4">
+                    <div class="card-body p-4">
+                      <iframe allowfullscreen="" height="255" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2441.4231560856406!2d0.4934584999999935!3d52.2720193!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fd47d434176ae67%3A0xd8f72d4f192c5679!2sOld%20Forge%20Technologies!5e0!3m2!1sen!2suk!4v1731514687902!5m2!1sen!2suk"
+                        style="border:0; border-radius: 16px; width: 100%;">
+                      </iframe>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-xl-7">
+                  <div class="card rounded-4 mb-0">
+                    <div class="card-body p-4">
+                      <form id="contactForm" onsubmit="submitContact(event)">
+                        <div class="row g-4">
+                          <div class="col-12 col-lg-6">
+                            <label class="form-label" for="YourName">
+                              Your Name
+                            </label>
+                            <input class="form-control" id="YourName" name="YourName" placeholder="Enter Your Name"
+                              required="" type="text" />
+                          </div>
+                          <div class="col-12 col-lg-6">
+                            <label class="form-label" for="EmailId">
+                              Email Id
+                            </label>
+                            <input class="form-control" id="EmailId" name="EmailId" placeholder="Enter Email Address"
+                              required="" type="email" />
+                          </div>
+                          <div class="col-12 col-lg-12">
+                            <label class="form-label" for="Subject">
+                              Subject
+                            </label>
+                            <input class="form-control" id="Subject" name="Subject" placeholder="Subject" required=""
+                              type="text" />
+                          </div>
+                          <div class="col-12 col-lg-12">
+                            <label class="form-label" for="Message">
+                              Message
+                            </label>
+                            <textarea class="form-control" cols="5" id="Message" name="Message" required=""
+                              rows="10"></textarea>
+                          </div>
+                          <div class="col-12 col-lg-12">
+                            <button class="btn btn-grd btn-grd-primary px-4 rounded-5" id="submitButton" type="submit">
+                              Submit
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!--end contact form-->
+        </div>
+      </section>
+    </div>
+  </main>
+  <!--end main wrapper-->
+  <!--start footer -->
+  <section class="page-footer py-5">
+    <div class="container py-4 px-4 px-lg-0">
+      <div class="row g-4">
+        <div class="col-6 col-xl-6">
+          <div class="footer-widget-1">
+            <div class="footer-logo mb-4">
+              <img alt="" src="assets/images/logo1.png" width="160" />
+            </div>
+            <p>
+              Wegweiser is proudly developed by <a href="https://oldforge.tech" target="_blank"> Old Forge
+                Technologies</a>, a UK based MSP in collaboration with AI and technology specialists.
+            </p>
+            <p class="mb-2">
+              <strong>
+                Address:
+              </strong>
+              Old Forge Technologies,
+              <br />
+              United Kingdom, CB8 7PP
+            </p>
+            <p class="mb-2">
+              <strong>
+                Phone:
+              </strong>
+              +44 1638 814039
+            </p>
+            <p class="mb-0">
+              <strong>
+                Email:
+              </strong>
+              support@wegweiser.tech
+            </p>
+          </div>
+        </div>
+
+        <!-- Microsoft for Startups Logo Column -->
+        <div class="col-6 col-xl-6 d-flex align-items-right justify-content-center">
+          <div class="microsoft-footer-logo">
+            <img src="assets/images/download.png" alt="Microsoft for Startups"
+              style="max-width: 100%; height: auto; width: 350px;" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!--end footer section-->
+  <!--start footer strip-->
+  <footer class="footer-strip py-3 px-4 px-lg-0 text-center border-top">
+    <p class="mb-0">
+      ©
+      <span id="current-year">
+      </span>
+      wegweiser.tech | All rights reserved.
+    </p>
+    <script>
+      document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+  </footer>
+  <!--end footer strip-->
+  <!--Start Back To Top Button-->
+  <a class="back-to-top" href="javaScript:;">
+    <i class="material-icons-outlined">
+      arrow_upward
+    </i>
+  </a>
+  <!--End Back To Top Button-->
+  <!--start switcher-->
+  <button class="btn btn-grd btn-grd-danger btn-switcher position-fixed top-50 d-flex align-items-center gap-2"
+    data-bs-target="#staticBackdrop" data-bs-toggle="offcanvas" type="button">
+    <i class="material-icons-outlined">
+      tune
+    </i>
+    Customize
+  </button>
+  <div class="offcanvas offcanvas-end" data-bs-scroll="true" id="staticBackdrop" tabindex="-1">
+    <div class="offcanvas-header border-bottom h-70">
+      <div class="">
+        <h5 class="mb-0">
+          Theme Customizer
+        </h5>
+        <p class="mb-0">
+          Customize your theme
+        </p>
+      </div>
+      <a class="primaery-menu-close" data-bs-dismiss="offcanvas" href="javascript:;">
+        <i class="material-icons-outlined">
+          close
+        </i>
+      </a>
+    </div>
+    <div class="offcanvas-body">
+      <div>
+        <p>
+          Theme variation
+        </p>
+        <div class="row g-3">
+          <div class="col-12 col-xl-6">
+            <input class="btn-check" id="LightTheme" name="theme-options" type="radio" />
+            <label
+              class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4"
+              for="LightTheme">
+              <span class="material-icons-outlined">
+                light_mode
+              </span>
+              <span>
+                Light
+              </span>
+            </label>
+          </div>
+          <div class="col-12 col-xl-6">
+            <input checked="" class="btn-check" id="DarkTheme" name="theme-options" type="radio" />
+            <label
+              class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4"
+              for="DarkTheme">
+              <span class="material-icons-outlined">
+                dark_mode
+              </span>
+              <span>
+                Dark
+              </span>
+            </label>
+          </div>
+        </div>
+        <!--end row-->
+      </div>
+    </div>
+  </div>
+  <!--start switcher-->
+  <!--bootstrap js-->
+  <script src="assets/js/bootstrap.bundle.min.js">
+  </script>
+  <!--plugins-->
+  <script src="assets/js/jquery.min.js">
+  </script>
+  <!--plugins-->
+  <script src="assets/plugins/OwlCarousel/js/owl.carousel.min.js">
+  </script>
+  <script src="assets/plugins/OwlCarousel/js/owl.carousel2.thumbs.min.js">
+  </script>
+  <script src="assets/js/main.js">
+  </script>
+  <script src="assets/plugins/lightbox/dist/js/glightbox.min.js">
+  </script>
+  <script>
+    var lightbox = GLightbox();
+    lightbox.on('open', (target) => {
+      console.log('lightbox opened');
+    });
+    var lightboxDescription = GLightbox({
+      selector: '.glightbox2'
+    });
+    var lightboxGallery = GLightbox({
+      selector: '.glightbox-gallery'
+    });
+    var lightboxVideo = GLightbox({
+      selector: '.glightbox3'
+    });
+    lightboxVideo.on('slide_changed', ({ prev, current }) => {
+      console.log('Prev slide', prev);
+      console.log('Current slide', current);
+
+      const { slideIndex, slideNode, slideConfig, player } = current;
+
+      if (player) {
+        if (!player.ready) {
+          // If player is not ready
+          player.on('ready', (event) => {
+            // Do something when video is ready
+          });
+        }
+
+        player.on('play', (event) => {
+          console.log('Started play');
+        });
+
+        player.on('volumechange', (event) => {
+          console.log('Volume change');
+        });
+
+        player.on('ended', (event) => {
+          console.log('Video ended');
+        });
+      }
+    });
+
+    var lightboxInlineIframe = GLightbox({
+      selector: '.glightbox4'
+    });
+  </script>
+  <script>
+    $('.clients-shops').owlCarousel({
+      loop: true,
+      margin: 24,
+      responsiveClass: true,
+      nav: false,
+      navText: [
+        "<i class='bx bx-chevron-left'></i>",
+        "<i class='bx bx-chevron-right' ></i>"
+      ],
+      autoplay: true,
+      autoplayTimeout: 3000,
+      dots: false,
+      responsive: {
+        0: {
+          nav: false,
+          items: 1
+        },
+        576: {
+          nav: false,
+          items: 2
+        },
+        768: {
+          nav: false,
+          items: 3
+        },
+        1024: {
+          nav: false,
+          items: 3
+        },
+        1366: {
+          items: 4
+        },
+        1400: {
+          items: 5
+        }
+      },
+    })
+  </script>
+  <script>
+    async function submitContact(e) {
+      e.preventDefault();
+
+      const submitButton = document.getElementById('submitButton');
+      const originalText = submitButton.innerHTML;
+      submitButton.disabled = true;
+      submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
+
+      const formData = new FormData();
+      formData.append('YourName', document.getElementById('YourName').value);
+      formData.append('EmailId', document.getElementById('EmailId').value);
+      formData.append('Subject', document.getElementById('Subject').value);
+      formData.append('Message', document.getElementById('Message').value);
+
+      try {
+        const response = await fetch('https://app.wegweiser.tech/contact', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+          Swal.fire({
+            title: 'Thank you!',
+            text: result.message,
+            icon: 'success',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#1a73e8'
+          });
+          document.getElementById('contactForm').reset();
+        } else {
+          throw new Error(result.message || 'Error sending message');
+        }
+      } catch (error) {
+        console.error('Form submission error:', error);
+        Swal.fire({
+          title: 'Error',
+          text: error.message || 'There was an error sending your message. Please try again.',
+          icon: 'error',
+          confirmButtonText: 'OK',
+          confirmButtonColor: '#1a73e8'
+        });
+      } finally {
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalText;
+      }
+    }
+  </script>
+  <script>
+    $(document).ready(function () {
+      $("#imageGallery").owlCarousel({
+        items: 1,
+        loop: true,
+        margin: 10,
+        nav: true,
+        navText: [
+          '<button class="btn btn-grd btn-grd-primary"><i class="fas fa-chevron-left"></i></button>',
+          '<button class="btn btn-grd btn-grd-primary"><i class="fas fa-chevron-right"></i></button>'
+        ],
+        dots: true,
+        autoplay: true,
+        autoplayTimeout: 3000,
+        autoplayHoverPause: true
+      });
+      $("#bannerCarousel").owlCarousel({
+        items: 1,
+        loop: true,
+        margin: 10,
+        nav: true,
+        navText: [
+          '<button class="btn btn-grd btn-grd-primary"><i class="fas fa-chevron-left"></i></button>',
+          '<button class="btn btn-grd btn-grd-primary"><i class="fas fa-chevron-right"></i></button>'
+        ],
+        dots: true,
+        autoplay: true,
+        autoplayTimeout: 3000,
+        autoplayHoverPause: true
+      });
+    });
+  </script>
+
+  <script>
+    // Comprehensive console error suppression
+    (function() {
+      // Store original console methods
+      const originalError = console.error;
+      const originalWarn = console.warn;
+
+      // Override console.error to filter out specific errors
+      console.error = function(...args) {
+        const message = args.join(' ');
+
+        // Filter out Google Maps and Owl Carousel errors
+        if (message.includes('arch endpoint') ||
+            message.includes('Search endpoint') ||
+            message.includes('gen_204') ||
+            message.includes('google') ||
+            message.includes('maps') ||
+            message.includes('ERR_BLOCKED_BY_CLIENT') ||
+            message.includes('Uncaught Error') && message.includes('main.js')) {
+          return; // Suppress these errors
+        }
+
+        // Allow other errors through
+        originalError.apply(console, args);
+      };
+
+      // Override console.warn to filter out violations
+      console.warn = function(...args) {
+        const message = args.join(' ');
+
+        // Filter out passive event listener violations
+        if (message.includes('Added non-passive event listener') ||
+            message.includes('touchstart') ||
+            message.includes('Violation')) {
+          return; // Suppress these warnings
+        }
+
+        // Allow other warnings through
+        originalWarn.apply(console, args);
+      };
+
+      // Suppress unhandled promise rejections from Google services
+      window.addEventListener('unhandledrejection', function(e) {
+        if (e.reason && (
+            e.reason.toString().includes('google') ||
+            e.reason.toString().includes('maps') ||
+            e.reason.toString().includes('gen_204')
+        )) {
+          e.preventDefault();
+        }
+      });
+
+      // Suppress general errors from Google Maps
+      window.addEventListener('error', function(e) {
+        if (e.message && (
+            e.message.includes('arch endpoint') ||
+            e.message.includes('Search endpoint') ||
+            e.message.includes('google') ||
+            e.message.includes('maps') ||
+            e.message.includes('gen_204')
+        )) {
+          e.preventDefault();
+          return true;
+        }
+      });
+    })();
+  </script>
+</body>
+
+</html>

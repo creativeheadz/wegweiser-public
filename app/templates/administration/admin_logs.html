@@ -1,0 +1,250 @@
+<!-- Filepath: app/templates/administration/admin_logs.html -->
+{# Filepath: app/templates/administration/admin_logs.html #}
+{% extends "base.html" %}
+
+{% block title %}Log Viewer - Wegweiser{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <!--breadcrumb-->
+    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div class="breadcrumb-title pe-3">Administration</div>
+        <div class="ps-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 p-0">
+                    <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Log Viewer</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <!--end breadcrumb-->
+
+    <!-- Metrics Cards -->
+    <div class="row mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 rounded-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="fs-1 text-primary">
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
+                        <div class="ms-3">
+                            <p class="mb-0">Total Logs</p>
+                            <h4 class="mb-0" id="totalLogs">-</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 rounded-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="fs-1 text-danger">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <div class="ms-3">
+                            <p class="mb-0">Error Rate (24h)</p>
+                            <h4 class="mb-0" id="errorRate">-</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 rounded-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="fs-1 text-success">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                        </div>
+                        <div class="ms-3">
+                            <p class="mb-0">Avg Health Score</p>
+                            <h4 class="mb-0" id="avgHealthScore">-</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card border-0 rounded-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="fs-1 text-info">
+                            <i class="fa-solid fa-gauge-high"></i>
+                        </div>
+                        <div class="ms-3">
+                            <p class="mb-0">Logs/Minute</p>
+                            <h4 class="mb-0" id="logsPerMinute">-</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Card -->
+    <div class="card border-0 rounded-4">
+        <div class="card-header py-3">
+            <div class="row g-3 align-items-center">
+                <div class="col-md-3">
+                    <select id="levelFilter" class="form-select">
+                        <option value="">All Levels</option>
+                        <option value="INFO">Info</option>
+                        <option value="WARNING">Warning</option>
+                        <option value="ERROR">Error</option>
+                        <option value="DEBUG">Debug</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select id="sourceFilter" class="form-select">
+                        <option value="">All Sources</option>
+                        <option value="Application">Application</option>
+                        <option value="System">System</option>
+                        <option value="Security">Security</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select id="timeFilter" class="form-select">
+                        <option value="">All Time</option>
+                        <option value="1h">Last Hour</option>
+                        <option value="24h">Last 24 Hours</option>
+                        <option value="7d">Last 7 Days</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="autoRefresh">
+                        <label class="form-check-label" for="autoRefresh">Auto Refresh</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="customer-table">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Time</th>
+                                <th>Level</th>
+                                <th>Source</th>
+                                <th style="width: 40%">Message</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logTableBody">
+                            <!-- Logs will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Details Modal -->
+    <div class="modal fade" id="logDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Log Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <pre id="logDetails" class="bg-light p-3"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let autoRefreshInterval;
+
+function formatDate(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleString();
+}
+
+function getLevelBadgeClass(level) {
+    const classes = {
+        'INFO': 'bg-info-subtle text-info',
+        'WARNING': 'bg-warning-subtle text-warning',
+        'ERROR': 'bg-danger-subtle text-danger',
+        'DEBUG': 'bg-secondary-subtle text-secondary'
+    };
+    return `lable-table ${classes[level] || 'bg-primary-subtle text-primary'} rounded border font-text2 fw-bold`;
+}
+
+function showLogDetails(metadata) {
+    document.getElementById('logDetails').textContent = JSON.stringify(metadata, null, 2);
+    new bootstrap.Modal(document.getElementById('logDetailsModal')).show();
+}
+
+function fetchMetrics() {
+    fetch('/api/logs/metrics')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('totalLogs').textContent = data.total_logs.toLocaleString();
+            document.getElementById('errorRate').textContent = `${data.error_rate}%`;
+            document.getElementById('avgHealthScore').textContent = data.avg_health_score;
+            document.getElementById('logsPerMinute').textContent = data.logs_per_minute;
+        })
+        .catch(error => console.error('Error fetching metrics:', error));
+}
+
+function fetchLogs() {
+    const level = document.getElementById('levelFilter').value;
+    const source = document.getElementById('sourceFilter').value;
+    const time = document.getElementById('timeFilter').value;
+    
+    fetch(`/api/logs?level=${level}&source_type=${source}&time=${time}`)
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('logTableBody');
+            tbody.innerHTML = '';
+            
+            data.logs.forEach(log => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${formatDate(log.created_at)}</td>
+                    <td><span class="${getLevelBadgeClass(log.level)}">${log.level}</span></td>
+                    <td>${log.source_type}</td>
+                    <td style="white-space: normal; word-wrap: break-word; max-width: 500px;">${log.message}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick='showLogDetails(${JSON.stringify(log.metadata)})'>
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(error => console.error('Error fetching logs:', error));
+}
+
+function toggleAutoRefresh() {
+    if (document.getElementById('autoRefresh').checked) {
+        autoRefreshInterval = setInterval(() => {
+            fetchLogs();
+            fetchMetrics();
+        }, 5000); // Refresh every 5 seconds
+    } else {
+        clearInterval(autoRefreshInterval);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetchLogs();
+    fetchMetrics();
+    
+    document.getElementById('levelFilter').addEventListener('change', fetchLogs);
+    document.getElementById('sourceFilter').addEventListener('change', fetchLogs);
+    document.getElementById('timeFilter').addEventListener('change', fetchLogs);
+    document.getElementById('autoRefresh').addEventListener('change', toggleAutoRefresh);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,83 @@
+{# Device Details Card Component #}
+<div class="row g-4 mt-4">
+    <div class="col-12">
+        <div class="card h-100 shadow">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-info-circle me-2"></i>
+                <h6 class="card-title mb-0">Device Details</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="p-3 border rounded h-100">
+                            <p class="mb-0"><strong>Platform:</strong> <br>{{ device.agent_platform or 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 border rounded h-100">
+                            <p class="mb-0"><strong>User:</strong> <br>{{ device.logged_on_user or 'N/A' }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 border rounded h-100">
+                            <p class="mb-0">
+                                <strong>Public IP:</strong> <br>
+                                {% if device.publicIp %}
+                                <a href="https://who.is/whois-ip/ip-address/{{ device.publicIp }}" target="_blank" class="me-2">{{ device.publicIp }}</a>
+                                <button type="button" class="btn btn-sm btn-outline-primary ip-info-btn" data-ip="{{ device.publicIp }}" title="Click to view IP information">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 border rounded h-100">
+                            <p class="mb-2"><strong>Device UUID:</strong></p>
+                            <div class="input-group">
+                                <input type="text" class="form-control" value="{{ device.deviceuuid }}" id="deviceUUID" readonly>
+                                <button class="btn btn-outline-secondary" type="button" id="copyUUIDBtn" data-copy="input" data-copy-target="deviceUUID" data-copy-message="Device UUID copied to clipboard!">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Additional device info from modular data #}
+                {% if device.modular_data %}
+                <hr class="my-3">
+                <div class="row">
+                    {% if device.modular_data.connectivity %}
+                    <div class="col-md-3">
+                        <p><strong>Status:</strong> <br>
+                            <span class="badge {% if device.modular_data.connectivity.is_online %}bg-success{% else %}bg-danger{% endif %}">
+                                {{ device.modular_data.connectivity.status }}
+                            </span>
+                        </p>
+                    </div>
+                    {% endif %}
+                    {% if device.modular_data.basic %}
+                    <div class="col-md-3">
+                        <p><strong>Group:</strong> <br>{{ device.modular_data.basic.groupname or 'N/A' }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <p><strong>Organization:</strong> <br>{{ device.modular_data.basic.orgname or 'N/A' }}</p>
+                    </div>
+                    {% endif %}
+                    {% if device.modular_data.basic and device.modular_data.basic.health_score %}
+                    <div class="col-md-3">
+                        <p><strong>Health Score:</strong> <br>
+                            <span class="badge {% if device.modular_data.basic.health_score >= 80 %}bg-success{% elif device.modular_data.basic.health_score >= 60 %}bg-warning{% else %}bg-danger{% endif %}">
+                                {{ "%.1f"|format(device.modular_data.basic.health_score) }}%
+                            </span>
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+

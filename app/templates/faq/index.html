@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ - Wegweiser{% endblock %}
+
+{% block content %}
+<div class="main-content p-4">
+    <!-- Breadcrumb Navigation -->
+    {% call breadcrumb(title='Help & Support', items=[
+        {'text': 'Frequently Asked Questions', 'icon': 'fas fa-question-circle'}
+    ]) %}
+    {% endcall %}
+
+    <!-- FAQ Header -->
+    <div class="card mb-4">
+        <div class="card-body py-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h4 class="mb-1">Frequently Asked Questions</h4>
+                    <p class="mb-0 text-muted">Find answers to common questions about Wegweiser</p>
+                </div>
+                <div class="faq-stats">
+                    <span class="badge bg-primary rounded-pill">{{ faqs|length }} Questions</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="card mb-4">
+        <div class="card-body py-3">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="search-container">
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent"><i class="fas fa-search"></i></span>
+                            <input type="text" id="faqSearch" class="form-control border-start-0"
+                                   placeholder="Search questions and answers...">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                    <div class="d-flex gap-2 justify-content-md-end">
+                        <button class="btn btn-outline-primary btn-sm" onclick="expandAll()">
+                            <i class="fas fa-expand-alt me-1"></i> Expand All
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="collapseAll()">
+                            <i class="fas fa-compress-alt me-1"></i> Collapse All
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Content -->
+    <div class="faq-container">
+        {% if faqs %}
+            <div class="accordion faq-accordion" id="faqAccordion">
+                {% for faq in faqs %}
+                <div class="accordion-item faq-item mb-3" data-faq-id="{{ faq.id }}">
+                    <h2 class="accordion-header" id="heading{{ loop.index }}">
+                        <button class="accordion-button collapsed" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}"
+                                aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+                            <div class="d-flex align-items-center gap-3 w-100">
+                                <div class="faq-icon">
+                                    <i class="fas fa-question-circle"></i>
+                                </div>
+                                <div class="faq-question-text">
+                                    {{ faq.question }}
+                                </div>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="collapse{{ loop.index }}" class="accordion-collapse collapse"
+                         aria-labelledby="heading{{ loop.index }}" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            <div class="faq-answer">
+                                {{ faq.answer|faq_html }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-question-circle fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No FAQs Available</h5>
+                <p class="text-muted">Check back later for frequently asked questions.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- No Results Message -->
+    <div id="noResults" class="text-center py-5" style="display: none;">
+        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+        <h5 class="text-muted">No matching questions found</h5>
+        <p class="text-muted">Try adjusting your search terms or browse all questions.</p>
+        <button class="btn btn-outline-primary" onclick="clearSearch()">
+            <i class="fas fa-times me-1"></i> Clear Search
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<style>
+/* FAQ Specific Styles - Enhanced */
+.faq-accordion .accordion-item {
+    border: 2px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.faq-accordion .accordion-item:hover {
+    transform: translateY(-2px);
+}
+
+.faq-accordion .accordion-button {
+    padding: 1.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.faq-accordion .accordion-button:not(.collapsed) {
+    background: rgba(var(--primary-rgb), 0.08);
+    color: var(--primary);
+}
+
+.faq-accordion .accordion-button:focus {
+    box-shadow: none;
+}
+
+.faq-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.15) 0%, rgba(var(--primary-rgb), 0.05) 100%);
+    border-radius: 10px;
+    color: var(--primary);
+    border: 1px solid rgba(var(--primary-rgb), 0.2);
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.faq-accordion .accordion-button:hover .faq-icon {
+    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.25) 0%, rgba(var(--primary-rgb), 0.1) 100%);
+    transform: scale(1.1);
+}
+
+.faq-accordion .accordion-button:not(.collapsed) .faq-icon {
+    background: linear-gradient(135deg, var(--primary) 0%, rgba(var(--primary-rgb), 0.8) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+}
+
+.faq-question-text {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.faq-answer {
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+.faq-answer p:last-child {
+    margin-bottom: 0;
+}
+
+.search-container {
+    max-width: 400px;
+}
+
+.faq-stats .badge {
+    font-size: 0.875rem;
+}
+
+/* Smooth animations */
+.accordion-collapse {
+    transition: all 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .faq-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+
+    .search-container {
+        max-width: 100%;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('faqSearch');
+    const faqItems = document.querySelectorAll('.faq-item');
+    const noResults = document.getElementById('noResults');
+    let searchTimeout;
+
+    // Enhanced search functionality
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(performSearch, 300);
+    });
+
+    function performSearch() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        let visibleCount = 0;
+
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question-text').textContent.toLowerCase();
+            const answer = item.querySelector('.faq-answer').textContent.toLowerCase();
+
+            if (searchTerm === '' || question.includes(searchTerm) || answer.includes(searchTerm)) {
+                item.style.display = '';
+                visibleCount++;
+
+                // Highlight search terms
+                if (searchTerm !== '') {
+                    highlightSearchTerm(item, searchTerm);
+                } else {
+                    removeHighlights(item);
+                }
+            } else {
+                item.style.display = 'none';
+                // Collapse hidden items
+                const collapse = item.querySelector('.accordion-collapse');
+                if (collapse.classList.contains('show')) {
+                    bootstrap.Collapse.getInstance(collapse)?.hide();
+                }
+            }
+        });
+
+        // Show/hide no results message
+        if (visibleCount === 0 && searchTerm !== '') {
+            noResults.style.display = 'block';
+        } else {
+            noResults.style.display = 'none';
+        }
+    }
+
+    function highlightSearchTerm(item, term) {
+        const questionElement = item.querySelector('.faq-question-text');
+        const answerElement = item.querySelector('.faq-answer');
+
+        [questionElement, answerElement].forEach(element => {
+            if (element.dataset.originalText === undefined) {
+                element.dataset.originalText = element.innerHTML;
+            }
+
+            const regex = new RegExp(`(${escapeRegex(term)})`, 'gi');
+            element.innerHTML = element.dataset.originalText.replace(regex, '<mark>$1</mark>');
+        });
+    }
+
+    function removeHighlights(item) {
+        const questionElement = item.querySelector('.faq-question-text');
+        const answerElement = item.querySelector('.faq-answer');
+
+        [questionElement, answerElement].forEach(element => {
+            if (element.dataset.originalText !== undefined) {
+                element.innerHTML = element.dataset.originalText;
+            }
+        });
+    }
+
+    function escapeRegex(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    // Global functions for expand/collapse buttons
+    window.expandAll = function() {
+        faqItems.forEach(item => {
+            const collapse = item.querySelector('.accordion-collapse');
+            if (!collapse.classList.contains('show')) {
+                new bootstrap.Collapse(collapse, { show: true });
+            }
+        });
+    };
+
+    window.collapseAll = function() {
+        faqItems.forEach(item => {
+            const collapse = item.querySelector('.accordion-collapse');
+            if (collapse.classList.contains('show')) {
+                bootstrap.Collapse.getInstance(collapse)?.hide();
+            }
+        });
+    };
+
+    window.clearSearch = function() {
+        searchInput.value = '';
+        performSearch();
+        searchInput.focus();
+    };
+});
+</script>
+{% endblock %}

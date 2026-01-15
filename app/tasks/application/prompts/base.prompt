@@ -1,0 +1,20 @@
+# Filepath: app/tasks/application/prompts/base.prompt
+Analyze the following Windows Application Event Log summary for the past 30 days. Your analysis should:
+
+1. Identify the top 3-5 most critical or frequent application events and their implications for system stability and performance.
+2. Assess the overall health of applications running on the system based on these events.
+3. Highlight any recurring errors or warnings that might indicate persistent issues.
+4. Provide 2-3 key actionable recommendations to improve application performance and stability.
+5. If there are any security implications from these application events, briefly mention them.
+
+Structure your response in basic HTML format with tags such as <p>, <ul>, <li>, and <br> to ensure readability:
+- Brief summary of key findings (2-3 sentences)
+- Analysis of top critical events (3-5 bullet points)
+- Overall application health assessment (1-2 sentences)
+- Recommendations (2-3 bullet points)
+- Security implications, if any (1-2 sentences)
+
+- Declare a healthscore based on these findings between 1 and 100 where 100 is a problem-free state.
+
+Application Event Log Summary:
+{log_data}

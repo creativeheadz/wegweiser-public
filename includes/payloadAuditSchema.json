@@ -1,0 +1,143 @@
+{
+    "type": "object",
+    "properties": {
+        "data": {
+            "type": "object",
+            "properties": {
+                "device": {
+                    "type": "object",
+                    "properties": {
+                        "deviceUuid": {"type": "string", "format": "uuid"},
+                        "groupUuid": {"type": "string", "format": "uuid"},
+                        "systemtime": {"type": "number"}
+                    },
+                    "required": ["deviceUuid", "systemtime"]
+                },
+                "system": {
+                    "type": "object",
+                    "properties": {
+                        "devicePlatform": {"type": "string", "minLength": 0, "maxLength": 256},
+                        "systemName": {"type": "string", "minLength": 0, "maxLength": 256},
+                        "currentUser": {"type": "string", "minLength": 0, "maxLength": 256},
+                        "cpuUsage": {"type": "number"},
+                        "cpuCount": {"type": "integer"},
+                        "bootTime": {"type": "number"},
+                        "publicIp": {"type": ["string", "null"], "minLength": 0, "maxLength": 16}
+                    },
+                    "required": ["devicePlatform", "systemName", "currentUser", "cpuUsage", "cpuCount", "bootTime"]
+                },
+                "drives": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string", "minLength": 0, "maxLength": 256},
+                            "total": {"type": "integer"},
+                            "used": {"type": "integer"},
+                            "free": {"type": "integer"},
+                            "usedPer": {"type": "number"},
+                            "freePer": {"type": "number"}
+                        },
+                        "required": ["name", "total", "used", "free", "usedPer", "freePer"]
+                    }
+                },
+                "networkList": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "patternProperties": {
+                            ".*": {
+                                "type": "object",
+                                "properties": {
+                                    "ifIsUp": {"type": "boolean"},
+                                    "ifSpeed": {"type": "integer"},
+                                    "ifMtu": {"type": "integer"},
+                                    "bytesSent": {"type": "integer"},
+                                    "bytesRecv": {"type": "integer"},
+                                    "errIn": {"type": "integer"},
+                                    "errOut": {"type": "integer"},
+                                    "address4": {"type": ["string", "null"], "minLength": 0, "maxLength": 16},
+                                    "netmask4": {"type": ["string", "null"], "minLength": 0, "maxLength": 16},
+                                    "broadcast4": {"type": ["string", "null"], "minLength": 0, "maxLength": 16},
+                                    "address6": {"type": ["string", "null"], "minLength": 0, "maxLength": 40},
+                                    "netmask6": {"type": ["string", "null"], "minLength": 0, "maxLength": 40},
+                                    "broadcast6": {"type": ["string", "null"], "minLength": 0, "maxLength": 40}
+                                },
+                                "required": ["ifIsUp", "ifSpeed", "ifMtu", "bytesSent", "bytesRecv", "errIn", "errOut"]
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "Users": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "patternProperties": {
+                            "^[0-9]+$": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {"type": "string", "minLength": 0, "maxLength": 256},
+                                    "terminal": {"type": "string", "minLength": 0, "maxLength": 256},
+                                    "host": {"type": "string", "minLength": 0, "maxLength": 256},
+                                    "loggedIn": {"type": "number"},
+                                    "pid": {"type": "integer"}
+                                },
+                                "required": ["username", "terminal", "host", "loggedIn", "pid"]
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "battery": {
+                    "type": "object",
+                    "properties": {
+                        "installed": {"type": "boolean"},
+                        "pcCharged": {"type": "number"},
+                        "secsLeft": {"type": ["number", "string"], "minLength": 0, "maxLength": 16},  
+                        "powerPlug": {"type": "boolean"}
+                    },
+                    "required": ["installed", "pcCharged", "secsLeft", "powerPlug"]
+                },
+                "partitions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "patternProperties": {
+                            "^.*$": {
+                                "type": "object",
+                                "properties": {
+                                    "device": {"type": "string", "minLength": 0, "maxLength": 256},
+                                    "fstype": {"type": "string", "minLength": 0, "maxLength": 256}
+                                },
+                                "required": ["device", "fstype"]
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "memory": {
+                    "type": "object",
+                    "properties": {
+                        "total": {"type": "integer"},
+                        "available": {"type": "integer"},
+                        "used": {"type": "integer"},
+                        "free": {"type": "integer"},
+                        "memory_metrics": {"type": "object"}
+                    },
+                    "required": ["total", "available", "used", "free"]
+                },
+                "cpu": {
+                    "type": "object",
+                    "properties": {
+                        "cpuname": {"type": "string", "minLength": 0, "maxLength": 512},
+                        "cpu_metrics": {"type": "object"}
+                    },
+                    "required": ["cpuname"]
+                }
+            },
+            "required": ["device", "system", "drives", "networkList", "Users", "battery", "partitions", "memory"]
+        }
+    },
+    "required": ["data"]
+}

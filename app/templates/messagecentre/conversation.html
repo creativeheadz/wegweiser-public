@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Conversation - Wegweiser{% endblock %}
+
+{% block content %}
+<div class="main-content p-4">
+    <!-- Breadcrumb Navigation -->
+    {% call breadcrumb(title='Communication', items=[
+        {'text': 'Message Centre', 'icon': 'fas fa-envelope', 'url': url_for('messagecentre_bp.messagecentre')},
+        {'text': 'Conversation', 'icon': 'fas fa-comments'}
+    ]) %}
+    {% endcall %}
+
+    <!-- Conversation Header -->
+    <div class="card mb-3">
+        <div class="card-body py-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="conversation-icon">
+                        <i class="fas fa-comments text-info fa-2x"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">{{ entity_info }}</h5>
+                        <p class="mb-0 text-muted small">{{ messages|length }} message{{ 's' if messages|length != 1 else '' }}</p>
+                    </div>
+                </div>
+                <a href="{{ url_for('messagecentre_bp.messagecentre') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Messages
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conversation Messages -->
+    <div class="conversation-container">
+        {% for message in messages %}
+        <div class="message-bubble-container mb-4 {% if message.is_system %}system-message{% else %}user-message{% endif %}">
+            <div class="message-bubble">
+                <div class="message-header d-flex align-items-center gap-2 mb-2">
+                    <div class="message-avatar">
+                        {% if message.is_system %}
+                            <i class="fas fa-robot"></i>
+                        {% else %}
+                            <i class="fas fa-user"></i>
+                        {% endif %}
+                    </div>
+                    <div class="message-sender">
+                        <strong>{% if message.is_system %}System{% else %}User{% endif %}</strong>
+                    </div>
+                    <div class="message-time text-muted small">
+                        {{ message.timestamp }}
+                    </div>
+                </div>
+                <div class="message-content">
+                    {{ message.content|safe }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+/* Conversation Specific Styles */
+.conversation-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-bg);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--glass-border);
+}
+
+.conversation-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.message-bubble-container {
+    display: flex;
+    margin-bottom: 1.5rem;
+}
+
+.message-bubble-container.system-message {
+    justify-content: flex-start;
+}
+
+.message-bubble-container.user-message {
+    justify-content: flex-end;
+}
+
+.message-bubble {
+    max-width: 70%;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    padding: 1rem;
+    box-shadow: var(--glass-shadow);
+}
+
+.system-message .message-bubble {
+    background: rgba(var(--info-rgb, 57, 208, 216), 0.1);
+    border-left: 4px solid var(--info);
+}
+
+.user-message .message-bubble {
+    background: rgba(var(--primary-rgb), 0.1);
+    border-left: 4px solid var(--primary);
+}
+
+[data-bs-theme="dark"] .system-message .message-bubble {
+    background: rgba(var(--info-rgb, 57, 208, 216), 0.15);
+}
+
+[data-bs-theme="dark"] .user-message .message-bubble {
+    background: rgba(var(--primary-rgb), 0.15);
+}
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-bg);
+    border-radius: 50%;
+    border: 1px solid var(--glass-border);
+    font-size: 0.875rem;
+}
+
+.system-message .message-avatar {
+    background: rgba(var(--info-rgb, 57, 208, 216), 0.2);
+    color: var(--info);
+}
+
+.user-message .message-avatar {
+    background: rgba(var(--primary-rgb), 0.2);
+    color: var(--primary);
+}
+
+.message-content {
+    line-height: 1.6;
+}
+
+.message-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .message-bubble {
+        max-width: 85%;
+    }
+
+    .conversation-container {
+        padding: 0 0.5rem;
+    }
+}
+</style>
+{% endblock %}

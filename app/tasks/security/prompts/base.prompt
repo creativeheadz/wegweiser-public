@@ -1,0 +1,20 @@
+# Filepath: app/tasks/security/prompts/base.prompt
+Analyze the following Windows Security Event Log summary. Your analysis should:
+
+1. Identify any potential security breaches, unauthorized access attempts, or suspicious activities.
+2. Evaluate authentication patterns and highlight any anomalies in login behavior.
+3. Assess the overall security posture based on the events observed.
+4. Provide specific, actionable security recommendations.
+5. Identify any compliance-related concerns based on the security events.
+
+Structure your response in basic HTML format with tags such as <p>, <ul>, <li>, and <br> to ensure readability:
+- Summary of security findings (2-3 sentences)
+- Critical security events analysis (3-5 bullet points)
+- Overall security posture assessment (1-2 sentences)
+- Security recommendations (3-4 bullet points)
+- Compliance implications (1-2 sentences)
+
+- Declare a healthscore based on these findings between 1 and 100 where 100 is a completely secure state.
+
+Security Event Log Summary:
+{log_data}

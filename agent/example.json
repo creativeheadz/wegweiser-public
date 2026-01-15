@@ -1,0 +1,19 @@
+{
+	"settings":{
+		"scriptname":"getComputerName",
+		"scripttype":"python",
+		"returnname":"computerName",
+		"returntype":"json"
+	},
+	"execTime": {
+		"execstarttime":1100,
+		"execendtime":1100,
+		"execwindow":5
+	},
+	"payload":{
+		"payloadsig":"gaeydWl+MZXyabURGiITJxAkkcfSAWTWJi7UyxfJZ77umB2fVxgLuGOZL6eAGh3s+jHRrxEoo6k/gy0VTm+z+J2Ls23i3R2/T4aaTVHZnW6vzts7/b8sad9eNqIiUb4+ekgOX4Sy/v3U4GxVL8N/ITrb6HLVKui5nZHtqyI2t7EAjbgSkH5RlGTgb7+AvKDGyAsGBJxanFyacmlrebT6P0/9dGTsb15BchegbLslrJ1aOWQMUMTYczrisowEbvT8VZK+upv74QitC0V91+e7JospAJj9JiK4K2xczWX1p7nPJl825kYmtw9NR4erjAuCNHNn5pXIr3PsI/9EcNYbSmMJWYXVTLFNl2qtRJkSURmFLsIuEPYT8k0UnANPjOoiXjUulxdg9lTf1d9w3VxKsN7CqWDWSpEbbsuGtZa5CdLEQBrsnYsEIKmVLgYp8uA23Ho/eXPXZ6U1YnT9bWlUey4T/WcCVy7STW6TCiu4uSI7B+pMcmHAT1P2jbiuaY9gGHoV4wYzYICGcmTl8/vU1HnwXwBxv1ACYm0/TFuA9Oy91RHP0EgerHHtEpHdQGbFpfmwU32fZdEncXCRGkZLFJ9iBEXPqF66Bj6DzlWCLeuTKfAf21eBkRTSThDOQ80DU34PMjgfFPLYFb5QQlnYUoyfLihOUJyXi4rIXNZQaFc=",
+		"payloadb64":"cGVyc29uc25hbWUgPSBpbnB1dCgnV2hhdCBpcyB5b3VyIG5hbWU/ICcpCnByaW50KGYnaGVsbG8ge3BlcnNvbnNuYW1lfS4gTmljZSB0byBtZWV0IHlvdS4nKQ=="
+	}
+}
+
+

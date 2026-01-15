@@ -1,0 +1,183 @@
+<!-- Filepath: app/templates/administration/admin_devices.html -->
+{% extends 'base.html' %}
+
+{% block title %}Device Management{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function runAllAIUtilities() {
+    if (confirm('Are you sure you want to run all AI utility scripts? This may take some time.')) {
+      $.ajax({
+        url: "{{ url_for('admin_bp.run_all_ai_utilities') }}",
+        method: "GET",
+        success: function (data) {
+          alert(data.message);
+        },
+        error: function (error) {
+          alert('Failed to execute AI utilities.');
+        }
+      });
+    }
+  }
+
+  function getStatusBadgeClass(status) {
+    switch (status) {
+      case 'Online': return 'bg-success';
+      case 'Offline': return 'bg-danger';
+      case 'Stale': return 'bg-warning';
+      default: return 'bg-secondary';
+    }
+  }
+
+  function getHealthScoreColor(score) {
+    if (score >= 80) return 'text-success';
+    if (score >= 60) return 'text-warning';
+    return 'text-danger';
+  }
+
+  function formatTimestamp(timestamp) {
+    const now = new Date();
+    const date = new Date(timestamp * 1000);
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} minute${diffMins !== 1 ? 's' : ''} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+  }
+
+  // Format timestamps on page load
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.timestamp').forEach(function (element) {
+      const timestamp = element.getAttribute('data-timestamp');
+      if (timestamp) {
+        element.textContent = formatTimestamp(parseInt(timestamp));
+      }
+    });
+  });
+</script>
+
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12">
+    <div class="card rounded-4">
+      <div class="card-header py-3">
+        <div class="d-flex align-items-center justify-content-between">
+          <h5 class="mb-0"><i class="fas fa-server me-2"></i>Device Management - All Tenants</h5>
+          <div class="dropdown">
+            <a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+              <i class="fa-solid fa-ellipsis-vertical fs-5"></i>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="javascript:;" onclick="runAllAIUtilities()">
+                  <i class="fas fa-robot me-2"></i>Run AI Utilities
+                </a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="{{ url_for('admin_bp.view_tenants') }}">
+                  <i class="fas fa-building me-2"></i>Manage Tenants
+                </a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        {% if devices_by_tenant %}
+        {% for tenant_name, devices in devices_by_tenant.items() %}
+        <div class="tenant-section mb-4">
+          <div class="d-flex align-items-center mb-3">
+            <h6 class="mb-0 text-primary">
+              <i class="fas fa-building me-2"></i>{{ tenant_name or 'Unknown Tenant' }}
+            </h6>
+            <span class="badge bg-light text-dark ms-2">{{ devices|length }} device{{ 's' if devices|length != 1 else ''
+              }}</span>
+          </div>
+
+          <div class="row">
+            {% for device_info in devices %}
+            <div class="col-12 col-md-6 col-lg-4 mb-3">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="card-title mb-1">
+                      <i class="fas fa-desktop me-2"></i>{{ device_info.device.devicename or 'Unnamed Device' }}
+                    </h6>
+                    <span
+                      class="badge {{ 'bg-success' if device_info.online_status == 'Online' else 'bg-danger' if device_info.online_status == 'Offline' else 'bg-warning' }}">
+                      {{ device_info.online_status }}
+                    </span>
+                  </div>
+
+                  <!-- Breadcrumb-style hierarchy -->
+                  <div class="text-muted small mb-2">
+                    <i class="fas fa-sitemap me-1"></i>
+                    <span class="text-primary">{{ device_info.tenant_name }}</span>
+                    <i class="fas fa-chevron-right mx-1"></i>
+                    <span>{{ device_info.org_name }}</span>
+                    <i class="fas fa-chevron-right mx-1"></i>
+                    <span>{{ device_info.group_name }}</span>
+                  </div>
+
+                  <div class="row text-left">
+                    <div class="col-12">
+                      <div class="text-muted small">Health Score</div>
+                      <div
+                        class="fw-bold {{ 'text-success' if device_info.health_score >= 80 else 'text-warning' if device_info.health_score >= 60 else 'text-danger' }}">
+                        {{ "%.1f"|format(device_info.health_score) }}%
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Full Device ID in new row -->
+                  <div class="mt-2">
+                    <div class="text-muted small">Device ID</div>
+                    <div class="small font-monospace text-break">
+                      {{ device_info.device.deviceuuid }}
+                    </div>
+                  </div>
+
+                  {% if device_info.device.last_heartbeat %}
+                  <div class="mt-2 text-muted small">
+                    <i class="fas fa-heartbeat me-1"></i>
+                    Last seen: <span class="timestamp" data-timestamp="{{ device_info.device.last_heartbeat }}"></span>
+                  </div>
+                  {% endif %}
+
+                  <div class="mt-3">
+                    <a href="{{ url_for('devices_bp.view_device', deviceuuid=device_info.device.deviceuuid) }}"
+                      class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-eye me-1"></i>View Details
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% if not loop.last %}
+        <hr class="my-4">
+        {% endif %}
+        {% endfor %}
+        {% else %}
+        <div class="text-center py-5">
+          <i class="fas fa-server fa-3x text-muted mb-3"></i>
+          <h5 class="text-muted">No devices found</h5>
+          <p class="text-muted">No devices are currently registered across all tenants.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

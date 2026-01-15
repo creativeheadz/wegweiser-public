@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}View Ticket - Wegweiser{% endblock %}
+
+{% block content %}
+<div class="main-content p-4">
+    <!-- Breadcrumb Navigation -->
+    {% call breadcrumb(title='Help & Support', items=[
+        {'text': 'Support Tickets', 'icon': 'fas fa-ticket-alt', 'url': url_for('tickets_bp.support_dashboard')},
+        {'text': 'Ticket #' + ticket.id|string, 'icon': 'fas fa-eye'}
+    ]) %}
+        <a href="{{ url_for('tickets_bp.support_dashboard') }}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-1"></i> Back to Tickets
+        </a>
+    {% endcall %}
+
+    <!-- Ticket Header -->
+    <div class="card mb-3">
+        <div class="card-body py-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="ticket-type-icon">
+                        {% if ticket.state == 'new' %}
+                            <i class="fas fa-ticket-alt text-primary fa-2x"></i>
+                        {% elif ticket.state == 'open' %}
+                            <i class="fas fa-folder-open text-info fa-2x"></i>
+                        {% elif ticket.state == 'pending reminder' or ticket.state == 'pending close' %}
+                            <i class="fas fa-clock text-warning fa-2x"></i>
+                        {% elif ticket.state == 'closed' %}
+                            <i class="fas fa-check-circle text-success fa-2x"></i>
+                        {% else %}
+                            <i class="fas fa-question-circle text-secondary fa-2x"></i>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h5 class="mb-0">Ticket #{{ ticket.id }}: {{ ticket.title }}</h5>
+                        <div class="d-flex align-items-center gap-2 mt-1">
+                            {% if ticket.state == 'new' %}
+                                <span class="badge bg-primary">New</span>
+                            {% elif ticket.state == 'open' %}
+                                <span class="badge bg-info">Open</span>
+                            {% elif ticket.state == 'pending reminder' or ticket.state == 'pending close' %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% elif ticket.state == 'closed' %}
+                                <span class="badge bg-success">Closed</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ ticket.state }}</span>
+                            {% endif %}
+
+                            {% if '3' in ticket.priority or 'high' in ticket.priority|lower %}
+                                <span class="badge bg-danger">High Priority</span>
+                            {% elif '2' in ticket.priority or 'normal' in ticket.priority|lower %}
+                                <span class="badge bg-warning">Normal Priority</span>
+                            {% elif '1' in ticket.priority or 'low' in ticket.priority|lower %}
+                                <span class="badge bg-info">Low Priority</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ ticket.priority }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticket Conversation -->
+    <div class="conversation-container">
+        {% if articles %}
+            {% for article in articles %}
+            <div class="message-bubble-container mb-4 {% if article.sender == 'System' or article.sender == 'Agent' %}support-message{% else %}user-message{% endif %}">
+                <div class="message-bubble">
+                    <div class="message-header d-flex align-items-center gap-2 mb-2">
+                        <div class="message-avatar">
+                            {% if article.sender == 'System' or article.sender == 'Agent' %}
+                                <i class="fas fa-headset"></i>
+                            {% else %}
+                                <i class="fas fa-user"></i>
+                            {% endif %}
+                        </div>
+                        <div class="message-sender">
+                            <strong>{% if article.sender == 'System' or article.sender == 'Agent' %}Support Team{% else %}{{ user.firstname }} {{ user.lastname }}{% endif %}</strong>
+                        </div>
+                        <div class="message-time text-muted small">
+                            {{ article.formatted_date }}
+                        </div>
+                    </div>
+                    <div class="message-content">
+                        {{ article.body|safe }}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No messages found</h5>
+                <p class="text-muted">This ticket doesn't have any messages yet.</p>
+            </div>
+        {% endif %}
+    </div>
+
+            {% if ticket.state != 'closed' %}
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Add Reply</h5>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('tickets_bp.reply_to_ticket', ticket_id=ticket.id) }}" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <div class="mb-3">
+                            <textarea class="form-control" name="reply" rows="4" placeholder="Type your reply here..."
+                                required></textarea>
+                        </div>
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-1"></i> Send Reply
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-warning mt-4">
+                <i class="fas fa-lock me-2"></i> This ticket is closed. Please create a new ticket if you need further
+                assistance.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+/* Support Ticket View Specific Styles */
+.ticket-type-icon {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-bg);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--glass-border);
+}
+
+.conversation-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.message-bubble-container {
+    display: flex;
+    margin-bottom: 1.5rem;
+}
+
+.message-bubble-container.support-message {
+    justify-content: flex-start;
+}
+
+.message-bubble-container.user-message {
+    justify-content: flex-end;
+}
+
+.message-bubble {
+    max-width: 70%;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--border-radius-lg);
+    padding: 1rem;
+    box-shadow: var(--glass-shadow);
+}
+
+.support-message .message-bubble {
+    background: rgba(var(--info-rgb, 57, 208, 216), 0.1);
+    border-left: 4px solid var(--info);
+}
+
+.user-message .message-bubble {
+    background: rgba(var(--primary-rgb), 0.1);
+    border-left: 4px solid var(--primary);
+}
+
+[data-bs-theme="dark"] .support-message .message-bubble {
+    background: rgba(var(--info-rgb, 57, 208, 216), 0.15);
+}
+
+[data-bs-theme="dark"] .user-message .message-bubble {
+    background: rgba(var(--primary-rgb), 0.15);
+}
+
+.message-avatar {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-bg);
+    border-radius: 50%;
+    border: 1px solid var(--glass-border);
+    font-size: 0.875rem;
+}
+
+.support-message .message-avatar {
+    background: rgba(var(--info-rgb, 57, 208, 216), 0.2);
+    color: var(--info);
+}
+
+.user-message .message-avatar {
+    background: rgba(var(--primary-rgb), 0.2);
+    color: var(--primary);
+}
+
+.message-content {
+    line-height: 1.6;
+}
+
+.message-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .message-bubble {
+        max-width: 85%;
+    }
+
+    .conversation-container {
+        padding: 0 0.5rem;
+    }
+}
+</style>
+{% endblock %}

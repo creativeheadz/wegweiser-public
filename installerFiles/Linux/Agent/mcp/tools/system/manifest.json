@@ -1,0 +1,24 @@
+{
+  "name": "system",
+  "version": "1.0.0",
+  "description": "System information tools",
+  "tools": [
+    {
+      "module": "system_info:SystemInfo",
+      "name": "system_info",
+      "description": "Get system information (CPU, memory, disk, uptime)",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category of info: 'cpu', 'memory', 'disk', 'uptime', 'all'"
+          }
+        },
+        "required": []
+      }
+    }
+  ],
+  "dependencies": ["psutil"],
+  "platforms": ["linux", "windows", "darwin"]
+}

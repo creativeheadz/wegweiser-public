@@ -1,0 +1,213 @@
+/* Unified Metric Cards - Compact Glassmorphism Design */
+
+.metric-card-unified {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: var(--glass-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.metric-card-unified:hover {
+    border-color: rgba(var(--primary-rgb), 0.3);
+    box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.12), var(--glass-shadow);
+    transform: translateY(-2px);
+}
+
+/* Light theme metric card */
+[data-bs-theme="light"] .metric-card-unified {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+[data-bs-theme="light"] .metric-card-unified:hover {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(var(--primary-rgb), 0.3);
+    box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.15);
+}
+
+/* Dark theme metric card - IMPROVED */
+[data-bs-theme="dark"] .metric-card-unified {
+    background: linear-gradient(135deg, #0d111a 0%, #0a0e17 100%);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+[data-bs-theme="dark"] .metric-card-unified:hover {
+    background: linear-gradient(135deg, #12161f 0%, #0f1319 100%);
+    border-color: rgba(var(--primary-rgb), 0.5);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 8px 24px rgba(var(--primary-rgb), 0.2);
+}
+
+.metric-card-unified .card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-card-unified h6 {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: 0.3px;
+}
+
+/* Dark theme text improvement */
+[data-bs-theme="dark"] .metric-card-unified h6 {
+    color: #f0f6fc;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.metric-card-unified .badge {
+    font-size: 0.75rem;
+    padding: 0.4rem 0.7rem;
+    background: rgba(var(--primary-rgb), 0.15);
+    color: var(--primary);
+    border: 1px solid rgba(var(--primary-rgb), 0.3);
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.metric-card-unified .badge:hover {
+    background: rgba(var(--primary-rgb), 0.25);
+    border-color: rgba(var(--primary-rgb), 0.5);
+}
+
+/* Dark theme badge improvement */
+[data-bs-theme="dark"] .metric-card-unified .badge {
+    background: rgba(74, 91, 255, 0.25);
+    border-color: rgba(74, 91, 255, 0.5);
+    color: #a8d8ff;
+    font-weight: 700;
+}
+
+[data-bs-theme="dark"] .metric-card-unified .badge:hover {
+    background: rgba(74, 91, 255, 0.35);
+    border-color: rgba(74, 91, 255, 0.7);
+}
+
+/* Icon styling */
+.metric-card-unified i {
+    transition: transform 0.2s ease;
+}
+
+.metric-card-unified:hover i {
+    transform: scale(1.1);
+}
+
+/* Mini Gauge Container */
+.mini-gauge-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 120px;
+    background: rgba(var(--primary-rgb), 0.03);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+/* Dark theme gauge container */
+[data-bs-theme="dark"] .mini-gauge-container {
+    background: rgba(74, 91, 255, 0.08);
+    border: 1px solid rgba(74, 91, 255, 0.15);
+}
+
+.mini-gauge-container canvas {
+    max-width: 120px;
+    max-height: 120px;
+    filter: drop-shadow(0 2px 4px rgba(var(--primary-rgb), 0.1));
+}
+
+/* History Chart Container */
+.history-chart-container {
+    flex: 1;
+    min-height: 180px;
+    position: relative;
+    background: rgba(var(--primary-rgb), 0.02);
+    border-radius: 8px;
+    padding: 0.75rem;
+    border: 1px solid rgba(var(--primary-rgb), 0.08);
+}
+
+/* Dark theme chart container */
+[data-bs-theme="dark"] .history-chart-container {
+    background: rgba(74, 91, 255, 0.06);
+    border-color: rgba(74, 91, 255, 0.12);
+}
+
+.history-chart-container > div {
+    width: 100%;
+    height: 100%;
+}
+
+/* uPlot chart styling for glassmorphism */
+.uplot {
+    font-family: var(--font-family-base);
+}
+
+.uplot .u-legend {
+    display: none;
+}
+
+.uplot .u-title {
+    display: none;
+}
+
+/* uPlot chart text color - improved for dark theme */
+[data-bs-theme="dark"] .uplot {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+[data-bs-theme="dark"] .uplot .u-axis text {
+    fill: rgba(255, 255, 255, 0.6);
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+    .metric-card-unified {
+        margin-bottom: 1rem;
+    }
+    
+    .mini-gauge-container {
+        height: 100px;
+    }
+    
+    .mini-gauge-container canvas {
+        max-width: 100px;
+        max-height: 100px;
+    }
+    
+    .history-chart-container {
+        min-height: 150px;
+    }
+}
+
+@media (max-width: 576px) {
+    .metric-card-unified .card-body {
+        padding: 0.75rem;
+    }
+    
+    .mini-gauge-container {
+        height: 80px;
+        margin-bottom: 0.75rem;
+    }
+    
+    .mini-gauge-container canvas {
+        max-width: 80px;
+        max-height: 80px;
+    }
+    
+    .history-chart-container {
+        min-height: 120px;
+        padding: 0.5rem;
+    }
+}
+
+

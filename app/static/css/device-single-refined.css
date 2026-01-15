@@ -1,0 +1,875 @@
+/**
+ * Device Single Page - Refined Glassmorphism Design System
+ * Elegant, artsy data density with cohesive glassmorphism aesthetic
+ */
+
+/* Main container - elegant glassmorphism */
+.device-health-metrics-wrapper {
+    background: var(--glass-primary);
+    backdrop-filter: var(--glass-blur-strong);
+    -webkit-backdrop-filter: var(--glass-blur-strong);
+    border: 1px solid var(--glass-border-primary);
+    border-radius: 16px;
+    box-shadow: var(--shadow-glass-medium);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.device-health-metrics-wrapper:hover {
+    box-shadow: var(--shadow-glass-strong);
+    border-color: var(--glass-border-accent);
+}
+
+/* Card header - refined typography */
+.device-health-metrics-wrapper .card-header {
+    background: var(--glass-secondary);
+    backdrop-filter: var(--glass-blur-medium);
+    -webkit-backdrop-filter: var(--glass-blur-medium);
+    border-bottom: 1px solid var(--glass-border-secondary);
+    padding: var(--space-sm) var(--space-md);
+}
+
+.device-health-metrics-wrapper .card-header h6 {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.device-health-metrics-wrapper .card-header i {
+    font-size: var(--font-size-sm);
+    opacity: 0.8;
+}
+
+/* Card body - refined spacing */
+.device-health-metrics-wrapper .card-body {
+    padding: var(--space-md);
+    background: transparent;
+}
+
+/* =====================================================
+   REFINED GAUGE STYLING
+   ===================================================== */
+
+.unified-gauges-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    height: 100%;
+}
+
+.gauge-card {
+    background: var(--glass-secondary);
+    backdrop-filter: var(--glass-blur-medium);
+    -webkit-backdrop-filter: var(--glass-blur-medium);
+    border: 1px solid var(--glass-border-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-glass-subtle);
+}
+
+.gauge-card:hover {
+    background: var(--glass-primary);
+    border-color: var(--glass-border-accent);
+    box-shadow: var(--shadow-glass-medium);
+}
+
+.gauge-header {
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--glass-tertiary);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border-bottom: 1px solid var(--glass-border-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.gauge-header .gauge-label {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.gauge-header i {
+    font-size: var(--font-size-sm);
+    opacity: 0.7;
+}
+
+.gauge-body {
+    padding: var(--space-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 110px;
+}
+
+.unified-gauge-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =====================================================
+   REFINED CHART STYLING
+   ===================================================== */
+
+.unified-charts-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    height: 100%;
+}
+
+.unified-chart-card {
+    background: var(--glass-secondary);
+    backdrop-filter: var(--glass-blur-medium);
+    -webkit-backdrop-filter: var(--glass-blur-medium);
+    border: 1px solid var(--glass-border-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-glass-subtle);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.unified-chart-card:hover {
+    background: var(--glass-primary);
+    border-color: var(--glass-border-accent);
+    box-shadow: var(--shadow-glass-medium);
+}
+
+.unified-chart-card .card-header {
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--glass-tertiary);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border-bottom: 1px solid var(--glass-border-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+
+.unified-chart-card .card-header .chart-title {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.unified-chart-card .card-header i {
+    font-size: var(--font-size-sm);
+    opacity: 0.7;
+}
+
+.unified-chart-card .card-body {
+    padding: var(--space-sm);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.unified-chart-container {
+    width: 100%;
+    height: 100%;
+    min-height: 130px;
+}
+
+/* =====================================================
+   REFINED DEVICE DETAILS COMPONENT
+   ===================================================== */
+
+.device-details-wrapper {
+    background: var(--glass-primary);
+    backdrop-filter: var(--glass-blur-strong);
+    -webkit-backdrop-filter: var(--glass-blur-strong);
+    border: 1px solid var(--glass-border-primary);
+    border-radius: 16px;
+    box-shadow: var(--shadow-glass-medium);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.device-details-wrapper:hover {
+    box-shadow: var(--shadow-glass-strong);
+    border-color: var(--glass-border-accent);
+}
+
+.device-details-wrapper .card-header {
+    background: var(--glass-secondary);
+    backdrop-filter: var(--glass-blur-medium);
+    -webkit-backdrop-filter: var(--glass-blur-medium);
+    border-bottom: 1px solid var(--glass-border-secondary);
+    padding: var(--space-sm) var(--space-md);
+}
+
+.device-details-wrapper .card-body {
+    padding: var(--space-md);
+    background: transparent;
+}
+
+/* Refined info display */
+.device-details-wrapper .card-body p {
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+    margin-bottom: var(--space-sm);
+}
+
+.device-details-wrapper .card-body p strong {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: var(--space-micro);
+}
+
+.device-details-wrapper .card-body hr {
+    margin: var(--space-md) 0;
+    opacity: 0.1;
+    border-color: var(--glass-border-secondary);
+}
+
+/* =====================================================
+   REFINED DEVICE HEADER
+   ===================================================== */
+
+.device-header-refined {
+    margin-bottom: var(--space-lg);
+}
+
+.device-header-refined h4 {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.device-header-refined h4 i {
+    font-size: var(--font-size-lg);
+    opacity: 0.8;
+}
+
+.device-header-refined .text-muted {
+    font-size: var(--font-size-base);
+    font-weight: 400;
+    opacity: 0.7;
+}
+
+.device-header-refined .btn {
+    font-size: var(--font-size-sm);
+    padding: var(--space-xs) var(--space-md);
+    background: var(--glass-secondary);
+    backdrop-filter: var(--glass-blur-medium);
+    -webkit-backdrop-filter: var(--glass-blur-medium);
+    border: 1px solid var(--glass-border-secondary);
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.device-header-refined .btn:hover {
+    background: var(--glass-primary);
+    border-color: var(--glass-border-accent);
+    box-shadow: var(--shadow-glass-medium);
+}
+
+/* =====================================================
+   REFINED AI ANALYSES ACCORDION
+   ===================================================== */
+
+.ai-analyses-wrapper {
+    background: var(--glass-primary);
+    backdrop-filter: var(--glass-blur-strong);
+    -webkit-backdrop-filter: var(--glass-blur-strong);
+    border: 1px solid var(--glass-border-primary);
+    border-radius: 16px;
+    box-shadow: var(--shadow-glass-medium);
+    overflow: hidden;
+}
+
+.ai-analyses-wrapper .card-header {
+    background: var(--glass-secondary);
+    backdrop-filter: var(--glass-blur-medium);
+    -webkit-backdrop-filter: var(--glass-blur-medium);
+    border-bottom: 1px solid var(--glass-border-secondary);
+    padding: var(--space-sm) var(--space-md);
+}
+
+.ai-analyses-wrapper .card-body {
+    padding: var(--space-md);
+    background: transparent;
+}
+
+/* Refined accordion items */
+#analysisAccordion .accordion-item {
+    background: var(--glass-secondary);
+    backdrop-filter: var(--glass-blur-medium);
+    -webkit-backdrop-filter: var(--glass-blur-medium);
+    border: 1px solid var(--glass-border-secondary);
+    border-radius: 10px;
+    margin-bottom: var(--space-xs);
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#analysisAccordion .accordion-item:hover {
+    background: var(--glass-primary);
+    border-color: var(--glass-border-accent);
+    box-shadow: var(--shadow-glass-subtle);
+}
+
+#analysisAccordion .accordion-button {
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    color: var(--text-primary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#analysisAccordion .accordion-button:not(.collapsed) {
+    background: var(--glass-tertiary);
+    color: var(--text-primary);
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+#analysisAccordion .accordion-button:hover {
+    background: var(--glass-tertiary);
+}
+
+#analysisAccordion .accordion-button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+#analysisAccordion .accordion-body {
+    padding: var(--space-md);
+    background: transparent;
+    border-top: 1px solid var(--glass-border-secondary);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+}
+
+/* Analysis content typography */
+.analysis-content {
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.analysis-content h1,
+.analysis-content h2,
+.analysis-content h3,
+.analysis-content h4,
+.analysis-content h5 {
+    font-weight: 600;
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-xs);
+}
+
+.analysis-content h1 { font-size: var(--font-size-lg); }
+.analysis-content h2 { font-size: var(--font-size-md); }
+.analysis-content h3 { font-size: var(--font-size-base); }
+.analysis-content h4 { font-size: var(--font-size-sm); }
+.analysis-content h5 { font-size: var(--font-size-base); color: #ff8c42; }
+
+.analysis-content p {
+    margin-bottom: var(--space-xs);
+}
+
+.analysis-content ul,
+.analysis-content ol {
+    margin-left: var(--space-md);
+    margin-bottom: var(--space-xs);
+}
+
+.analysis-content li {
+    margin-bottom: var(--space-micro);
+}
+
+.analysis-content code {
+    background: var(--glass-tertiary);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-size: var(--font-size-sm);
+    font-family: var(--font-mono);
+}
+
+.analysis-content pre {
+    background: var(--glass-tertiary);
+    padding: var(--space-sm);
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: var(--space-sm);
+    font-size: var(--font-size-sm);
+}
+
+.analysis-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: var(--space-sm);
+    font-size: var(--font-size-base);
+}
+
+.analysis-content table th,
+.analysis-content table td {
+    padding: var(--space-xs);
+    border: 1px solid var(--glass-border-secondary);
+    text-align: left;
+}
+
+.analysis-content table th {
+    background: var(--glass-tertiary);
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* =====================================================
+   ELEGANT BADGES & STATUS INDICATORS
+   ===================================================== */
+
+.badge-refined {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    padding: var(--space-micro) var(--space-xs);
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--glass-secondary);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border: 1px solid var(--glass-border-secondary);
+}
+
+/* =====================================================
+   RESPONSIVE ADJUSTMENTS
+   ===================================================== */
+
+@media (max-width: 991px) {
+    .unified-gauges-container {
+        flex-direction: row;
+        gap: var(--space-md);
+    }
+
+    .gauge-wrapper {
+        flex: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .unified-gauges-container {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+
+    .device-health-metrics-wrapper .card-body {
+        padding: var(--space-sm);
+    }
+
+    .device-details-wrapper .card-body {
+        padding: var(--space-sm);
+    }
+}
+
+/* =====================================================
+   ARTSY ENHANCEMENTS - SUBTLE ANIMATIONS & EFFECTS
+   ===================================================== */
+
+/* Smooth fade-in for components */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.device-health-metrics-wrapper,
+.device-details-wrapper,
+.ai-analyses-wrapper {
+    animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Stagger animation for accordion items */
+#analysisAccordion .accordion-item {
+    animation: fadeInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation-fill-mode: both;
+}
+
+#analysisAccordion .accordion-item:nth-child(1) { animation-delay: 0.05s; }
+#analysisAccordion .accordion-item:nth-child(2) { animation-delay: 0.1s; }
+#analysisAccordion .accordion-item:nth-child(3) { animation-delay: 0.15s; }
+#analysisAccordion .accordion-item:nth-child(4) { animation-delay: 0.2s; }
+#analysisAccordion .accordion-item:nth-child(5) { animation-delay: 0.25s; }
+#analysisAccordion .accordion-item:nth-child(n+6) { animation-delay: 0.3s; }
+
+/* Elegant glow effect on focus */
+.gauge-card:focus-within,
+.unified-chart-card:focus-within {
+    box-shadow: var(--shadow-glass-medium), 0 0 0 3px rgba(40, 81, 231, 0.1);
+}
+
+/* Refined button styling */
+.btn-outline-secondary {
+    background: var(--glass-tertiary);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border: 1px solid var(--glass-border-secondary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-outline-secondary:hover {
+    background: var(--glass-secondary);
+    border-color: var(--glass-border-accent);
+    box-shadow: var(--shadow-glass-subtle);
+}
+
+/* Elegant progress bars */
+.progress {
+    background: var(--glass-tertiary);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border: 1px solid var(--glass-border-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: var(--primary-gradient);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Refined badge styling */
+.badge {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    padding: var(--space-micro) var(--space-xs);
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Category badges with glassmorphism */
+.badge.bg-primary {
+    background: rgba(var(--primary-rgb), 0.15) !important;
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border: 1px solid rgba(var(--primary-rgb), 0.25);
+    color: var(--primary);
+}
+
+[data-bs-theme="light"] .badge.bg-primary {
+    background: rgba(var(--primary-rgb), 0.1) !important;
+    color: var(--primary-dark);
+}
+
+/* Elegant input styling */
+.form-control,
+.input-group .form-control {
+    background: var(--glass-tertiary);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border: 1px solid var(--glass-border-secondary);
+    font-size: var(--font-size-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-control:focus,
+.input-group .form-control:focus {
+    background: var(--glass-secondary);
+    border-color: var(--glass-border-accent);
+    box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+}
+
+/* Refined IP info button */
+.ip-info-btn {
+    background: var(--glass-tertiary);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border: 1px solid var(--glass-border-secondary);
+    font-size: var(--font-size-xs);
+    padding: var(--space-micro) var(--space-xs);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ip-info-btn:hover {
+    background: var(--glass-secondary);
+    border-color: var(--glass-border-accent);
+    box-shadow: var(--shadow-glass-subtle);
+}
+
+/* =====================================================
+   REFINED CATEGORY ACCENT BORDERS
+   ===================================================== */
+
+/* Elegant 2px left border with subtle glow */
+.accordion-item[data-category="System"] .accordion-button,
+.accordion-item[data-category="System"] .accordion-body {
+    border-left: 2px solid rgba(var(--primary-rgb), 0.4);
+    box-shadow: inset 2px 0 4px rgba(var(--primary-rgb), 0.08);
+}
+
+.accordion-item[data-category="Security"] .accordion-button,
+.accordion-item[data-category="Security"] .accordion-body {
+    border-left: 2px solid rgba(var(--primary-rgb), 0.4);
+    box-shadow: inset 2px 0 4px rgba(var(--primary-rgb), 0.08);
+}
+
+.accordion-item[data-category="Applications"] .accordion-button,
+.accordion-item[data-category="Applications"] .accordion-body {
+    border-left: 2px solid rgba(var(--primary-rgb), 0.4);
+    box-shadow: inset 2px 0 4px rgba(var(--primary-rgb), 0.08);
+}
+
+.accordion-item[data-category="Hardware"] .accordion-button,
+.accordion-item[data-category="Hardware"] .accordion-body {
+    border-left: 2px solid rgba(var(--primary-rgb), 0.4);
+    box-shadow: inset 2px 0 4px rgba(var(--primary-rgb), 0.08);
+}
+
+.accordion-item[data-category="Logs"] .accordion-button,
+.accordion-item[data-category="Logs"] .accordion-body {
+    border-left: 2px solid rgba(var(--primary-rgb), 0.4);
+    box-shadow: inset 2px 0 4px rgba(var(--primary-rgb), 0.08);
+}
+
+.accordion-item[data-category="Other"] .accordion-button,
+.accordion-item[data-category="Other"] .accordion-body {
+    border-left: 2px solid rgba(var(--primary-rgb), 0.4);
+    box-shadow: inset 2px 0 4px rgba(var(--primary-rgb), 0.08);
+}
+
+/* =====================================================
+   REALTIME METRICS REFINEMENTS
+   ===================================================== */
+
+/* Nested gauge cards in realtime metrics */
+.device-health-metrics-wrapper .gauge-card {
+    background: var(--glass-tertiary);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border: 1px solid var(--glass-border-secondary);
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.device-health-metrics-wrapper .gauge-card:hover {
+    background: var(--glass-secondary);
+    border-color: var(--glass-border-accent);
+    box-shadow: var(--shadow-glass-subtle);
+}
+
+.device-health-metrics-wrapper .gauge-card h6 {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-sm);
+}
+
+.device-health-metrics-wrapper .gauge-card .card-body {
+    padding: var(--space-md);
+}
+
+/* =====================================================
+   HARDWARE COMPONENTS REFINEMENTS
+   ===================================================== */
+
+/* Printer cards and drive cards with glassmorphism */
+.printer-card,
+.border.rounded {
+    background: var(--glass-tertiary);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border: 1px solid var(--glass-border-secondary) !important;
+    border-radius: 10px !important;
+    padding: var(--space-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.printer-card:hover,
+.border.rounded:hover {
+    background: var(--glass-secondary);
+    border-color: var(--glass-border-accent) !important;
+    box-shadow: var(--shadow-glass-subtle);
+}
+
+.printer-card .fw-bold,
+.border.rounded strong {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.printer-card .text-muted,
+.border.rounded .text-muted {
+    font-size: var(--font-size-sm);
+}
+
+/* Device details boxes - fixed height of 100px */
+.device-details-wrapper .border.rounded {
+    height: 100px !important;
+    min-height: 100px;
+    max-height: 100px;
+}
+
+/* =====================================================
+   TAG STYLING REFINEMENTS
+   ===================================================== */
+
+/* Tag badges with elegant glassmorphism */
+.badge.tag-badge {
+    background: var(--glass-secondary);
+    backdrop-filter: var(--glass-blur-subtle);
+    -webkit-backdrop-filter: var(--glass-blur-subtle);
+    border: 1px solid var(--glass-border-secondary);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.badge.tag-badge:hover {
+    background: var(--glass-primary);
+    border-color: var(--glass-border-accent);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-glass-subtle);
+}
+
+/* =====================================================
+   ALERT REFINEMENTS
+   ===================================================== */
+
+/* Elegant alert styling with glassmorphism */
+.alert {
+    background: var(--glass-secondary);
+    backdrop-filter: var(--glass-blur-medium);
+    -webkit-backdrop-filter: var(--glass-blur-medium);
+    border: 1px solid var(--glass-border-secondary);
+    border-radius: 12px;
+    padding: var(--space-md);
+}
+
+.alert-info {
+    background: rgba(var(--info-rgb), 0.1);
+    border-color: rgba(var(--info-rgb), 0.25);
+}
+
+.alert-warning {
+    background: rgba(var(--warning-rgb), 0.1);
+    border-color: rgba(var(--warning-rgb), 0.25);
+}
+
+.alert-danger {
+    background: rgba(var(--danger-rgb), 0.1);
+    border-color: rgba(var(--danger-rgb), 0.25);
+}
+
+.alert-success {
+    background: rgba(var(--success-rgb), 0.1);
+    border-color: rgba(var(--success-rgb), 0.25);
+}
+
+[data-bs-theme="light"] .alert-info {
+    background: rgba(var(--info-rgb), 0.08);
+}
+
+[data-bs-theme="light"] .alert-warning {
+    background: rgba(var(--warning-rgb), 0.08);
+}
+
+[data-bs-theme="light"] .alert-danger {
+    background: rgba(var(--danger-rgb), 0.08);
+}
+
+[data-bs-theme="light"] .alert-success {
+    background: rgba(var(--success-rgb), 0.08);
+}
+
+/* =====================================================
+   LINK REFINEMENTS
+   ===================================================== */
+
+/* Elegant link styling */
+a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+a:hover {
+    color: var(--primary-dark);
+    text-decoration: none;
+}
+
+/* =====================================================
+   ACCESSIBILITY & REDUCED MOTION
+   ===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+
+
+/* =====================================================
+   AI ANALYSES: FAQ STYLE NORMALIZATION (Device Page)
+   - Normalize accordion title sizing to harmonize with page
+   - Apply Wegweiser accent color (#ff8c42) to titles
+   ===================================================== */
+#analysisAccordion.faq-accordion .accordion-button {
+    font-size: var(--font-size-sm);
+    padding: var(--space-sm) var(--space-md);
+}
+
+#analysisAccordion.faq-accordion .faq-question-text h5 {
+    color: #ff8c42;
+    font-size: var(--font-size-base);
+    margin: 0;
+}
+
+
+/* Normalize AI Analysis Summary header title and color */
+.ai-analyses-wrapper .card-header .card-title {
+    font-size: var(--font-size-sm);
+    color: #ff8c42;
+}
+.ai-analyses-wrapper .card-header i.fa-brain {
+    color: #ff8c42;
+}

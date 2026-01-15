@@ -1,0 +1,10 @@
+{
+  "levels": {
+    "INFO": false,
+    "DEBUG": false,
+    "ERROR": true,
+    "WARNING": true
+  },
+  "last_updated": "2025-10-18T18:23:29.602931+00:00",
+  "updated_by": "a.trimbitas@oldforge.tech"
+}

@@ -1,0 +1,23 @@
+# Filepath: app/tasks/crashes/prompts/base.prompt
+Analyze the following summary of Windows Application Crash Logs and provide a comprehensive structured report. Your analysis should:
+
+1. Identify the most critical and frequent application crashes, categorizing them by severity and impact on business operations.
+2. Determine root causes and contributing factors for each major crash pattern, including memory issues, compatibility problems, or corrupted files.
+3. Assess the overall impact on system stability, user productivity, and potential data loss risks.
+4. Evaluate crash frequency trends and identify any escalating patterns that require immediate attention.
+5. Provide specific troubleshooting steps prioritized by impact and likelihood of success.
+6. Recommend proactive monitoring strategies, including key performance indicators and alerting thresholds.
+7. Suggest preventive measures such as application updates, system hardening, or configuration changes.
+
+Structure your response in basic HTML format using tags like <p>, <ul>, <li>, and <br> to ensure readability:
+- Brief summary of key findings and overall crash landscape (2-3 sentences)
+- Detailed analysis of critical crashes with root cause assessment (4-6 bullet points)
+- Impact assessment on system stability and user experience (2-3 sentences)
+- Prioritized troubleshooting recommendations with specific steps (3-4 bullet points)
+- Proactive monitoring and prevention strategies (2-3 bullet points)
+- Long-term stability recommendations for MSP consideration (1-2 sentences)
+
+- Declare a healthscore based on these findings between 1 and 100 where 100 is a problem-free state.
+
+Crash Summary:
+{crash_data}

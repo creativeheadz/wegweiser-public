@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Report - {{ device.devicename }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+            @top-center {
+                content: "Device Report - {{ device.devicename }}";
+                font-family: Arial, sans-serif;
+                font-size: 12px;
+                color: #666;
+            }
+            @bottom-center {
+                content: "Page " counter(page) " of " counter(pages);
+                font-family: Arial, sans-serif;
+                font-size: 10px;
+                color: #666;
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #007bff;
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .header .subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .device-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+        }
+
+        .device-info h2 {
+            color: #007bff;
+            margin-top: 0;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .info-item {
+            margin-bottom: 10px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .health-score {
+            text-align: center;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+
+        .health-score .score {
+            font-size: 48px;
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .health-score .label {
+            font-size: 16px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .analyses-section {
+            margin-top: 40px;
+        }
+
+        .analyses-section h2 {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        .analysis-card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            page-break-inside: avoid;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .analysis-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 10px;
+        }
+
+        .analysis-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #007bff;
+            margin: 0;
+        }
+
+        .analysis-timestamp {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .analysis-content {
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .analysis-content h1,
+        .analysis-content h2,
+        .analysis-content h3,
+        .analysis-content h4,
+        .analysis-content h5,
+        .analysis-content h6 {
+            color: #007bff;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .analysis-content p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .analysis-content strong {
+            color: #495057;
+        }
+
+        .analysis-content ul,
+        .analysis-content ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .analysis-content li {
+            margin-bottom: 5px;
+        }
+
+        .analysis-score {
+            background: #007bff;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .chart-placeholder {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            color: #666;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+
+        .chart-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .no-break {
+            page-break-inside: avoid;
+        }
+
+        .footer-info {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>Device Health Report</h1>
+        <div class="subtitle">{{ device.devicename }} - Generated on {{ report_date }}</div>
+    </div>
+
+    <!-- Device Information -->
+    <div class="device-info">
+        <h2>Device Information</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <div class="info-label">Device Name:</div>
+                <div>{{ device.devicename }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Platform:</div>
+                <div>{{ device.agent_platform or 'N/A' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Organization:</div>
+                <div>{{ device.orgname or 'No Organization' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Group:</div>
+                <div>{{ device.groupname or 'No Group' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Logged User:</div>
+                <div>{{ device.logged_on_user or 'N/A' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Public IP:</div>
+                <div>{{ device.publicIp or 'N/A' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Device UUID:</div>
+                <div style="font-family: monospace; font-size: 12px;">{{ device.deviceuuid }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Report Generated:</div>
+                <div>{{ report_date }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Health Score -->
+    <div class="health-score no-break">
+        <div class="score">{{ device.health_score or 'N/A' }}{% if device.health_score %}%{% endif %}</div>
+        <div class="label">Overall Health Score</div>
+    </div>
+
+    <!-- Charts Section -->
+    {% if charts %}
+    <div class="page-break">
+        <h2>Performance Charts</h2>
+        {% for chart_name, chart_data in charts.items() %}
+        <div class="chart-placeholder">
+            <h3>{{ chart_name }}</h3>
+            <p>Chart data would be rendered here</p>
+            <!-- In a full implementation, this would contain the actual chart image -->
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Analysis Section -->
+    <div class="page-break">
+        <div class="analyses-section">
+            <h2>Device Analysis Results</h2>
+            {% if analyses %}
+                {% for analysis in analyses %}
+                <div class="analysis-card">
+                    <div class="analysis-header">
+                        <h3 class="analysis-title">{{ analysis.name }}</h3>
+                        <div>
+                            {% if analysis.analyzed_at %}
+                            <div class="analysis-timestamp">{{ analysis.analyzed_at.strftime('%Y-%m-%d %H:%M') }}</div>
+                            {% endif %}
+                            {% if analysis.score %}
+                            <div class="analysis-score">Score: {{ analysis.score }}%</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="analysis-content">
+                        {{ analysis.analysis|safe }}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="analysis-card">
+                    <div class="analysis-content">
+                        <p><em>No analysis data available for this device at the time of report generation.</em></p>
+                        <p>Analysis data will appear here once the device has been processed by the Wegweiser analysis engine.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-info">
+        <p>This report was automatically generated by Wegweiser Device Management System</p>
+        <p>Report contains analysis data up to {{ report_date }}</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">UI Components</h1>
+                <p class="lead mb-5">Example implementations of the enhanced UI components</p>
+            </div>
+        </div>
+
+        <!-- Example Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Theme Colors</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-4">These colors change based on the active theme.</p>
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="p-3 rounded d-flex align-items-center justify-content-center" style="background-color: var(--primary); color: #fff; width: 100px; height: 100px;">Primary</div>
+                            <div class="p-3 rounded d-flex align-items-center justify-content-center" style="background-color: var(--secondary); color: #fff; width: 100px; height: 100px;">Secondary</div>
+                            <div class="p-3 rounded d-flex align-items-center justify-content-center" style="background-color: var(--success); color: #fff; width: 100px; height: 100px;">Success</div>
+                            <div class="p-3 rounded d-flex align-items-center justify-content-center" style="background-color: var(--danger); color: #fff; width: 100px; height: 100px;">Danger</div>
+                            <div class="p-3 rounded d-flex align-items-center justify-content-center" style="background-color: var(--warning); color: #000; width: 100px; height: 100px;">Warning</div>
+                            <div class="p-3 rounded d-flex align-items-center justify-content-center" style="background-color: var(--info); color: #000; width: 100px; height: 100px;">Info</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty States Examples -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="mb-4">Empty States</h2>
+                <div class="row">
+                    <!-- Default Empty State -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Default Empty State</h5>
+                            </div>
+                            <div class="card-body">
+                                <div 
+                                    data-empty-state="default"
+                                    data-empty-title="No data available"
+                                    data-empty-message="Data hasn't been added yet for this section."
+                                    data-empty-icon="insert_chart_outlined"
+                                    data-empty-animated="true"
+                                    data-empty-action="Add Data"
+                                    data-empty-action-url="#">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table Empty State -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Table Empty State</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Status</th>
+                                                <th>Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="3" class="p-0">
+                                                    <div 
+                                                        data-empty-state="table"
+                                                        data-empty-title="No records found"
+                                                        data-empty-message="There are no records matching your criteria."
+                                                        data-empty-icon="table_view"
+                                                        data-empty-animated="true">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading States and Skeletons -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="mb-4">Loading States</h2>
+
+                <div class="row">
+                    <!-- Skeleton Example -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Skeleton Loading</h5>
+                                <button class="btn btn-sm btn-primary" id="toggleSkeleton">Toggle Loading</button>
+                            </div>
+                            <div class="card-body">
+                                <div id="skeletonContainer" data-skeleton="text" data-skeleton-count="5"></div>
+                                <div id="actualContent" style="display: none;">
+                                    <h5>Actual Content</h5>
+                                    <p>This content loads after the skeleton placeholders.</p>
+                                    <p>It provides a more pleasant user experience than showing a spinner.</p>
+                                    <p>Particularly useful for content heavy pages.</p>
+                                    <button class="btn btn-outline-primary">Action Button</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Loader Example -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Progress Loading</h5>
+                                <button class="btn btn-sm btn-primary" id="startProgress">Start Loading</button>
+                            </div>
+                            <div class="card-body" id="progressContainer">
+                                <p>Click the button to see a progress loader.</p>
+                                <p>This is perfect for data-heavy operations where you want to show progress.</p>
+                                <div id="progressContent" style="display: none;">
+                                    <p>Content loaded successfully!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Skeleton loading demo
+    document.getElementById('toggleSkeleton').addEventListener('click', function() {
+        const skeletonContainer = document.getElementById('skeletonContainer');
+        const actualContent = document.getElementById('actualContent');
+        
+        if (skeletonContainer.style.display !== 'none') {
+            // Show actual content
+            skeletonContainer.style.display = 'none';
+            actualContent.style.display = 'block';
+            this.textContent = 'Show Skeleton';
+        } else {
+            // Show skeleton
+            skeletonContainer.innerHTML = '';
+            skeletonContainer.style.display = 'block';
+            actualContent.style.display = 'none';
+            this.textContent = 'Show Content';
+            
+            // Re-create skeletons
+            window.WegweiserUI.createSkeleton('text', 5, skeletonContainer);
+        }
+    });
+    
+    // Progress loader demo
+    document.getElementById('startProgress').addEventListener('click', function() {
+        // Initialize progress loader
+        const loader = window.WegweiserUI.createProgressLoader('#progressContainer', true);
+        if (!loader) return;
+        
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 10;
+            loader.updateProgress(progress);
+            
+            if (progress >= 100) {
+                clearInterval(interval);
+                loader.complete();
+                
+                // Show content
+                document.getElementById('progressContent').style.display = 'block';
+            }
+        }, 300);
+    });
+</script>
+{% endblock %}

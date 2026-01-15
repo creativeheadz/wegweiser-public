@@ -1,0 +1,4 @@
+requests>=2.25.0
+logzero>=1.7.0
+cryptography>=3.4.0
+python-socketio[client]>=5.0.0

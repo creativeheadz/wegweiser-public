@@ -1,0 +1,387 @@
+<!-- Filepath: app/templates/administration/admin_ipblocker.html -->
+{% extends "base.html" %}
+
+{% block title %}IP Blocker Management{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">IP Blocker Management</h1>
+
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <button class="btn btn-primary" onclick="fetchLists()">Refresh Lists</button>
+            <button class="btn btn-warning" onclick="verifyBlocks()">Verify Rules</button>
+            <button class="btn btn-danger" onclick="confirmCleanup()">Cleanup All</button>
+        </div>
+        <div class="d-flex">
+            <input type="text" id="whitelistInput" class="form-control me-2" placeholder="IP to whitelist...">
+            <button class="btn btn-success" onclick="addToWhitelist()">Add</button>
+        </div>
+        <div class="d-flex">
+            <input type="text" id="searchInput" class="form-control me-2" placeholder="Search IP or network...">
+            <button class="btn btn-outline-primary" onclick="searchIPs()">Search</button>
+        </div>
+    </div>
+
+    <h2>Whitelist</h2>
+    <div class="table-responsive">
+        <table class="table table-striped" id="whitelist-table">
+            <thead>
+                <tr>
+                    <th>IP Address</th>
+                    <th>Added Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div id="whitelist-pagination" class="d-flex justify-content-center"></div>
+    </div>
+
+    <h2>Blacklist</h2>
+    <div class="table-responsive">
+        <table class="table table-striped" id="blacklist-table">
+            <thead>
+                <tr>
+                    <th>IP Address</th>
+                    <th>Block Date</th>
+                    <th>Network</th>
+                    <th>Country</th>
+                    <th>Description</th>
+                    <th>Abuse Contacts</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div id="blacklist-pagination" class="d-flex justify-content-center"></div>
+    </div>
+
+    <h2>Failed Requests</h2>
+    <div class="table-responsive">
+        <table class="table table-striped" id="failed-requests-table">
+            <thead>
+                <tr>
+                    <th>IP Address</th>
+                    <th>Failed Count</th>
+                    <th>Last Failure</th>
+                    <th>Network Info</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div id="failed-requests-pagination" class="d-flex justify-content-center"></div>
+    </div>
+</div>
+
+<script>
+    let currentPage = {
+        whitelist: 1,
+        blacklist: 1,
+        failed: 1
+    };
+    const itemsPerPage = 10;
+    let searchQuery = '';
+
+    function createPaginationControls(totalItems, currentPage, listType) {
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const paginationDiv = document.getElementById(`${listType}-pagination`);
+        paginationDiv.innerHTML = '';
+
+        if (totalPages <= 1) return;
+
+        const pagination = document.createElement('nav');
+        const ul = document.createElement('ul');
+        ul.className = 'pagination pagination-sm';
+
+        // Previous button
+        ul.appendChild(createPageItem('«', currentPage > 1, () => changePage(listType, currentPage - 1)));
+
+        // Calculate visible pages
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, currentPage + 2);
+
+        // Always show first page
+        if (startPage > 1) {
+            ul.appendChild(createPageItem('1', true, () => changePage(listType, 1)));
+            if (startPage > 2) {
+                ul.appendChild(createPageItem('...', false));
+            }
+        }
+
+        // Show page numbers
+        for (let i = startPage; i <= endPage; i++) {
+            ul.appendChild(createPageItem(i.toString(), true, () => changePage(listType, i), i === currentPage));
+        }
+
+        // Always show last page
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                ul.appendChild(createPageItem('...', false));
+            }
+            ul.appendChild(createPageItem(totalPages.toString(), true, () => changePage(listType, totalPages)));
+        }
+
+        // Next button
+        ul.appendChild(createPageItem('»', currentPage < totalPages, () => changePage(listType, currentPage + 1)));
+
+        pagination.appendChild(ul);
+        paginationDiv.appendChild(pagination);
+    }
+
+    function createPageItem(text, enabled, onClick, active = false) {
+        const li = document.createElement('li');
+        li.className = `page-item ${active ? 'active' : ''} ${!enabled ? 'disabled' : ''}`;
+        
+        const a = document.createElement('a');
+        a.className = 'page-link';
+        a.href = '#';
+        a.textContent = text;
+        
+        if (enabled) {
+            a.onclick = (e) => {
+                e.preventDefault();
+                onClick();
+            };
+        }
+        
+        li.appendChild(a);
+        return li;
+    }
+
+    function changePage(listType, page) {
+        currentPage[listType] = page;
+        fetchLists();
+    }
+
+    function searchIPs() {
+        searchQuery = document.getElementById('searchInput').value.trim();
+        currentPage.whitelist = 1;
+        currentPage.blacklist = 1;
+        currentPage.failed = 1;
+        fetchLists();
+    }
+
+    async function addToWhitelist() {
+    const ip = document.getElementById('whitelistInput').value.trim();
+    if (!ip) {
+        alert('Please enter an IP address');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/ip-blocker/whitelist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ip }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert(`Added ${ip} to whitelist`);
+            document.getElementById('whitelistInput').value = '';
+            fetchLists();
+        } else {
+            alert(`Failed to add ${ip} to whitelist: ${result.reason}`);
+        }
+    } catch (error) {
+        console.error("Error adding to whitelist:", error);
+        alert('Failed to add IP to whitelist');
+    }
+}
+    async function showRequestHistory(ip) {
+        try {
+            const response = await fetch(`/api/ip-blocker/history/${ip}`);
+            const data = await response.json();
+            
+            let historyHtml = '';
+            if (data.success && data.history) {
+                historyHtml = data.history.map(entry => `
+                    <tr>
+                        <td>${new Date(entry.timestamp * 1000).toLocaleString()}</td>
+                        <td>${entry.url}</td>
+                        <td>${entry.type || 'N/A'}</td>
+                    </tr>
+                `).join('');
+            }
+
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.innerHTML = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Request History for ${ip}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info">
+                                Reason: ${data.block_info_reason || 'Unknown'}<br>
+                                Trigger URL: ${data.block_info_trigger_url || 'Unknown'}
+                            </div>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>URL</th>
+                                        <th>Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${historyHtml}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+            
+            modal.addEventListener('hidden.bs.modal', () => {
+                document.body.removeChild(modal);
+            });
+        } catch (error) {
+            console.error("Error fetching history:", error);
+        }
+    }
+
+    async function fetchLists() {
+        const whitelistTable = document.querySelector("#whitelist-table tbody");
+        const blacklistTable = document.querySelector("#blacklist-table tbody");
+        const failedRequestsTable = document.querySelector("#failed-requests-table tbody");
+
+        whitelistTable.innerHTML = "";
+        blacklistTable.innerHTML = "";
+        failedRequestsTable.innerHTML = "";
+
+        try {
+            const params = new URLSearchParams({
+                whitelist_page: currentPage.whitelist,
+                blacklist_page: currentPage.blacklist,
+                failed_page: currentPage.failed,
+                per_page: itemsPerPage,
+                search: searchQuery
+            });
+
+            const response = await fetch(`/api/ip-blocker/lists?${params}`);
+            const data = await response.json();
+
+            if (data.success) {
+                // Render whitelist
+                data.whitelist.items.forEach(item => {
+                    const formattedDate = item.added_date ? new Date(item.added_date * 1000).toLocaleString() : 'N/A';
+                    whitelistTable.innerHTML += `
+                        <tr>
+                            <td>${item.ip}</td>
+                            <td>${formattedDate}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="removeFromWhitelist('${item.ip}')">Remove</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                createPaginationControls(data.whitelist.total, currentPage.whitelist, 'whitelist');
+
+                // Render blacklist
+                data.blacklist.items.forEach(item => {
+                    blacklistTable.innerHTML += `
+                        <tr>
+                            <td>${item.ip}</td>
+                            <td>${item.block_date}</td>
+                            <td>${item.network || 'Unknown'}</td>
+                            <td>${item.country === 'null' ? 'Unknown' : (item.country || 'Unknown')}</td>
+                            <td>
+                                ${item.description || 'No description available'}
+                                ${item.block_info_trigger_url ? '<br><small class="text-muted">Triggered by: ' + item.block_info_trigger_url + '</small>' : ''}
+                            </td>
+                            <td>${item.abuse_contacts ? item.abuse_contacts.join(', ') : 'None'}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-success btn-sm" onclick="unblockIP('${item.ip}')">Unblock</button>
+                                    <button class="btn btn-info btn-sm ms-1" onclick="showRequestHistory('${item.ip}')">View History</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                createPaginationControls(data.blacklist.total, currentPage.blacklist, 'blacklist');
+
+                // Render failed requests
+                data.failed_requests.items.forEach(item => {
+                    failedRequestsTable.innerHTML += `
+                        <tr>
+                            <td>${item.ip}</td>
+                            <td>${item.count}</td>
+                            <td>${item.last_failure ? new Date(item.last_failure * 1000).toLocaleString() : 'N/A'}</td>
+                            <td>${item.network_info || 'N/A'}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-warning btn-sm" onclick="blockIP('${item.ip}')">Block</button>
+                                    <button class="btn btn-info btn-sm ms-1" onclick="showRequestHistory('${item.ip}')">View History</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+                createPaginationControls(data.failed_requests.total, currentPage.failed, 'failed');
+            }
+        } catch (error) {
+            console.error("Error fetching IP lists:", error);
+        }
+    }
+
+    async function removeFromWhitelist(ip) {
+        const response = await fetch('/api/ip-blocker/whitelist', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ip }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert(`Removed ${ip} from whitelist`);
+            fetchLists();
+        } else {
+            alert(`Failed to remove ${ip} from whitelist: ${result.reason}`);
+        }
+    }
+
+    async function unblockIP(ip) {
+        const response = await fetch('/api/ip-blocker/unblock', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ip }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert(`Unblocked ${ip}`);
+            fetchLists();
+        } else {
+            alert(`Failed to unblock ${ip}: ${result.reason}`);
+        }
+    }
+
+    async function blockIP(ip) {
+        const response = await fetch('/api/ip-blocker/block', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ip }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+            alert(`Blocked ${ip}`);
+            fetchLists();
+        } else {
+            alert(`Failed to block ${ip}: ${result.reason}`);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", fetchLists);
+</script>
+{% endblock %}

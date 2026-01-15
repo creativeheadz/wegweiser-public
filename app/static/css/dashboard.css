@@ -1,0 +1,10 @@
+/* filepath: /opt/wegweiser/app/static/css/dashboard.css */
+/* 
+ * Dashboard Styles
+ * Uses unified variables from _variables.css
+ */
+
+/* Import unified variables */
+@import url('./_variables.css');
+
+/* ...existing code... */

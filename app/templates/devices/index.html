@@ -1,0 +1,586 @@
+<!-- Filepath: app/templates/devices/index.html -->
+{% extends "base.html" %}
+{% from 'components/guided_tour.html' import tour_breadcrumb_button, include_tour_system %}
+
+{% block extra_head %}
+<link href="{{ url_for('static', filename='plugins/input-tags/css/tagsinput.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/devices.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="main-content p-4">
+    <!-- Breadcrumb Navigation -->
+    {% call breadcrumb(title='Administration', items=[
+    {'text': 'Device Management', 'icon': 'fas fa-server'}
+    ]) %}
+        {{ tour_breadcrumb_button(tour_data) }}
+    {% endcall %}
+
+    <!-- Top Controls Row -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <!-- Search Box -->
+        <div class="search-container">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent"><i class="fas fa-search"></i></span>
+                <input type="text" id="device-search" class="form-control border-start-0"
+                    placeholder="Search devices...">
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2 flex-wrap">
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-filter me-1"></i> Filter
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="filterDropdown">
+                    <li>
+                        <h6 class="dropdown-header">Filter by Organization</h6>
+                    </li>
+                    <li><a class="dropdown-item filter-item" href="#" data-filter="org" data-value="all">All
+                            Organizations</a></li>
+                    {% for org in organisations %}
+                    <li><a class="dropdown-item filter-item" href="#" data-filter="org"
+                            data-value="{{ org.orguuid }}">{{ org.orgname }}</a></li>
+                    {% endfor %}
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <h6 class="dropdown-header">Filter by Status</h6>
+                    </li>
+                    <li><a class="dropdown-item filter-item" href="#" data-filter="status" data-value="all">All
+                            Statuses</a></li>
+                    <li><a class="dropdown-item filter-item" href="#" data-filter="status"
+                            data-value="online">Online</a></li>
+                    <li><a class="dropdown-item filter-item" href="#" data-filter="status"
+                            data-value="offline">Offline</a></li>
+                </ul>
+            </div>
+            <button class="btn btn-outline-secondary" id="sortButton">
+                <i class="fas fa-sort me-1"></i> Sort
+            </button>
+            <button class="btn btn-outline-secondary" id="layoutToggle" title="Toggle between list and card view">
+                <i id="layoutToggleIcon" class="fas fa-list me-1"></i> <span id="layoutToggleText">List View</span>
+            </button>
+<!--             <button class="btn btn-outline-secondary" id="addDeviceButton">
+                <i class="fas fa-plus me-1"></i> Add Device
+            </button> -->
+        </div>
+    </div>
+
+    <!-- Devices Container with Layout Toggle -->
+    <div id="devicesContainer" class="devices-list" data-layout="{{ 'list' if default_layout == 'list' else 'card' }}">
+        {% if devices_by_group %}
+
+        <!-- LIST VIEW -->
+        <div id="listView" class="layout-view {{ 'active' if default_layout == 'list' else '' }}" {% if default_layout != 'list' %}style="display: none;"{% endif %}>
+            {% for group_key, group_data in devices_by_group %}
+            <div class="group-section" data-group-uuid="{{ group_data.groupuuid }}">
+                <!-- Group Title -->
+                <h6 class="group-title mb-3 text-muted">
+                    <a href="{{ url_for('organisations_bp.view_organisation', org_uuid=group_data.orguuid) }}"
+                        class="text-decoration-none">{{ group_data.orgname }}</a>
+                    <span>/</span>
+                    <a href="{{ url_for('groups_bp.view_group', group_uuid=group_data.groupuuid) }}"
+                        class="text-decoration-none">{{ group_data.groupname }}</a>
+                    <span class="device-count">({{ group_data.devices|length }} device{{ 's' if group_data.devices|length !=
+                        1 else '' }})</span>
+                </h6>
+
+                <!-- Devices in this group -->
+                <div class="devices-group-container mb-4">
+                    {% for device in group_data.devices %}
+                    <div class="col-12 device-card" data-name="{{ device.devicename }}" data-org="{{ device.orguuid }}"
+                        data-group="{{ device.groupuuid }}" data-status="{{ device.status|lower }}"
+                        data-health="{{ device.health_score }}" data-group-key="{{ group_key }}" data-deviceuuid="{{ device.deviceuuid }}">
+                        <div class="row align-items-center p-3 h-100">
+                            <!-- Device Info Section - Now includes health gauge under OS icon -->
+                            <div class="col-12 col-lg-9 mb-3 mb-lg-0">
+                                <div class="d-flex align-items-start gap-3">
+                                    <!-- OS Icon and Health Gauge Column -->
+                                    <div class="d-flex flex-column flex-lg-row align-items-center gap-2 flex-shrink-0 os-gauge-wrap">
+                                        <div class="d-flex align-items-center justify-content-center os-icon-wrap" style="width: 45px; height: 45px;">
+                                            <i class="{{ device.icon }} fs-4 os-icon {% if device.is_online %}os-online{% endif %}"></i>
+                                        </div>
+                                        <!-- Health Gauge underneath OS icon on mobile, next to on desktop -->
+                                        <div class="health-score-compact">
+                                            {% if device.health_score is not none %}
+                                            <div class="health-gauge" style="--progress-angle: {{ (device.health_score * 3.6)|round(1) }}deg; width: 45px; height: 45px;">
+                                                <div class="health-gauge-circle"></div>
+                                                <div class="health-gauge-progress"></div>
+                                                <div class="health-gauge-text">{{ device.health_score }}%</div>
+                                            </div>
+                                            {% else %}
+                                            <div class="health-gauge">
+                                                <div class="health-gauge-circle"></div>
+                                                <div class="health-gauge-text">N/A</div>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <!-- Device Name and Path Info -->
+                                    <div class="min-width-0" style="width: 100%; max-width: calc(100% - 120px);">
+                                        <a href="{{ url_for('devices_bp.view_device', deviceuuid=device.deviceuuid) }}" class="device-name-link text-decoration-none">
+                                            <h5 class="card-title mb-1">
+                                                <i class="fas fa-{{ 'server' if device.device_type == 'server' else 'desktop' }} me-2"></i>{{ device.devicename or device.deviceuuid[:8] }}
+                                            </h5>
+                                        </a>
+                                        <div class="entity-path-compact">
+                                            <div class="d-flex flex-column flex-lg-row gap-1 gap-lg-3 align-items-lg-center flex-wrap">
+                                                <div class="d-flex align-items-center" style="min-height: 1.2rem;">
+                                                    <i class="fas fa-building me-2 flex-shrink-0" style="width: 12px; text-align: center;"></i>
+                                                    <span class="text-truncate text-muted small">{{ device.orgname }}</span>
+                                                </div>
+                                                <div class="d-flex align-items-center" style="min-height: 1.2rem;">
+                                                    <i class="fas fa-users me-2 flex-shrink-0" style="width: 12px; text-align: center;"></i>
+                                                    <span class="text-truncate text-muted small">{{ device.groupname }}</span>
+                                                </div>
+                                                <div class="d-flex align-items-center" style="min-height: 1.2rem;">
+                                                    <i class="fas fa-code me-2 flex-shrink-0" style="width: 12px; text-align: center;"></i>
+                                                    <span class="text-truncate text-muted small">{{ device.deviceuuid }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Actions Section -->
+                            <div class="col-12 col-lg-3">
+                                <div class="d-flex align-items-center justify-content-center justify-content-lg-end gap-2">
+                                    <a href="{{ url_for('devices_bp.view_device', deviceuuid=device.deviceuuid) }}"
+                                        class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1">
+                                        <i class="fas fa-eye"></i>
+                                        <span class="d-none d-sm-inline">View</span>
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-danger delete-device-btn"
+                                        data-device-name="{{ device.devicename }}"
+                                        data-deviceuuid="{{ device.deviceuuid }}">
+                                        <i class="fas fa-trash"></i>
+                                        <span class="d-none d-sm-inline">Delete</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- CARD VIEW -->
+        <div id="cardView" class="layout-view {{ 'active' if default_layout != 'list' else '' }}" {% if default_layout == 'list' %}style="display: none;"{% endif %}>
+            {% for group_key, group_data in devices_by_group %}
+            <div class="group-section-card" data-group-uuid="{{ group_data.groupuuid }}">
+                <!-- Group Title -->
+                <h6 class="group-title mb-3 text-muted">
+                    <a href="{{ url_for('organisations_bp.view_organisation', org_uuid=group_data.orguuid) }}"
+                        class="text-decoration-none">{{ group_data.orgname }}</a>
+                    <span>/</span>
+                    <a href="{{ url_for('groups_bp.view_group', group_uuid=group_data.groupuuid) }}"
+                        class="text-decoration-none">{{ group_data.groupname }}</a>
+                    <span class="device-count">({{ group_data.devices|length }} device{{ 's' if group_data.devices|length !=
+                        1 else '' }})</span>
+                </h6>
+
+                <!-- Devices in card grid -->
+                <div class="row mb-4">
+                    {% for device in group_data.devices %}
+                    <div class="col-12 col-md-6 col-lg-4 mb-3 device-card-wrapper" data-name="{{ device.devicename }}" data-org="{{ device.orguuid }}"
+                        data-group="{{ device.groupuuid }}" data-status="{{ device.status|lower }}"
+                        data-health="{{ device.health_score }}" data-group-key="{{ group_key }}" data-deviceuuid="{{ device.deviceuuid }}">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <a href="{{ url_for('devices_bp.view_device', deviceuuid=device.deviceuuid) }}" class="device-name-link text-decoration-none">
+                                        <h6 class="card-title mb-1">
+                                            <i class="{{ device.icon }} me-2"></i>{{ device.devicename }}
+                                        </h6>
+                                    </a>
+                                    <span class="badge {{ 'bg-success' if device.status and device.status|lower == 'online' else 'bg-danger' }}">
+                                        {{ device.status|default('Offline')|capitalize }}
+                                    </span>
+                                </div>
+
+                                <!-- Breadcrumb-style hierarchy -->
+                                <div class="text-muted small mb-2">
+                                    <i class="fas fa-sitemap me-1"></i>
+                                    <span>{{ device.orgname }}</span>
+                                    <i class="fas fa-chevron-right mx-1"></i>
+                                    <span>{{ device.groupname }}</span>
+                                </div>
+
+                                <!-- Health Score -->
+                                <div class="row text-left">
+                                    <div class="col-12">
+                                        <div class="text-muted small">Health Score</div>
+                                        {% if device.health_score is not none %}
+                                        <div class="fw-bold {{ 'text-success' if device.health_score >= 80 else 'text-warning' if device.health_score >= 60 else 'text-danger' }}">
+                                            {{ "%.1f"|format(device.health_score) }}%
+                                        </div>
+                                        {% else %}
+                                        <div class="fw-bold text-muted">N/A</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Device ID -->
+                                <div class="mt-2">
+                                    <div class="text-muted small">Device ID</div>
+                                    <div class="small font-monospace text-break">
+                                        {{ device.deviceuuid }}
+                                    </div>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="mt-3 d-flex gap-2">
+                                    <a href="{{ url_for('devices_bp.view_device', deviceuuid=device.deviceuuid) }}"
+                                        class="btn btn-sm btn-outline-primary flex-grow-1">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-danger delete-device-btn"
+                                        data-device-name="{{ device.devicename }}"
+                                        data-deviceuuid="{{ device.deviceuuid }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <!-- Empty State -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-6">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body text-center py-5">
+                        <div class="mb-4">
+                            <i class="fas fa-server fa-4x text-muted opacity-50"></i>
+                        </div>
+                        <h4 class="mb-3">It's empty here!</h4>
+                        <p class="text-muted mb-4">
+                            You haven't deployed any agents yet. Why don't you deploy a few agents to see what we can find out?
+                        </p>
+                        <a href="{{ url_for('quickstart_bp.quickstart') }}" class="btn btn-primary">
+                            <i class="fas fa-rocket me-2"></i>Get Started with Quickstart Guide
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script>
+    $(document).ready(function () {
+        let sortByHealth = false;
+        const serverDefaultLayout = "{{ 'list' if default_layout == 'list' else 'card' }}";
+        const storedLayout = localStorage.getItem('devicesLayout');
+        let currentLayout = (storedLayout === 'list' || storedLayout === 'card') ? storedLayout : serverDefaultLayout; // 'list' or 'card'
+
+        function syncLayoutUI() {
+            const showList = currentLayout === 'list';
+            $('#listView').toggle(showList).toggleClass('active', showList);
+            $('#cardView').toggle(!showList).toggleClass('active', !showList);
+
+            // Toggle button shows destination view
+            $('#layoutToggleText').text(showList ? 'Card View' : 'List View');
+            const iconClass = showList ? 'fa-th' : 'fa-list';
+            $('#layoutToggleIcon').removeClass('fa-th fa-list').addClass(iconClass);
+
+            $('#devicesContainer').attr('data-layout', currentLayout);
+        }
+
+        async function persistLayoutPreference(layout) {
+            // Local fallback (always)
+            localStorage.setItem('devicesLayout', layout);
+
+            try {
+                const res = await fetch('/devices/preferences/layout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ layout })
+                });
+                // Ignore non-2xx here; localStorage still keeps the preference.
+                if (!res.ok) {
+                    console.warn('Failed to persist layout preference:', await res.text());
+                }
+            } catch (e) {
+                console.warn('Failed to persist layout preference:', e);
+            }
+        }
+
+        // Apply preference immediately on load (prevents mismatch if localStorage overrides server)
+        syncLayoutUI();
+
+        // Helper function to apply search/filter/sort to all visible devices
+        function applyFilters() {
+            const searchTerm = $('#device-search').val().toLowerCase();
+            const currentView = currentLayout === 'list' ? '#listView' : '#cardView';
+
+            // Get all group sections in current view
+            const groupSelector = currentLayout === 'list' ? '.group-section' : '.group-section-card';
+            const deviceSelector = currentLayout === 'list' ? '.device-card' : '.device-card-wrapper';
+            const containerSelector = currentLayout === 'list' ? '.devices-group-container' : '.row';
+
+            $(currentView).find(groupSelector).each(function () {
+                const groupSection = $(this);
+                let groupHasVisibleDevices = false;
+
+                groupSection.find(deviceSelector).each(function () {
+                    const deviceName = $(this).data('name').toLowerCase();
+                    const groupKey = $(this).data('group-key').toLowerCase();
+                    const deviceUuid = $(this).data('deviceuuid').toLowerCase();
+
+                    if (deviceName.includes(searchTerm) || groupKey.includes(searchTerm) || deviceUuid.includes(searchTerm)) {
+                        $(this).show();
+                        groupHasVisibleDevices = true;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                // Show/hide entire group section
+                if (groupHasVisibleDevices) {
+                    groupSection.show();
+                } else {
+                    groupSection.hide();
+                }
+            });
+        }
+
+        // Search functionality
+        $('#device-search').on('input', function () {
+            applyFilters();
+        });
+
+        // Filter functionality
+        $('.filter-item').on('click', function (e) {
+            e.preventDefault();
+
+            const filterType = $(this).data('filter');
+            const filterValue = $(this).data('value');
+
+            // Update dropdown button text
+            $('#filterDropdown').text($(this).text());
+
+            // Apply filter to both views
+            const groupSelector = '.group-section, .group-section-card';
+            const deviceSelector = '.device-card, .device-card-wrapper';
+
+            $(groupSelector).each(function () {
+                const groupSection = $(this);
+                let groupHasVisibleDevices = false;
+
+                groupSection.find(deviceSelector).each(function () {
+                    let shouldShow = false;
+
+                    if (filterValue === 'all') {
+                        shouldShow = true;
+                    } else if (filterType === 'org') {
+                        shouldShow = $(this).data('org') === filterValue;
+                    } else if (filterType === 'status') {
+                        shouldShow = $(this).data('status') === filterValue;
+                    }
+
+                    if (shouldShow) {
+                        $(this).show();
+                        groupHasVisibleDevices = true;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                // Show/hide entire group section
+                if (groupHasVisibleDevices) {
+                    groupSection.show();
+                } else {
+                    groupSection.hide();
+                }
+            });
+        });
+
+        // Sort functionality (toggle between name and health)
+        $('#sortButton').on('click', function () {
+            sortByHealth = !sortByHealth;
+
+            // Sort in both views
+            $('.group-section, .group-section-card').each(function () {
+                const groupSection = $(this);
+                const containerSelector = groupSection.hasClass('group-section') ? '.devices-group-container' : '.row';
+                const deviceSelector = groupSection.hasClass('group-section') ? '.device-card' : '.device-card-wrapper';
+
+                const groupContainer = groupSection.find(containerSelector);
+                const devices = groupContainer.find(deviceSelector).get();
+
+                devices.sort(function (a, b) {
+                    if (sortByHealth) {
+                        return $(b).data('health') - $(a).data('health');
+                    } else {
+                        return $(a).data('name').localeCompare($(b).data('name'));
+                    }
+                });
+
+                groupContainer.append(devices);
+            });
+
+            // Update button text
+            $(this).html(sortByHealth ?
+                '<i class="fas fa-sort me-1"></i> Sort by Name' :
+                '<i class="fas fa-sort me-1"></i> Sort by Health');
+        });
+
+        // Layout toggle functionality
+        $('#layoutToggle').on('click', function () {
+            currentLayout = currentLayout === 'list' ? 'card' : 'list';
+
+            syncLayoutUI();
+            persistLayoutPreference(currentLayout);
+
+            // Reapply filters to new view
+            applyFilters();
+        });
+
+        // Delete device functionality
+        $(document).on('click', '.delete-device-btn', function () {
+            const deviceuuid = $(this).data('deviceuuid');
+            const deviceName = $(this).data('device-name');
+
+            // Custom confirmation dialog
+            const result = confirm(
+                `Are you sure you want to delete device "${deviceName}"?\n\n` +
+                'This will permanently delete:\n' +
+                '• All device data and metadata\n' +
+                '• Analysis history and reports\n' +
+                '• Event logs and AI analyses\n' +
+                '• Device monitoring history\n\n' +
+                'This action cannot be undone.'
+            );
+
+            if (!result) return;
+
+            // Disable the delete button to prevent double-clicks
+            $(this).prop('disabled', true);
+
+            fetch('/devices/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ deviceuuids: [deviceuuid] })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        $(this).prop('disabled', false);
+                    }
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    $(this).prop('disabled', false);
+                    location.reload();
+                });
+        });
+    });
+</script>
+
+<script>
+// Live update OS icon glow and status badges using NATS status
+(function() {
+  function applyTenantDeviceStatuses(devices) {
+    const byId = {};
+    devices.forEach(d => { if (d && d.device_uuid) byId[d.device_uuid] = d; });
+
+    document.querySelectorAll('.device-card[data-deviceuuid], .device-card-wrapper[data-deviceuuid]').forEach(function(el) {
+      const uuid = el.getAttribute('data-deviceuuid');
+      const d = byId[uuid];
+      if (!d) return;
+      const statusLower = (d.status || (d.is_online ? 'Online' : 'Offline')).toLowerCase();
+
+      // Update list-view OS icon glow
+      const osIcon = el.querySelector('.os-icon');
+      if (osIcon) {
+        osIcon.classList.remove('os-online','os-stale');
+        if (statusLower === 'online') osIcon.classList.add('os-online');
+        else if (statusLower === 'stale') osIcon.classList.add('os-stale');
+      }
+
+      // Update data-status for filtering
+      el.setAttribute('data-status', statusLower);
+
+      // Update card-view badge if present
+      const badge = el.querySelector('.card-body .badge');
+      if (badge) {
+        badge.classList.remove('bg-success', 'bg-warning', 'bg-danger', 'bg-secondary');
+        if (statusLower === 'online') { badge.classList.add('bg-success'); badge.textContent = 'Online'; }
+        else if (statusLower === 'stale') { badge.classList.add('bg-warning'); badge.textContent = 'Stale'; }
+        else if (statusLower === 'offline') { badge.classList.add('bg-danger'); badge.textContent = 'Offline'; }
+        else { badge.classList.add('bg-secondary'); badge.textContent = 'Unknown'; }
+      }
+    });
+  }
+
+  async function pollDeviceStatuses() {
+    let usedTenant = false;
+    const tenantUuid = "{{ session.get('tenant_uuid') or '' }}";
+    try {
+      if (tenantUuid) {
+        const res = await fetch(`/api/nats/tenant/${tenantUuid}/devices`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json && Array.isArray(json.devices)) {
+            applyTenantDeviceStatuses(json.devices);
+            usedTenant = true;
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Tenant status fetch failed, falling back to per-device');
+    }
+
+    if (!usedTenant) {
+      const els = Array.from(document.querySelectorAll('.device-card[data-deviceuuid], .device-card-wrapper[data-deviceuuid]'));
+      await Promise.all(els.map(async (el) => {
+        const uuid = el.getAttribute('data-deviceuuid');
+        try {
+          const res = await fetch(`/api/nats/device/${uuid}/status`);
+          if (res.ok) {
+            const json = await res.json();
+            if (json && json.success !== false) {
+              applyTenantDeviceStatuses([{ device_uuid: uuid, is_online: !!json.is_online, status: json.status }]);
+            }
+          }
+        } catch (e) { /* ignore single-device errors */ }
+      }));
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    pollDeviceStatuses();
+    setInterval(pollDeviceStatuses, 20000);
+  });
+})();
+</script>
+
+
+<!-- Include the guided tour system -->
+{{ include_tour_system('devices', tour_data) }}
+{% endblock %}

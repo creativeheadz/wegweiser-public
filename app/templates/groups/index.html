@@ -1,0 +1,388 @@
+<!-- Filepath: app/templates/groups/index.html -->
+{% extends "base.html" %}
+{% from 'components/guided_tour.html' import tour_breadcrumb_button, include_tour_system %}
+
+{% block title %}Group Management - Wegweiser{% endblock %}
+{% block extra_head %}
+<link href="{{ url_for('static', filename='css/groups.css') }}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+
+<div class="main-content p-4">
+    <!-- Breadcrumb Navigation -->
+    {% call breadcrumb(title='Administration', items=[
+    {'text': 'Group Management', 'icon': 'fas fa-users'}
+    ]) %}
+            {{ tour_breadcrumb_button(tour_data) }}
+    {% endcall %}
+
+    <!-- Top Controls Row -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <!-- Search Box -->
+        <div class="search-container mb-3 mb-md-0">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent"><i class="fas fa-search"></i></span>
+                <input type="text" id="searchInput" class="form-control border-start-0"
+                    placeholder="Search groups...">
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2">
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-filter me-1"></i> Filter
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="filterDropdown">
+                    <li>
+                        <h6 class="dropdown-header">Filter by Organization</h6>
+                    </li>
+                    <li><a class="dropdown-item filter-item" href="#" data-filter="org" data-value="">All
+                            Organizations</a></li>
+                    {% for choice in form.orgselect.choices %}
+                    <li><a class="dropdown-item filter-item" href="#" data-filter="org"
+                            data-value="{{ choice[0] }}">{{ choice[1] }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <button class="btn btn-outline-secondary" id="sortButton">
+                <i class="fas fa-sort me-1"></i> Sort
+            </button>
+            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#createGroupModal">
+                <i class="fas fa-plus me-1"></i> Create New Group
+            </button>
+        </div>
+    </div>
+
+    <!-- Groups Grid Container -->
+    <div id="groupsContainer" class="groups-list">
+        {% for org_key, org_data in groups_by_org %}
+        <div class="org-section">
+            <!-- Organization Title -->
+            <h6 class="org-title mb-3 text-muted">
+                <a href="{{ url_for('organisations_bp.view_organisation', org_uuid=org_data.orguuid) }}"
+                    class="text-decoration-none">{{ org_data.orgname }}</a>
+                <span class="group-count">({{ org_data.groups|length }} group{{ 's' if org_data.groups|length != 1 else '' }})</span>
+            </h6>
+
+            <!-- Groups in this organization -->
+            <div class="groups-org-container mb-4">
+                {% for group in org_data.groups %}
+                <div class="col-12 group-card" org="{{ group.orguuid|string }}" data-name="{{ group.groupname }}"
+                    health="{{ group.health_score }}" devices="{{ group.device_count }}" data-org-key="{{ org_key }}">
+                    <div class="row align-items-center p-3 rounded shadow-sm h-100">
+                        <!-- Group Info Section -->
+                        <div class="col-12 col-lg-9 mb-3 mb-lg-0">
+                            <div class="d-flex align-items-start gap-2">
+                                <!-- Avatar and Health Gauge Column -->
+                                <div class="d-flex flex-column flex-lg-row align-items-center gap-2 flex-shrink-0 avatar-gauge-wrap">
+                                    <div class="avatar rounded-3 border flex-shrink-0">
+                                        <span class="initials fs-4">{{ group.initials[:2] }}</span>
+                                    </div>
+                                    <!-- Health Gauge next to avatar -->
+                                    <div class="health-score-compact">
+                                        {% if group.health_score is not none and group.health_score > 0 %}
+                                        <div class="health-gauge" style="--progress-angle: {{ (group.health_score * 3.6)|round(1) }}deg; width: 45px; height: 45px;">
+                                            <div class="health-gauge-circle"></div>
+                                            <div class="health-gauge-progress"></div>
+                                            <div class="health-gauge-text">{{ group.health_score }}%</div>
+                                        </div>
+                                        {% elif group.health_score is not none and group.health_score == 0 %}
+                                        <div class="health-gauge" style="--progress-angle: 0deg; width: 45px; height: 45px;">
+                                            <div class="health-gauge-circle"></div>
+                                            <div class="health-gauge-progress"></div>
+                                            <div class="health-gauge-text">0%</div>
+                                        </div>
+                                        {% else %}
+                                        <div class="health-gauge" style="--progress-angle: 0deg; width: 45px; height: 45px;">
+                                            <div class="health-gauge-circle"></div>
+                                            <div class="health-gauge-progress"></div>
+                                            <div class="health-gauge-text">N/A</div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="min-width-0" style="width: 100%; max-width: calc(100% - 120px);">
+                                    <h6 class="mb-1 fw-bold text-truncate">
+                                        <a href="{{ url_for('groups_bp.view_group', group_uuid=group.groupuuid) }}"
+                                            class="group-name-link">
+                                            {{ group.groupname }}
+                                        </a>
+                                    </h6>
+                                    <div class="entity-path-compact">
+                                        <div class="d-flex flex-column flex-lg-row gap-1 gap-lg-3 align-items-lg-center flex-wrap">
+                                            <small class="text-muted d-flex align-items-center">
+                                                <i class="fas fa-building me-1 flex-shrink-0"></i>
+                                                <span class="text-truncate">{{ org_data.orgname }}</span>
+                                            </small>
+                                            <small class="text-muted d-flex align-items-center">
+                                                <i class="fas fa-server me-1 flex-shrink-0"></i>
+                                                <span class="text-truncate">{{ group.device_count }} Device{{ 's' if group.device_count != 1 else '' }}</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Actions Section -->
+                        <div class="col-6 col-lg-3">
+                            <div class="d-flex align-items-center justify-content-center justify-content-lg-end gap-2">
+                                <a href="{{ url_for('groups_bp.view_group', group_uuid=group.groupuuid) }}"
+                                    class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1">
+                                    <i class="fas fa-eye"></i>
+                                    <span class="d-none d-sm-inline">View</span>
+                                </a>
+                                <button class="btn btn-sm btn-outline-danger delete-group-btn"
+                                    data-group-name="{{ group.groupname }}" data-group-uuid="{{ group.groupuuid }}">
+                                    <i class="fas fa-trash"></i>
+                                    <span class="d-none d-sm-inline">Delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Create Group Modal -->
+    <div id="createGroupModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Group</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="createGroupForm" method="POST">
+                    {{ form.hidden_tag() }}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            {{ form.groupname.label(class="form-label") }}
+                            {{ form.groupname(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.orgselect.label(class="form-label") }}
+                            {{ form.orgselect(class="form-select") }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create Group</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Group Modal -->
+    <div id="deleteGroupModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete the group "<span id="deleteGroupName"></span>"?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    {{ form.hidden_tag() }}
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ super() }}
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script>
+    $(document).ready(function () {
+        // Search functionality
+        $('#searchInput').on('input', function () {
+            const searchTerm = $(this).val().toLowerCase();
+
+            $('.org-section').each(function () {
+                const orgSection = $(this);
+                let orgHasVisibleGroups = false;
+
+                orgSection.find('.group-card').each(function () {
+                    const groupName = $(this).data('name').toLowerCase();
+                    const orgKey = $(this).data('org-key').toLowerCase();
+
+                    if (groupName.includes(searchTerm) || orgKey.includes(searchTerm)) {
+                        $(this).show();
+                        orgHasVisibleGroups = true;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                // Show/hide entire organization section based on whether it has visible groups
+                if (orgHasVisibleGroups) {
+                    orgSection.show();
+                } else {
+                    orgSection.hide();
+                }
+            });
+        });
+
+        // Filter functionality
+        $('.filter-item').on('click', function (e) {
+            e.preventDefault();
+
+            const filterType = $(this).data('filter');
+            const filterValue = $(this).data('value');
+
+            // Update dropdown button text
+            $('#filterDropdown').text($(this).text());
+
+            // Apply filter
+            $('.org-section').each(function () {
+                const orgSection = $(this);
+                let orgHasVisibleGroups = false;
+
+                orgSection.find('.group-card').each(function () {
+                    let shouldShow = false;
+
+                    if (filterValue === '') {
+                        shouldShow = true;
+                    } else if (filterType === 'org') {
+                        // Convert both values to strings for comparison
+                        const cardOrgValue = $(this).attr('org');
+                        const selectedOrgValue = String(filterValue);
+                        shouldShow = cardOrgValue === selectedOrgValue;
+                    }
+
+                    if (shouldShow) {
+                        $(this).show();
+                        orgHasVisibleGroups = true;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                // Show/hide entire organization section
+                if (orgHasVisibleGroups) {
+                    orgSection.show();
+                } else {
+                    orgSection.hide();
+                }
+            });
+        });
+
+        // Sort functionality (toggle between name and health)
+        let sortByHealth = false;
+
+        $('#sortButton').on('click', function () {
+            sortByHealth = !sortByHealth;
+
+            $('.org-section').each(function () {
+                const orgContainer = $(this).find('.groups-org-container');
+                const groups = orgContainer.find('.group-card').get();
+
+                groups.sort(function (a, b) {
+                    if (sortByHealth) {
+                        return $(b).attr('health') - $(a).attr('health');
+                    } else {
+                        return $(a).data('name').localeCompare($(b).data('name'));
+                    }
+                });
+
+                orgContainer.append(groups);
+            });
+
+            // Update button text
+            $(this).html(sortByHealth ?
+                '<i class="fas fa-sort me-1"></i> Sort by Name' :
+                '<i class="fas fa-sort me-1"></i> Sort by Health');
+        });
+
+        // Form handling
+        $('#createGroupForm').on('submit', function (e) {
+            e.preventDefault();
+
+            let formData = new FormData(this);
+
+            $.ajax({
+                url: '/groups/add',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRFToken', $('input[name=csrf_token]').val());
+                },
+                success: function (response) {
+                    $('#createGroupModal').modal('hide');
+                    setTimeout(function () {
+                        window.location.href = window.location.href;
+                    }, 100);
+                },
+                error: function (xhr) {
+                    $('#createGroupModal').modal('hide');
+                    setTimeout(function () {
+                        window.location.href = window.location.href;
+                    }, 100);
+                }
+            });
+        });
+
+        // Delete functionality
+        $('.delete-group-btn').click(function () {
+            let groupName = $(this).data('group-name');
+            let groupUuid = $(this).data('group-uuid');
+            $('#deleteGroupName').text(groupName);
+            $('#confirmDeleteBtn').data('group-uuid', groupUuid);
+            $('#deleteGroupModal').modal('show');
+        });
+
+        $('#confirmDeleteBtn').click(function () {
+            let groupUuid = $(this).data('group-uuid');
+
+            $.ajax({
+                url: '/groups/delete',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ groupuuid: groupUuid }),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('X-CSRFToken', $('input[name=csrf_token]').val());
+                },
+                success: function (response) {
+                    $('#deleteGroupModal').modal('hide');
+                    setTimeout(function () {
+                        window.location.href = window.location.href;
+                    }, 100);
+                },
+                error: function (xhr) {
+                    $('#deleteGroupModal').modal('hide');
+                    setTimeout(function () {
+                        window.location.href = window.location.href;
+                    }, 100);
+                }
+            });
+        });
+
+        // Modal cleanup
+        $('#createGroupModal').on('hidden.bs.modal', function () {
+            $('#createGroupForm')[0].reset();
+        });
+
+        $('#deleteGroupModal').on('hidden.bs.modal', function () {
+            $('#deleteGroupName').text('');
+            $('#confirmDeleteBtn').removeData('group-uuid');
+        });
+
+
+    });
+</script>
+{{ include_tour_system(tour_data.page_identifier if tour_data else 'groups', tour_data) }}
+
+{% endblock %}

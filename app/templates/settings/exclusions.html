@@ -1,0 +1,744 @@
+{% extends "base.html" %}
+{% from 'components/guided_tour.html' import tour_breadcrumb_button, include_tour_system %}
+
+{% block title %}Analysis Exclusions - Wegweiser{% endblock %}
+
+{% set icon_mapping = {
+    'journalFiltered': 'fa-solid fa-book',
+    'authFiltered': 'fa-solid fa-user-shield',
+    'eventsFiltered-Application': 'fa-solid fa-laptop-code',
+    'eventsFiltered-Security': 'fa-solid fa-shield-alt',
+    'eventsFiltered-System': 'fa-solid fa-cogs',
+    'syslogFiltered': 'fa-solid fa-server',
+    'kernFiltered': 'fa-solid fa-memory',
+    'msinfo-InstalledPrograms': 'fa-solid fa-box-open',
+    'msinfo-NetworkConfig': 'fa-solid fa-network-wired',
+    'msinfo-StorageInfo': 'fa-solid fa-database',
+    'msinfo-SystemHardwareConfig': 'fa-solid fa-microchip',
+    'msinfo-SystemSoftwareConfig': 'fa-solid fa-code',
+    'windrivers': 'fa-solid fa-wind',
+    'msinfo-RecentAppCrashes': 'fa-solid fa-bug',
+    'group-health-analysis': 'fa-solid fa-users-cog',
+    'macos-hardware-eol': 'fa-solid fa-microchip',
+    'macos-os-version': 'fab fa-apple',
+    'macos-log-health': 'fa-solid fa-heartbeat',
+    'organization-health-analysis': 'fa-solid fa-building',
+    'tenant-ai-recommendations': 'fa-solid fa-robot',
+    'tenant-ai-suggestions': 'fa-solid fa-chart-line',
+    'lynis-audit': 'fa-solid fa-shield-halved',
+    'loki-scan': 'fa-solid fa-virus-slash',
+    'default': 'fa-solid fa-question'
+} %}
+
+{% block content %}
+<div class="main-content">
+    <!-- Breadcrumb -->
+    {% call breadcrumb(title='Settings', items=[
+        {'text': 'Analysis Settings', 'url': url_for('settings_bp.settings_index'), 'icon': 'fas fa-sliders-h'},
+        {'text': 'Exclusions', 'icon': 'fas fa-filter'}
+    ]) %}
+    {% endcall %}
+
+    <!-- Header card -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-filter me-2"></i>Analysis Exclusions & Priorities
+            </h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-2">
+                Configure what the AI should ignore or prioritize when calculating health scores. 
+                Exclusions reduce the impact of certain issues on the health score, while priorities increase their impact.
+            </p>
+            <div class="alert alert-info mb-0">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Hierarchy:</strong> Settings cascade from Tenant → Organisation → Group → Device. 
+                Lower-level settings add to (not replace) higher-level policies.
+            </div>
+        </div>
+    </div>
+
+    <!-- Scope selector tabs -->
+    <ul class="nav nav-tabs mb-4" id="scopeTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="tenant-tab" data-bs-toggle="tab" data-bs-target="#tenant-scope" type="button" role="tab" aria-controls="tenant-scope" aria-selected="true">
+                <i class="fas fa-building me-1"></i> Tenant-Wide
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="org-tab" data-bs-toggle="tab" data-bs-target="#org-scope" type="button" role="tab" aria-controls="org-scope" aria-selected="false">
+                <i class="fas fa-sitemap me-1"></i> By Organisation
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="group-tab" data-bs-toggle="tab" data-bs-target="#group-scope" type="button" role="tab" aria-controls="group-scope" aria-selected="false">
+                <i class="fas fa-users me-1"></i> By Group
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="scopeTabContent">
+        <!-- Tenant-wide exclusions -->
+        <div class="tab-pane fade show active" id="tenant-scope" role="tabpanel" aria-labelledby="tenant-tab">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-building me-2"></i>Tenant-Wide Exclusions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">These settings apply to all devices across your entire tenant.</p>
+                    
+                    <!-- Analysis type selector -->
+                    <div class="mb-4">
+                        <label for="tenantAnalysisType" class="form-label">Select Analysis Type</label>
+                        <select class="form-select" id="tenantAnalysisType">
+                            <option value="">-- Select an analysis type --</option>
+                            {% for group_name, analyses in analysis_groups.items() %}
+                            <optgroup label="{{ group_name }}">
+                                {% for analysis in analyses %}
+                                <option value="{{ analysis.type }}">{{ analysis.name }}</option>
+                                {% endfor %}
+                            </optgroup>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Exclusion form (hidden until analysis selected) -->
+                    <div id="tenantExclusionForm" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-minus-circle text-warning me-1"></i>
+                                        Exclusions <small class="text-muted">(reduce score impact)</small>
+                                    </label>
+                                    <textarea class="form-control" id="tenantExclusions" rows="4" 
+                                              placeholder="e.g., Ignore disconnected ethernet adapters&#10;Ignore legacy software XYZ" 
+                                              maxlength="500"></textarea>
+                                    <div class="form-text"><span id="tenantExclusionsCount">0</span>/500 characters</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-plus-circle text-success me-1"></i>
+                                        Priorities <small class="text-muted">(increase score impact)</small>
+                                    </label>
+                                    <textarea class="form-control" id="tenantPriorities" rows="4" 
+                                              placeholder="e.g., Prioritize disk space issues&#10;Focus on security vulnerabilities" 
+                                              maxlength="500"></textarea>
+                                    <div class="form-text"><span id="tenantPrioritiesCount">0</span>/500 characters</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="saveTenantExclusion">
+                            <i class="fas fa-save me-1"></i> Save Tenant Exclusions
+                        </button>
+                        <button class="btn btn-outline-danger ms-2" id="clearTenantExclusion">
+                            <i class="fas fa-trash me-1"></i> Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Organisation exclusions -->
+        <div class="tab-pane fade" id="org-scope" role="tabpanel" aria-labelledby="org-tab">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-sitemap me-2"></i>Organisation Exclusions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">These settings apply to all devices within a specific organisation.</p>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="orgSelector" class="form-label">Select Organisation</label>
+                            <select class="form-select" id="orgSelector">
+                                <option value="">-- Select an organisation --</option>
+                                {% for org in organisations %}
+                                <option value="{{ org.orguuid }}">{{ org.orgname }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="orgAnalysisType" class="form-label">Select Analysis Type</label>
+                            <select class="form-select" id="orgAnalysisType" disabled>
+                                <option value="">-- Select an analysis type --</option>
+                                {% for group_name, analyses in analysis_groups.items() %}
+                                <optgroup label="{{ group_name }}">
+                                    {% for analysis in analyses %}
+                                    <option value="{{ analysis.type }}">{{ analysis.name }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="orgExclusionForm" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-minus-circle text-warning me-1"></i>
+                                        Exclusions <small class="text-muted">(reduce score impact)</small>
+                                    </label>
+                                    <textarea class="form-control" id="orgExclusions" rows="4" 
+                                              placeholder="e.g., Ignore disconnected ethernet adapters" 
+                                              maxlength="500"></textarea>
+                                    <div class="form-text"><span id="orgExclusionsCount">0</span>/500 characters</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-plus-circle text-success me-1"></i>
+                                        Priorities <small class="text-muted">(increase score impact)</small>
+                                    </label>
+                                    <textarea class="form-control" id="orgPriorities" rows="4" 
+                                              placeholder="e.g., Prioritize disk space issues" 
+                                              maxlength="500"></textarea>
+                                    <div class="form-text"><span id="orgPrioritiesCount">0</span>/500 characters</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="saveOrgExclusion">
+                            <i class="fas fa-save me-1"></i> Save Organisation Exclusions
+                        </button>
+                        <button class="btn btn-outline-danger ms-2" id="clearOrgExclusion">
+                            <i class="fas fa-trash me-1"></i> Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Group exclusions -->
+        <div class="tab-pane fade" id="group-scope" role="tabpanel" aria-labelledby="group-tab">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-users me-2"></i>Group Exclusions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">These settings apply to all devices within a specific group.</p>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label for="groupSelector" class="form-label">Select Group</label>
+                            <select class="form-select" id="groupSelector">
+                                <option value="">-- Select a group --</option>
+                                {% for group in groups %}
+                                <option value="{{ group.groupuuid }}">{{ group.groupname }} ({{ group.org_name }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="groupAnalysisType" class="form-label">Select Analysis Type</label>
+                            <select class="form-select" id="groupAnalysisType" disabled>
+                                <option value="">-- Select an analysis type --</option>
+                                {% for group_name, analyses in analysis_groups.items() %}
+                                <optgroup label="{{ group_name }}">
+                                    {% for analysis in analyses %}
+                                    <option value="{{ analysis.type }}">{{ analysis.name }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="groupExclusionForm" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-minus-circle text-warning me-1"></i>
+                                        Exclusions <small class="text-muted">(reduce score impact)</small>
+                                    </label>
+                                    <textarea class="form-control" id="groupExclusions" rows="4" 
+                                              placeholder="e.g., Ignore disconnected ethernet adapters" 
+                                              maxlength="500"></textarea>
+                                    <div class="form-text"><span id="groupExclusionsCount">0</span>/500 characters</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-plus-circle text-success me-1"></i>
+                                        Priorities <small class="text-muted">(increase score impact)</small>
+                                    </label>
+                                    <textarea class="form-control" id="groupPriorities" rows="4" 
+                                              placeholder="e.g., Prioritize disk space issues" 
+                                              maxlength="500"></textarea>
+                                    <div class="form-text"><span id="groupPrioritiesCount">0</span>/500 characters</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" id="saveGroupExclusion">
+                            <i class="fas fa-save me-1"></i> Save Group Exclusions
+                        </button>
+                        <button class="btn btn-outline-danger ms-2" id="clearGroupExclusion">
+                            <i class="fas fa-trash me-1"></i> Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current exclusions summary -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-list me-2"></i>Active Exclusions Summary
+            </h5>
+        </div>
+        <div class="card-body">
+            <div id="exclusionsSummary">
+                <p class="text-muted">Select an analysis type above to view and manage exclusions.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tenantId = '{{ tenant_uuid }}';
+    const csrfToken = '{{ csrf_token() }}';
+    
+    // Character counters
+    function setupCharCounter(textareaId, counterId) {
+        const textarea = document.getElementById(textareaId);
+        const counter = document.getElementById(counterId);
+        if (textarea && counter) {
+            textarea.addEventListener('input', function() {
+                counter.textContent = this.value.length;
+            });
+        }
+    }
+    
+    setupCharCounter('tenantExclusions', 'tenantExclusionsCount');
+    setupCharCounter('tenantPriorities', 'tenantPrioritiesCount');
+    setupCharCounter('orgExclusions', 'orgExclusionsCount');
+    setupCharCounter('orgPriorities', 'orgPrioritiesCount');
+    setupCharCounter('groupExclusions', 'groupExclusionsCount');
+    setupCharCounter('groupPriorities', 'groupPrioritiesCount');
+    
+    // Fetch all exclusions for summary display
+    async function fetchAllExclusions(entityType, entityId) {
+        try {
+            const response = await fetch(`/api/analysis-config/exclusions/${entityType}/${entityId}`, {
+                headers: { 'X-CSRFToken': csrfToken }
+            });
+            if (response.ok) {
+                return await response.json();
+            }
+            return null;
+        } catch (e) {
+            console.error('Error fetching all exclusions:', e);
+            return null;
+        }
+    }
+    
+    // Analysis type display names
+    const analysisTypeNames = {
+        'authFiltered': 'Authentication & Authorization',
+        'bluetoothFiltered': 'Bluetooth Devices',
+        'diskFiltered': 'Disk & Storage',
+        'displayFiltered': 'Display Configuration',
+        'hardwareFiltered': 'Hardware Overview',
+        'memoryFiltered': 'Memory Analysis',
+        'networkFiltered': 'Network Configuration',
+        'osFiltered': 'Operating System',
+        'performanceFiltered': 'Performance Metrics',
+        'powerFiltered': 'Power Management',
+        'printerFiltered': 'Printers',
+        'securityFiltered': 'Security Posture',
+        'softwareFiltered': 'Software Inventory',
+        'startupFiltered': 'Startup Items',
+        'systemFiltered': 'System Overview',
+        'usbFiltered': 'USB Devices',
+        'virtualFiltered': 'Virtualization',
+        'wifiFiltered': 'WiFi Networks'
+    };
+    
+    // Update exclusions summary card
+    async function updateExclusionsSummary() {
+        const summaryDiv = document.getElementById('exclusionsSummary');
+        summaryDiv.innerHTML = '<p class="text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Loading exclusions...</p>';
+        
+        // Fetch all exclusions at each level
+        const [tenantData, orgData, groupData] = await Promise.all([
+            fetchAllExclusions('tenant', tenantId),
+            Promise.all(Array.from(document.getElementById('orgSelector').options)
+                .filter(o => o.value)
+                .map(o => fetchAllExclusions('organisation', o.value).then(d => ({ org: o.text, data: d })))),
+            Promise.all(Array.from(document.getElementById('groupSelector').options)
+                .filter(o => o.value)
+                .map(o => fetchAllExclusions('group', o.value).then(d => ({ group: o.text, data: d }))))
+        ]);
+        
+        let html = '';
+        let hasAny = false;
+        
+        // Tenant exclusions
+        if (tenantData?.exclusions?.length > 0) {
+            hasAny = true;
+            html += `<h6 class="text-primary mb-2"><i class="fas fa-building me-2"></i>Tenant-Level Exclusions</h6>`;
+            html += '<ul class="list-group mb-3">';
+            for (const excl of tenantData.exclusions) {
+                const name = analysisTypeNames[excl.analysis_type] || excl.analysis_type;
+                html += `<li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div>
+                        <strong>${name}</strong>
+                        ${excl.exclusions ? `<br><small class="text-muted">Exclusions: ${excl.exclusions.substring(0, 80)}${excl.exclusions.length > 80 ? '...' : ''}</small>` : ''}
+                        ${excl.priorities ? `<br><small class="text-success">Priorities: ${excl.priorities.substring(0, 80)}${excl.priorities.length > 80 ? '...' : ''}</small>` : ''}
+                    </div>
+                    <span class="badge bg-primary">Tenant</span>
+                </li>`;
+            }
+            html += '</ul>';
+        }
+        
+        // Org exclusions
+        for (const { org, data } of orgData) {
+            if (data?.exclusions?.length > 0) {
+                hasAny = true;
+                html += `<h6 class="text-info mb-2"><i class="fas fa-sitemap me-2"></i>${org}</h6>`;
+                html += '<ul class="list-group mb-3">';
+                for (const excl of data.exclusions) {
+                    const name = analysisTypeNames[excl.analysis_type] || excl.analysis_type;
+                    html += `<li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>${name}</strong>
+                            ${excl.exclusions ? `<br><small class="text-muted">Exclusions: ${excl.exclusions.substring(0, 80)}${excl.exclusions.length > 80 ? '...' : ''}</small>` : ''}
+                            ${excl.priorities ? `<br><small class="text-success">Priorities: ${excl.priorities.substring(0, 80)}${excl.priorities.length > 80 ? '...' : ''}</small>` : ''}
+                        </div>
+                        <span class="badge bg-info">Organisation</span>
+                    </li>`;
+                }
+                html += '</ul>';
+            }
+        }
+        
+        // Group exclusions
+        for (const { group, data } of groupData) {
+            if (data?.exclusions?.length > 0) {
+                hasAny = true;
+                html += `<h6 class="text-warning mb-2"><i class="fas fa-layer-group me-2"></i>${group}</h6>`;
+                html += '<ul class="list-group mb-3">';
+                for (const excl of data.exclusions) {
+                    const name = analysisTypeNames[excl.analysis_type] || excl.analysis_type;
+                    html += `<li class="list-group-item d-flex justify-content-between align-items-start">
+                        <div>
+                            <strong>${name}</strong>
+                            ${excl.exclusions ? `<br><small class="text-muted">Exclusions: ${excl.exclusions.substring(0, 80)}${excl.exclusions.length > 80 ? '...' : ''}</small>` : ''}
+                            ${excl.priorities ? `<br><small class="text-success">Priorities: ${excl.priorities.substring(0, 80)}${excl.priorities.length > 80 ? '...' : ''}</small>` : ''}
+                        </div>
+                        <span class="badge bg-warning text-dark">Group</span>
+                    </li>`;
+                }
+                html += '</ul>';
+            }
+        }
+        
+        if (!hasAny) {
+            html = '<p class="text-muted"><i class="fas fa-info-circle me-2"></i>No exclusions configured yet. Use the tabs above to add exclusions for specific analysis types.</p>';
+        }
+        
+        summaryDiv.innerHTML = html;
+    }
+    
+    // Load summary on page load
+    updateExclusionsSummary();
+
+    // Fetch exclusions for an entity
+    async function fetchExclusions(entityType, entityId, analysisType) {
+        try {
+            const response = await fetch(`/api/analysis-config/exclusions/${entityType}/${entityId}/${analysisType}`, {
+                headers: { 'X-CSRFToken': csrfToken }
+            });
+            if (response.ok) {
+                return await response.json();
+            }
+            return null;
+        } catch (e) {
+            console.error('Error fetching exclusions:', e);
+            return null;
+        }
+    }
+    
+    // Save exclusions for an entity
+    async function saveExclusions(entityType, entityId, analysisType, exclusions, priorities) {
+        try {
+            const response = await fetch(`/api/analysis-config/exclusions/${entityType}/${entityId}/${analysisType}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ exclusions, priorities })
+            });
+            return await response.json();
+        } catch (e) {
+            console.error('Error saving exclusions:', e);
+            return { error: e.message };
+        }
+    }
+    
+    // Delete exclusions for an entity
+    async function deleteExclusions(entityType, entityId, analysisType) {
+        try {
+            const response = await fetch(`/api/analysis-config/exclusions/${entityType}/${entityId}/${analysisType}`, {
+                method: 'DELETE',
+                headers: { 'X-CSRFToken': csrfToken }
+            });
+            return await response.json();
+        } catch (e) {
+            console.error('Error deleting exclusions:', e);
+            return { error: e.message };
+        }
+    }
+    
+    // Show toast notification
+    function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        toast.className = 'toast-container position-fixed top-0 end-0 p-3';
+        toast.innerHTML = `
+            <div class="toast align-items-center text-white bg-${type} border-0" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        const toastEl = toast.querySelector('.toast');
+        const bsToast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        bsToast.show();
+        toastEl.addEventListener('hidden.bs.toast', () => toast.remove());
+    }
+    
+    // Tenant tab handlers
+    const tenantAnalysisType = document.getElementById('tenantAnalysisType');
+    const tenantExclusionForm = document.getElementById('tenantExclusionForm');
+    
+    tenantAnalysisType.addEventListener('change', async function() {
+        if (!this.value) {
+            tenantExclusionForm.style.display = 'none';
+            return;
+        }
+        
+        tenantExclusionForm.style.display = 'block';
+        const data = await fetchExclusions('tenant', tenantId, this.value);
+        const excl = data?.exclusion || {};
+        
+        document.getElementById('tenantExclusions').value = excl.exclusions || '';
+        document.getElementById('tenantPriorities').value = excl.priorities || '';
+        document.getElementById('tenantExclusionsCount').textContent = (excl.exclusions || '').length;
+        document.getElementById('tenantPrioritiesCount').textContent = (excl.priorities || '').length;
+    });
+    
+    document.getElementById('saveTenantExclusion').addEventListener('click', async function() {
+        const analysisType = tenantAnalysisType.value;
+        if (!analysisType) return;
+        
+        const result = await saveExclusions(
+            'tenant', 
+            tenantId, 
+            analysisType,
+            document.getElementById('tenantExclusions').value,
+            document.getElementById('tenantPriorities').value
+        );
+        
+        if (result.error) {
+            showToast('Failed to save: ' + result.error, 'danger');
+        } else {
+            showToast('Tenant exclusions saved successfully!');
+            updateExclusionsSummary();
+        }
+    });
+    
+    document.getElementById('clearTenantExclusion').addEventListener('click', async function() {
+        const analysisType = tenantAnalysisType.value;
+        if (!analysisType) return;
+        
+        if (!confirm('Are you sure you want to clear these exclusions?')) return;
+        
+        const result = await deleteExclusions('tenant', tenantId, analysisType);
+        if (result.error) {
+            showToast('Failed to clear: ' + result.error, 'danger');
+        } else {
+            document.getElementById('tenantExclusions').value = '';
+            document.getElementById('tenantPriorities').value = '';
+            document.getElementById('tenantExclusionsCount').textContent = '0';
+            document.getElementById('tenantPrioritiesCount').textContent = '0';
+            showToast('Exclusions cleared successfully!');
+            updateExclusionsSummary();
+        }
+    });
+    
+    // Organisation tab handlers
+    const orgSelector = document.getElementById('orgSelector');
+    const orgAnalysisType = document.getElementById('orgAnalysisType');
+    const orgExclusionForm = document.getElementById('orgExclusionForm');
+    
+    orgSelector.addEventListener('change', function() {
+        orgAnalysisType.disabled = !this.value;
+        orgExclusionForm.style.display = 'none';
+        orgAnalysisType.value = '';
+    });
+    
+    orgAnalysisType.addEventListener('change', async function() {
+        if (!this.value || !orgSelector.value) {
+            orgExclusionForm.style.display = 'none';
+            return;
+        }
+        
+        orgExclusionForm.style.display = 'block';
+        const data = await fetchExclusions('organisation', orgSelector.value, this.value);
+        const excl = data?.exclusion || {};
+        
+        document.getElementById('orgExclusions').value = excl.exclusions || '';
+        document.getElementById('orgPriorities').value = excl.priorities || '';
+        document.getElementById('orgExclusionsCount').textContent = (excl.exclusions || '').length;
+        document.getElementById('orgPrioritiesCount').textContent = (excl.priorities || '').length;
+    });
+    
+    document.getElementById('saveOrgExclusion').addEventListener('click', async function() {
+        const analysisType = orgAnalysisType.value;
+        const orgId = orgSelector.value;
+        if (!analysisType || !orgId) return;
+        
+        const result = await saveExclusions(
+            'organisation', 
+            orgId, 
+            analysisType,
+            document.getElementById('orgExclusions').value,
+            document.getElementById('orgPriorities').value
+        );
+        
+        if (result.error) {
+            showToast('Failed to save: ' + result.error, 'danger');
+        } else {
+            showToast('Organisation exclusions saved successfully!');
+            updateExclusionsSummary();
+        }
+    });
+    
+    document.getElementById('clearOrgExclusion').addEventListener('click', async function() {
+        const analysisType = orgAnalysisType.value;
+        const orgId = orgSelector.value;
+        if (!analysisType || !orgId) return;
+        
+        if (!confirm('Are you sure you want to clear these exclusions?')) return;
+        
+        const result = await deleteExclusions('organisation', orgId, analysisType);
+        if (result.error) {
+            showToast('Failed to clear: ' + result.error, 'danger');
+        } else {
+            document.getElementById('orgExclusions').value = '';
+            document.getElementById('orgPriorities').value = '';
+            document.getElementById('orgExclusionsCount').textContent = '0';
+            document.getElementById('orgPrioritiesCount').textContent = '0';
+            showToast('Exclusions cleared successfully!');
+            updateExclusionsSummary();
+        }
+    });
+    
+    // Group tab handlers
+    const groupSelector = document.getElementById('groupSelector');
+    const groupAnalysisType = document.getElementById('groupAnalysisType');
+    const groupExclusionForm = document.getElementById('groupExclusionForm');
+    
+    groupSelector.addEventListener('change', function() {
+        groupAnalysisType.disabled = !this.value;
+        groupExclusionForm.style.display = 'none';
+        groupAnalysisType.value = '';
+    });
+    
+    groupAnalysisType.addEventListener('change', async function() {
+        if (!this.value || !groupSelector.value) {
+            groupExclusionForm.style.display = 'none';
+            return;
+        }
+        
+        groupExclusionForm.style.display = 'block';
+        const data = await fetchExclusions('group', groupSelector.value, this.value);
+        const excl = data?.exclusion || {};
+        
+        document.getElementById('groupExclusions').value = excl.exclusions || '';
+        document.getElementById('groupPriorities').value = excl.priorities || '';
+        document.getElementById('groupExclusionsCount').textContent = (excl.exclusions || '').length;
+        document.getElementById('groupPrioritiesCount').textContent = (excl.priorities || '').length;
+    });
+    
+    document.getElementById('saveGroupExclusion').addEventListener('click', async function() {
+        const analysisType = groupAnalysisType.value;
+        const groupId = groupSelector.value;
+        if (!analysisType || !groupId) return;
+        
+        const result = await saveExclusions(
+            'group', 
+            groupId, 
+            analysisType,
+            document.getElementById('groupExclusions').value,
+            document.getElementById('groupPriorities').value
+        );
+        
+        if (result.error) {
+            showToast('Failed to save: ' + result.error, 'danger');
+        } else {
+            showToast('Group exclusions saved successfully!');
+            updateExclusionsSummary();
+        }
+    });
+    
+    document.getElementById('clearGroupExclusion').addEventListener('click', async function() {
+        const analysisType = groupAnalysisType.value;
+        const groupId = groupSelector.value;
+        if (!analysisType || !groupId) return;
+        
+        if (!confirm('Are you sure you want to clear these exclusions?')) return;
+        
+        const result = await deleteExclusions('group', groupId, analysisType);
+        if (result.error) {
+            showToast('Failed to clear: ' + result.error, 'danger');
+        } else {
+            document.getElementById('groupExclusions').value = '';
+            document.getElementById('groupPriorities').value = '';
+            document.getElementById('groupExclusionsCount').textContent = '0';
+            document.getElementById('groupPrioritiesCount').textContent = '0';
+            showToast('Exclusions cleared successfully!');
+            updateExclusionsSummary();
+        }
+    });
+});
+</script>
+
+<style>
+.nav-tabs .nav-link {
+    color: var(--text-muted);
+}
+.nav-tabs .nav-link.active {
+    color: var(--primary);
+    font-weight: 500;
+}
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25);
+}
+</style>
+{% endblock %}

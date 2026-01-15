@@ -1,0 +1,121 @@
+{# templates/widgets/cpu_load.html #}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="col-12 col-xl-6">
+  <div class="card rounded-4">
+    <div class="card-header py-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <h5 class="mb-0">CPU Load</h5>
+        <div class="dropdown">
+          <a href="javascript:;" class="dropdown-toggle-nocaret options dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="fa-solid fa-ellipsis-vertical fs-5"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="javascript:;">Action</a></li>
+            <li><a class="dropdown-item" href="javascript:;">Another action</a></li>
+            <li><a class="dropdown-item" href="javascript:;">Something else here</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="cpu-load-chart"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let chart = null;
+
+    // Chart configuration
+    const options = {
+        series: [0], // Initial value
+        chart: {
+            height: 370,
+            type: 'radialBar',
+            offsetY: -10
+        },
+        plotOptions: {
+            radialBar: {
+                startAngle: -135,
+                endAngle: 135,
+                dataLabels: {
+                    name: {
+                        fontSize: '16px',
+                        color: undefined,
+                        offsetY: 120
+                    },
+                    value: {
+                        offsetY: 76,
+                        fontSize: '22px',
+                        color: undefined,
+                        formatter: function (val) {
+                            return val + "%";
+                        }
+                    }
+                },
+                track: {
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    strokeWidth: '67%',
+                    margin: 0,
+                    dropShadow: {
+                        enabled: false,
+                        top: -3,
+                        left: 0,
+                        blur: 4,
+                        opacity: 0.35
+                    }
+                },
+            },
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shade: 'dark',
+                type: 'horizontal',
+                shadeIntensity: 0.5,
+                gradientToColors: ['#ff0080'],
+                inverseColors: true,
+                opacityFrom: 1,
+                opacityTo: 1,
+                stops: [0, 100]
+            }
+        },
+        colors: ["#7928ca"],
+        stroke: {
+            dashArray: 4
+        },
+        labels: ['CPU Load'],
+    };
+
+    // Initialize chart
+    chart = new ApexCharts(document.querySelector("#cpu-load-chart"), options);
+    chart.render();
+
+    // Function to update chart data
+    function updateCPULoad() {
+        fetch('/widgets/latest-cpu-data')
+            .then(response => response.json())
+            .then(data => {
+                const loadPercentage = parseInt(data.load_percentage);
+                chart.updateSeries([loadPercentage]);
+            })
+            .catch(error => {
+                console.error('Error fetching CPU load data:', error);
+            });
+    }
+
+    // Initial update
+    updateCPULoad();
+
+    // Poll for updates every 6 seconds
+    setInterval(updateCPULoad, 6000);
+});
+</script>
+{% endblock %}

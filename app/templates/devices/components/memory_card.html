@@ -1,0 +1,119 @@
+{# Memory Information Card Component - Content Only #}
+{% if device.modular_data and device.modular_data.memory %}
+{# Main Memory Stats - Structured Grid #}
+<div class="p-3 border rounded mb-3">
+    <div class="row g-3 mb-3">
+        <div class="col-md-3">
+            {% if device.modular_data.memory.total_memory_gb %}
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Total</small>
+                <strong>
+                    {{ "%.2f"|format(device.modular_data.memory.total_memory_gb) }} GB
+                    <span class="ai-insight-icon" data-ai-insight="memory_total" data-insight-value="Total Memory: {{ device.modular_data.memory.total_memory_gb }} GB">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                    </span>
+                </strong>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            {% if device.modular_data.memory.used_memory_gb %}
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Used</small>
+                <strong>
+                    {{ "%.2f"|format(device.modular_data.memory.used_memory_gb) }} GB
+                    <span class="ai-insight-icon" data-ai-insight="memory_used" data-insight-value="Used Memory: {{ device.modular_data.memory.used_memory_gb }} GB, Available: {{ device.modular_data.memory.available_memory_gb or 'N/A' }} GB, Usage: {{ device.modular_data.memory.mem_used_percent or 'N/A' }}%">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                    </span>
+                </strong>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            {% if device.modular_data.memory.available_memory_gb %}
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Available</small>
+                <strong>{{ "%.2f"|format(device.modular_data.memory.available_memory_gb) }} GB</strong>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            {% if device.modular_data.memory.mem_used_percent %}
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Usage</small>
+                <span class="badge {% if device.modular_data.memory.mem_used_percent >= 90 %}bg-danger{% elif device.modular_data.memory.mem_used_percent >= 80 %}bg-warning{% else %}bg-success{% endif %} fs-6">
+                    {{ "%.1f"|format(device.modular_data.memory.mem_used_percent) }}%
+                </span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# Status Badge #}
+    <div>
+        <small class="text-muted d-block mb-1">Status</small>
+        <span class="badge {% if device.modular_data.memory.memory_status == 'CRITICAL' %}bg-danger{% elif device.modular_data.memory.memory_status == 'High' %}bg-warning{% else %}bg-success{% endif %} fs-6">
+            {{ device.modular_data.memory.memory_status }}
+        </span>
+    </div>
+</div>
+
+{# Extended Memory Metrics from psutil #}
+{% if device.modular_data.memory.memory_metrics_json %}
+{# Swap Information - Structured Grid #}
+{% if device.modular_data.memory.memory_metrics_json.swap_total or device.modular_data.memory.memory_metrics_json.swap_used %}
+<div class="p-3 border rounded mb-3">
+    <h6 class="text-muted mb-3">Swap Memory</h6>
+    <div class="row g-3">
+        {% if device.modular_data.memory.memory_metrics_json.swap_total %}
+        <div class="col-md-3">
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Total</small>
+                <strong>{{ "%.2f"|format(device.modular_data.memory.memory_metrics_json.swap_total / 1024 / 1024 / 1024) }} GB</strong>
+            </div>
+        </div>
+        {% endif %}
+        {% if device.modular_data.memory.memory_metrics_json.swap_used %}
+        <div class="col-md-3">
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Used</small>
+                <strong>{{ "%.2f"|format(device.modular_data.memory.memory_metrics_json.swap_used / 1024 / 1024 / 1024) }} GB</strong>
+            </div>
+        </div>
+        {% endif %}
+        {% if device.modular_data.memory.memory_metrics_json.swap_free %}
+        <div class="col-md-3">
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Free</small>
+                <strong>{{ "%.2f"|format(device.modular_data.memory.memory_metrics_json.swap_free / 1024 / 1024 / 1024) }} GB</strong>
+            </div>
+        </div>
+        {% endif %}
+        {% if device.modular_data.memory.memory_metrics_json.swap_percent %}
+        <div class="col-md-3">
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Usage</small>
+                <span class="badge {% if device.modular_data.memory.memory_metrics_json.swap_percent >= 80 %}bg-danger{% elif device.modular_data.memory.memory_metrics_json.swap_percent >= 60 %}bg-warning{% else %}bg-success{% endif %} fs-6">
+                    {{ "%.1f"|format(device.modular_data.memory.memory_metrics_json.swap_percent) }}%
+                </span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{# Memory Utilization #}
+{% if device.modular_data.memory.memory_metrics_json.percent %}
+<div class="p-3 border rounded mb-3">
+    <h6 class="text-muted mb-3">Memory Utilization</h6>
+    <div>
+        <span class="badge {% if device.modular_data.memory.memory_metrics_json.percent >= 90 %}bg-danger{% elif device.modular_data.memory.memory_metrics_json.percent >= 80 %}bg-warning{% else %}bg-success{% endif %} fs-6">
+            {{ "%.1f"|format(device.modular_data.memory.memory_metrics_json.percent) }}%
+        </span>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+{% endif %}
+

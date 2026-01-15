@@ -1,0 +1,17 @@
+# Filepath: config/wegweiser-log-cleanup.timer
+# Systemd timer for Wegweiser log cleanup
+# Install to /etc/systemd/system/wegweiser-log-cleanup.timer
+
+[Unit]
+Description=Wegweiser Log Cleanup Timer
+Requires=wegweiser-log-cleanup.service
+
+[Timer]
+# Run daily at 2 AM
+OnCalendar=daily
+OnCalendar=*-*-* 02:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+

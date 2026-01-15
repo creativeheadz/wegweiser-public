@@ -1,0 +1,59 @@
+<!-- Filepath: app/templates/user/setup_2fa.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Set Up Two-Factor Authentication</h2>
+
+                    <div class="setup-steps mb-4">
+                        <div class="step-1 mb-4">
+                            <h5>1. Scan QR Code</h5>
+                            <p>Use your authenticator app to scan this QR code:</p>
+                            <div class="text-center">
+                                <img src="{{ qr_code }}" alt="QR Code" class="img-fluid mb-3">
+                            </div>
+                            <p class="text-muted small">Can't scan? Use this code manually:
+                                <code>{{ secret_key }}</code></p>
+                        </div>
+
+                        <div class="step-2 mb-4">
+                            <h5>2. Verify Setup</h5>
+                            <p>Enter the 6-digit code from your authenticator app to verify the setup:</p>
+                            <form method="POST">
+                                {{ form.hidden_tag() }}
+                                <div class="form-group">
+                                    {{ form.token(class="form-control mb-3", autofocus=true) }}
+                                    {% if form.token.errors %}
+                                    {% for error in form.token.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                                {{ form.submit(class="btn btn-primary w-100") }}
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="backup-codes mt-4">
+                        <h5>3. Save Your Backup Codes</h5>
+                        <p class="text-warning">Important: Store these backup codes in a safe place. You can use them to
+                            log in if you lose access to your authenticator app.</p>
+                        <div class="backup-codes-container bg-light p-3 rounded">
+                            {% for code in backup_codes %}
+                            <code class="d-inline-block me-3 mb-2">{{ code }}</code>
+                            {% endfor %}
+                        </div>
+                        <button class="btn btn-outline-secondary btn-sm mt-2" onclick="window.print()">
+                            <i class="fas fa-print"></i> Print Backup Codes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+# Filepath: app/tasks/storage/prompts/base.prompt
+Analyze the following Windows Storage Information and provide a comprehensive storage infrastructure assessment. Your analysis should:
+
+1. Detailed evaluation of disk space utilization across all volumes, including identification of low free space conditions, growth trends, and capacity planning requirements.
+2. Assessment of storage device types (SSD, HDD, hybrid), their performance characteristics, age, health status, and potential failure indicators.
+3. Analysis of storage configuration including RAID levels, volume layouts, file system types, and optimization opportunities for performance and reliability.
+4. Evaluation of storage I/O performance metrics, including read/write speeds, queue depths, response times, and potential bottlenecks.
+5. Assessment of backup and recovery capabilities, including available space for backups, retention policies, and disaster recovery considerations.
+6. Identification of storage security considerations, including encryption status, access controls, and data protection measures.
+7. Analysis of storage fragmentation, file system health, and maintenance requirements.
+8. Comprehensive recommendations for storage monitoring, alerting thresholds, and proactive maintenance strategies tailored for MSP operations.
+
+Structure your response in basic HTML format using tags like <p>, <ul>, <li>, and <br> to ensure readability:
+- Summary of storage infrastructure status and critical findings (2-3 sentences)
+- Detailed analysis of storage capacity and utilization patterns (4-5 bullet points)
+- Storage device health and performance assessment (3-4 bullet points)
+- Configuration optimization and reliability recommendations (3-4 bullet points)
+- Backup and disaster recovery considerations (2-3 bullet points)
+- Proactive monitoring strategies and key performance indicators for MSP implementation (3-4 bullet points)
+- Long-term capacity planning and upgrade recommendations (1-2 sentences)
+
+- Declare a healthscore based on these findings between 1 and 100 where 100 is a problem-free state.
+
+Storage Information:
+{storage_data}

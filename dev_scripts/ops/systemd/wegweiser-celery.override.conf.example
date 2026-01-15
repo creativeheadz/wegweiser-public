@@ -1,0 +1,17 @@
+# Place this file at /etc/systemd/system/wegweiser-celery.service.d/override.conf
+# then run: systemctl daemon-reload && systemctl restart wegweiser-celery
+
+[Service]
+# Ensure /run/celery is created with correct ownership for the service user
+RuntimeDirectory=celery
+RuntimeDirectoryMode=0750
+
+# Keep PIDs in /run (tmpfs) and logs in app-local directory
+Environment=CELERYD_PID_FILE=/run/celery/%n.pid
+Environment=CELERYD_LOG_FILE=/opt/wegweiser/wlog/celery-%n.log
+
+# Make it resilient
+Restart=on-failure
+RestartSec=3s
+StartLimitIntervalSec=120
+StartLimitBurst=10

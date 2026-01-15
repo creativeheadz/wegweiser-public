@@ -1,0 +1,141 @@
+{# CPU Information Card Component - Content Only #}
+{% if device.modular_data and device.modular_data.cpu %}
+{# Processor Name #}
+<div class="mb-3">
+    <strong>Processor:</strong>
+    {{ device.modular_data.cpu.cpu_name or 'N/A' }}
+    {% if device.modular_data.cpu.cpu_name %}
+    <span class="ai-insight-icon" data-ai-insight="cpu_name" data-insight-value="{{ device.modular_data.cpu.cpu_name }}" title="Ask AI about this processor">
+        <i class="fas fa-wand-magic-sparkles"></i>
+    </span>
+    {% endif %}
+</div>
+
+{# Extended CPU Metrics from psutil #}
+{% if device.modular_data.cpu.cpu_metrics_json %}
+<div class="p-3 border rounded mb-3">
+    <h6 class="text-muted mb-3">Extended CPU Metrics</h6>
+
+    {# Core and Frequency Information - Structured Grid #}
+    <div class="row g-3 mb-3">
+        <div class="col-md-3">
+            {% if device.modular_data.cpu.cpu_metrics_json.cores_logical %}
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Logical Cores</small>
+                <strong>{{ device.modular_data.cpu.cpu_metrics_json.cores_logical }}</strong>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            {% if device.modular_data.cpu.cpu_metrics_json.cores_physical %}
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Physical Cores</small>
+                <strong>{{ device.modular_data.cpu.cpu_metrics_json.cores_physical }}</strong>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            {% if device.modular_data.cpu.cpu_metrics_json.frequency_current %}
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Current Freq</small>
+                <strong>{{ "%.1f"|format(device.modular_data.cpu.cpu_metrics_json.frequency_current) }} GHz</strong>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            {% if device.modular_data.cpu.cpu_metrics_json.frequency_max %}
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Max Freq</small>
+                <strong>{{ "%.1f"|format(device.modular_data.cpu.cpu_metrics_json.frequency_max) }} GHz</strong>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {# CPU Usage #}
+    {% if device.modular_data.cpu.cpu_metrics_json.cpu_percent_overall %}
+    <div>
+        <small class="text-muted d-block mb-1">Overall Usage</small>
+        <span class="badge {% if device.modular_data.cpu.cpu_metrics_json.cpu_percent_overall >= 80 %}bg-danger{% elif device.modular_data.cpu.cpu_metrics_json.cpu_percent_overall >= 60 %}bg-warning{% else %}bg-success{% endif %} fs-6">
+            {{ "%.1f"|format(device.modular_data.cpu.cpu_metrics_json.cpu_percent_overall) }}%
+        </span>
+    </div>
+    {% endif %}
+</div>
+
+{# CPU Times - Structured Grid #}
+{% if device.modular_data.cpu.cpu_metrics_json.cpu_times %}
+<div class="p-3 border rounded mb-3">
+    <h6 class="text-muted mb-3">CPU Times</h6>
+    <div class="row g-3">
+        {% if device.modular_data.cpu.cpu_metrics_json.cpu_times.user %}
+        <div class="col-md-3">
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">User</small>
+                <strong>{{ "{:,.2f}".format(device.modular_data.cpu.cpu_metrics_json.cpu_times.user) }}s</strong>
+            </div>
+        </div>
+        {% endif %}
+        {% if device.modular_data.cpu.cpu_metrics_json.cpu_times.system %}
+        <div class="col-md-3">
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">System</small>
+                <strong>{{ "{:,.2f}".format(device.modular_data.cpu.cpu_metrics_json.cpu_times.system) }}s</strong>
+            </div>
+        </div>
+        {% endif %}
+        {% if device.modular_data.cpu.cpu_metrics_json.cpu_times.idle %}
+        <div class="col-md-3">
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Idle</small>
+                <strong>{{ "{:,.2f}".format(device.modular_data.cpu.cpu_metrics_json.cpu_times.idle) }}s</strong>
+            </div>
+        </div>
+        {% endif %}
+        {% if device.modular_data.cpu.cpu_metrics_json.cpu_times.iowait %}
+        <div class="col-md-3">
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">I/O Wait</small>
+                <strong>{{ "{:,.2f}".format(device.modular_data.cpu.cpu_metrics_json.cpu_times.iowait) }}s</strong>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+{# CPU Statistics - Structured Grid #}
+{% if device.modular_data.cpu.cpu_metrics_json.cpu_stats %}
+<div class="p-3 border rounded mb-3">
+    <h6 class="text-muted mb-3">CPU Statistics</h6>
+    <div class="row g-3">
+        {% if device.modular_data.cpu.cpu_metrics_json.cpu_stats.ctx_switches %}
+        <div class="col-md-4">
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Context Switches</small>
+                <strong>{{ "{:,}".format(device.modular_data.cpu.cpu_metrics_json.cpu_stats.ctx_switches) }}</strong>
+            </div>
+        </div>
+        {% endif %}
+        {% if device.modular_data.cpu.cpu_metrics_json.cpu_stats.interrupts %}
+        <div class="col-md-4">
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Interrupts</small>
+                <strong>{{ "{:,}".format(device.modular_data.cpu.cpu_metrics_json.cpu_stats.interrupts) }}</strong>
+            </div>
+        </div>
+        {% endif %}
+        {% if device.modular_data.cpu.cpu_metrics_json.cpu_stats.syscalls %}
+        <div class="col-md-4">
+            <div class="d-flex flex-column">
+                <small class="text-muted mb-1">Syscalls</small>
+                <strong>{{ "{:,}".format(device.modular_data.cpu.cpu_metrics_json.cpu_stats.syscalls) }}</strong>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endif %}
+{% endif %}
+

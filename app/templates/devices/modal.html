@@ -1,0 +1,176 @@
+<!-- Filepath: app/templates/devices/modal.html -->
+<!--Full Screen Device Modal-->
+<div class="modal fade" id="deviceModal-{{ device.deviceuuid }}" tabindex="-1" aria-labelledby="deviceModalLabel-{{ device.deviceuuid }}" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0 py-2 bg-grd-primary">
+                <h5 class="modal-title">{{ device.devicename }} | {{ device.orgname }} | {{ device.groupname }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <nav id="device-nav-{{ device.deviceuuid }}" class="navbar px-3 mb-3 sticky-top">
+                    <ul class="nav nav-pills">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#general-info-{{ device.deviceuuid }}">General Info</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#hardware-{{ device.deviceuuid }}">Hardware</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#storage-{{ device.deviceuuid }}">Storage</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#network-{{ device.deviceuuid }}">Network</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#eventlogs-{{ device.deviceuuid }}">Eventlogs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#chat-{{ device.deviceuuid }}">Chat</a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-img-top d-flex align-items-center justify-content-center" style="height: 200px; background: linear-gradient(135deg, rgba(255, 20, 147, 0.1) 0%, rgba(255, 105, 180, 0.1) 100%);">
+                                <i class="fas fa-laptop" style="font-size: 80px; color: rgba(255, 20, 147, 0.6);"></i>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title"> {{ device.devicename }} </h5>
+                                <p class="card-text">{{device.devicename}} is a {{ device.hardwareinfo }} machine. It's unique identifier is {{ device.deviceuuid }}.
+                                We hope you will not need to ever have to use it, but in case support asks for it, there you have it.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="scrollspy-{{ device.deviceuuid }}" class="scrollspy-example px-3" tabindex="0">
+                    <div class="timeline">
+                        <div class="timeline-item" id="general-info-{{ device.deviceuuid }}">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-content">
+                                <h4>General Information</h4>
+                                <div class="card radius-15 mb-3">
+                                    <div class="card-body">
+                                        <p><strong>Platform:</strong> {{ device.agent_platform or 'N/A' }}</p>
+                                        <p><strong>User:</strong> {{ device.logged_on_user or 'N/A' }}</p>
+                                        <p><strong>Public IP:</strong> {{ device.publicIp or 'N/A' }}</p>
+                                        <p><strong>Printers:</strong></p>
+                                        {% if device.printers %}
+                                            <ul>
+                                                {% for printer in device.printers %}
+                                                    <li>{{ printer.printer_name }} </li>
+                                                {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p>No printers installed.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item" id="hardware-{{ device.deviceuuid }}">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-content">
+                                <h4>Hardware</h4>
+                                <div class="card radius-15 mb-3">
+                                    <div class="card-body">
+                                        <p><strong>GPU Vendor:</strong> {{ device.gpu_vendor or 'N/A' }}</p>
+                                        <p><strong>GPU Product:</strong> {{ device.gpu_product or 'N/A' }}</p>
+                                        <p><strong>Battery Installed:</strong> {{ 'Yes' if device.battery_installed else 'No' }}</p>
+                                        <p><strong>Battery Charge:</strong> {{ device.percent_charged if device.percent_charged is not none else 'N/A' }}%</p>
+                                        <p><strong>On Mains Power:</strong> {{ 'Yes' if device.on_mains_power else 'No' }}</p>
+                                        <p><strong>BIOS Vendor:</strong> {{ device.bios_vendor or 'N/A' }}</p>
+                                        <p><strong>BIOS Version:</strong> {{ device.bios_version or 'N/A' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item" id="storage-{{ device.deviceuuid }}">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-content">
+                                <h4>Storage</h4>
+                                <div class="card radius-15 mb-3">
+                                    <div class="card-body">
+                                        {% if device.drives %}
+                                        {% for drive in device.drives.split(', ') %}
+                                        <p>{{ drive }}</p>
+                                        {% endfor %}
+                                        {% else %}
+                                        <p>No drive information available</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item" id="network-{{ device.deviceuuid }}">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-content">
+                                <h4>Network</h4>
+                                <div class="card radius-15 mb-3">
+                                    <div class="card-body">
+                                        {% if device.networks %}
+                                        {% for network in device.networks.split(', ') %}
+                                        <p>{{ network }}</p>
+                                        {% endfor %}
+                                        {% else %}
+                                        <p>No network information available</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item" id="eventlogs-{{ device.deviceuuid }}">
+                            <div class="timeline-point"></div>
+                            <div class="timeline-content">
+                                <h4>Eventlogs for {{ device.devicename }}</h4>
+                                {% for log_type in ['eventsFiltered-Application', 'eventsFiltered-Security', 'eventsFiltered-System'] %}
+                                <div class="card radius-15 mb-3">
+                                    <div class="card-body">
+                                        <h5>{{ log_type.split('-')[1] }} Logs</h5>
+                                        <div id="eventlog-{{ log_type.split('-')[1].lower() }}-{{ device.deviceuuid }}">
+                                            {% if log_type in device.eventlogs %}
+                                            <p>Timestamp: {{ device.eventlogs[log_type].created_at }}</p>
+                                            {{ device.eventlogs[log_type].ai_analysis | safe }}
+                                            {% else %}
+                                            <p>No {{ log_type.split('-')[1].lower() }} logs available</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+
+
+
+{% for device in devices %}
+<div class="modal fade" id="tagsModal-{{ device.deviceuuid }}" tabindex="-1" aria-labelledby="tagsModalLabel-{{ device.deviceuuid }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tagsModalLabel-{{ device.deviceuuid }}">Tags for {{ device.devicename }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body ">
+                <div class="product-tags btn-tags">
+                {% if device.tags %}
+                    {% for tag in device.tags %}
+                    <span class="badge bg-grd-primary">{{ tag }}</span>
+                    <!-- <p>{{ tag }}</p> -->
+                    {% endfor %}
+                {% else %}
+                    <p>No tags available</p>
+                {% endif %}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}

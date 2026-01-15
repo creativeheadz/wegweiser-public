@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - Forbidden | Wegweiser</title>
+    
+    <!-- Pace loading indicator -->
+    <link href="{{ url_for('static', filename='css/pace.minimal.css') }}" rel="stylesheet">
+    <script>
+        window.paceOptions = {
+            elements: false,
+            restartOnRequestAfter: false
+        };
+    </script>
+    <script src="{{ url_for('static', filename='js/pace.js') }}"></script>
+    
+    <style>
+        /* Standalone error page styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            color: #f0f6fc;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        
+        /* Background image */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('{{ url_for("static", filename="images/bg-themes/15.jpg") }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.15;
+            z-index: -1;
+        }
+        
+        .error-container {
+            max-width: 600px;
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo {
+            width: 120px;
+            height: auto;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .error-code {
+            font-size: 6rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            color: #f85149;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .error-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #f0f6fc;
+            font-weight: 500;
+        }
+        
+        .error-message {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            color: #8b949e;
+            line-height: 1.6;
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #f0f6fc;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            text-decoration: none;
+            color: #ffffff;
+        }
+        
+        .btn-primary {
+            background: rgba(40, 81, 231, 0.3);
+            border-color: rgba(40, 81, 231, 0.5);
+        }
+        
+        .btn-primary:hover {
+            background: rgba(40, 81, 231, 0.5);
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .error-container {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @media (max-width: 480px) {
+            .error-code {
+                font-size: 4rem;
+            }
+            .error-title {
+                font-size: 1.2rem;
+            }
+            .error-message {
+                font-size: 0.9rem;
+            }
+            .error-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="error-container">
+        <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Wegweiser Logo" class="logo">
+        <div class="error-code">403</div>
+        <div class="error-title">Access Forbidden</div>
+        <div class="error-message">
+            You don't have permission to access this resource. This area requires administrative privileges.
+        </div>
+        <div class="error-actions">
+            <a href="{{ url_for('dashboard_bp.dashboard') if 'user_id' in session else url_for('login_bp.login') }}" class="btn btn-primary">
+                {% if 'user_id' in session %}
+                    Return to Dashboard
+                {% else %}
+                    Login
+                {% endif %}
+            </a>
+            <a href="javascript:history.back()" class="btn">Go Back</a>
+        </div>
+    </div>
+</body>
+
+</html>

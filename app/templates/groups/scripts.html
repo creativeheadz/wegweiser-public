@@ -1,0 +1,45 @@
+<script src="https://cdn.jsdelivr.net/npm/uplot@1.6.31/dist/uPlot.iife.min.js"></script>
+<script src="{{ url_for('static', filename='js/group/group_health_history.js') }}"></script>
+<script src="{{ url_for('static', filename='js/group/group_healthscore.js') }}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Global variables
+        const groupUuid = "{{ group.groupuuid }}";
+        const entityType = "group";
+        const csrfToken = "{{ csrf_token() }}";
+
+        // Copy functionality is now handled by the centralized copy utility
+        // No need for duplicate copy code here
+
+        // Initialize popovers
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl);
+        });
+
+        // Copy buttons functionality is now handled by the centralized copy utility
+
+        // Load group analyses
+        loadGroupAnalyses(groupUuid);
+    });
+
+    function loadGroupAnalyses(group_uuid) {
+        $.get(`/groups/${group_uuid}/analyses`, function (data) {
+            $('#dynamic-group-analyses-grid').html(data);
+        }).fail(function () {
+            console.error("Failed to load group analyses.");
+            $('#dynamic-group-analyses-grid').html(`
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body text-center py-5">
+                            <i class="fa fa-exclamation-triangle fs-1 text-warning mb-3"></i>
+                            <h5 class="text-muted">Failed to Load Group Analyses</h5>
+                            <p class="text-muted">There was an error loading the group analysis data. Please refresh the page to try again.</p>
+                        </div>
+                    </div>
+                </div>
+            `);
+        });
+    }
+</script>

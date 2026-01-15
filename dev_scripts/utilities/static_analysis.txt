@@ -1,0 +1,5 @@
+Error: Static directory not found: app/static
+Current working directory: /home/andrei/wegweiser/tools
+Available directories in current location:
+  - jwn_sql_views/
+  - __pycache__/

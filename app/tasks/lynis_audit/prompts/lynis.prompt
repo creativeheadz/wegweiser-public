@@ -1,0 +1,152 @@
+# Filepath: app/tasks/lynis_audit/prompts/lynis.prompt
+# Lynis Security Audit Analysis for MSP Operations
+
+Analyze the following Lynis security audit report for a managed device and provide a comprehensive security assessment suitable for MSP operations. Your analysis should be thorough, actionable, and prioritize findings based on risk and compliance impact.
+
+## Analysis Structure Required
+
+Structure your response as valid JSON with the following format:
+
+{
+    "analysis": "HTML formatted analysis using <p>, <h4>, <h5>, <ul>, <li>, <strong>, <em>, <br> tags",
+    "score": 75
+}
+
+Where:
+- analysis: Your detailed HTML analysis for display to MSP users
+- score: Health score from 1-100 (integer only)
+
+## Analysis Content Structure
+
+Your HTML analysis MUST include these sections in order:
+
+### 1. Executive Summary (2-3 sentences)
+Provide a high-level overview of the device's security posture, highlighting the most critical finding and overall risk level.
+
+### 2. Security Posture Overview
+- **Hardening Index Score**: Interpret what this means
+- **Overall Security Grade**: Assign A-F based on findings
+- **Primary Risk Level**: Critical/High/Medium/Low
+- **Compliance Status**: Brief summary of compliance impact
+
+### 3. Critical Security Findings
+List all critical security issues requiring immediate attention:
+- Describe each finding clearly
+- Explain potential impact and exploitation risk
+- Provide immediate remediation steps
+- Estimate remediation time and complexity
+
+### 4. High-Priority Warnings
+Analyze all warnings from the Lynis report:
+- Categorize by severity
+- Explain business impact
+- Recommend remediation priority order
+
+### 5. System Hardening Recommendations
+Prioritized hardening steps:
+- **Quick Wins** (< 1 hour): Easy fixes with immediate benefit
+- **Standard Hardening** (1-4 hours): Important improvements
+- **Advanced Hardening** (> 4 hours): Comprehensive enhancements
+- For each: Explain security benefit and implementation approach
+
+### 6. Compliance Assessment
+Evaluate against common frameworks:
+- **ISO27001 Controls**: Affected controls and gaps
+- **PCI-DSS Requirements**: Compliance gaps if applicable
+- **HIPAA Requirements**: Healthcare-related concerns if applicable
+- **CIS Benchmarks**: Alignment with CIS standards
+- Provide specific control references for audit documentation
+
+### 7. Vulnerability Summary
+Categorize by type:
+- **Authentication & Access Control**: SSH, password policies, sudo
+- **Network Security**: Firewall, open ports, services
+- **Software Security**: Patches, updates, vulnerable packages
+- **File System Security**: Permissions, encryption, data protection
+- **Audit & Logging**: Log configuration, audit trail gaps
+- **Kernel & System**: Kernel hardening, system weaknesses
+
+### 8. MSP Action Plan
+Clear step-by-step guide for MSP technicians:
+
+**Immediate Actions (Within 24 hours):**
+1. [Specific action with commands if possible]
+2. [Continue...]
+
+**Short-term Actions (Within 1 week):**
+1. [Specific action]
+2. [Continue...]
+
+**Long-term Actions (Within 1 month):**
+1. [Specific action]
+2. [Continue...]
+
+### 9. Monitoring & Maintenance Strategy
+- **Key Security Metrics**: What to monitor continuously
+- **Audit Frequency**: Recommended re-scan schedule
+- **Alert Thresholds**: When to escalate issues
+- **Automated Remediation**: Automation opportunities
+- **Trend Analysis**: What to track over time
+
+### 10. Risk Assessment
+- **Data Breach Risk**: High/Medium/Low with justification
+- **Compliance Risk**: High/Medium/Low with justification
+- **Operational Risk**: High/Medium/Low with justification
+- **Reputational Risk**: High/Medium/Low with justification
+
+### 11. Health Score Justification
+Declare a health score between 1-100 where 100 is perfect security.
+
+Base the score on:
+- Hardening Index weight: 40%
+- Critical findings: -30 points each
+- High warnings: -10 points each
+- Medium warnings: -5 points each
+- Missing controls: -2 points each
+- Positive implementations: +5 points each
+
+Briefly explain the calculation.
+
+### 12. Client Communication Summary
+Non-technical summary for client reporting:
+- Current security status in plain language
+- What actions are being taken
+- Expected improvements
+- Timeline and next steps
+
+## Important Guidelines
+
+1. **Be Specific**: Don't say "improve security" - say "Enable UFW with restrictive default policy"
+2. **Prioritize Impact**: Focus on findings that could cause actual breaches
+3. **Consider Context**: Some findings may be acceptable for the device role
+4. **Provide Commands**: Include exact shell commands for remediation
+5. **Think MSP**: Remember this is for managed service providers
+6. **Document Everything**: Provide audit trail documentation
+7. **Balance Security vs Usability**: Note when recommendations impact functionality
+8. **Cost-Benefit Analysis**: Indicate ROI for major recommendations
+
+## Context Information
+
+Device Name: {device_name}
+Operating System: {os_type}
+MSP Client: {client_name}
+Device Role: {device_role}
+Compliance Requirements: {compliance_requirements}
+
+Previous Analysis Summary (if available):
+Last Health Score: {previous_score}
+Score Trend: {score_trend}
+
+## Lynis Audit Data
+
+{lynis_data}
+
+## Response Instructions
+
+1. Respond ONLY with valid JSON
+2. Use semantic HTML in the analysis field
+3. Make liberal use of <strong> tags for critical items
+4. Ensure all recommendations are actionable and specific
+5. The analysis must be professional and suitable for MSP operations
+6. Do NOT include any text outside the JSON object
+7. Validate your JSON before responding

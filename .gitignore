@@ -1,0 +1,45 @@
+/celerybeat-schedule
+devicefiles/
+*.log
+app/logs/
+flask_session/
+app/tmp/
+app/tmp/payloads/
+/flask_session/
+app/data/ip_blocker/lmdb_storage/lock.mdb
+app/data/ip_blocker/lmdb_storage/data.mdb
+/payloads
+/deviceFiles
+
+/venv
+/logs
+/db
+# Log files
+*.log
+.log.
+
+# Python bytecode files
+_pycache_/
+*.pyc
+/migrations
+/*rubbish*
+/celerybeat-schedule
+/wlog/
+wegweiser.log*
+.env
+
+# Private keys and certificates (never commit)
+*.pem
+*.key
+includes/serverPrivKey.pem
+includes/serverPubKey.pem
+includes/old/
+
+# Local Loki tool tarball (kept local, not in git history)
+downloads/tools/loki.tar.gz
+
+# IDE and tool settings (local only)
+.vscode/
+.augment/
+.claude/
+.backup/

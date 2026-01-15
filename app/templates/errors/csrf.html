@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session expired – Please log in | Wegweiser</title>
+
+    <!-- Pace loading indicator (consistent with other error pages) -->
+    <link href="{{ url_for('static', filename='css/pace.minimal.css') }}" rel="stylesheet">
+    <script>
+        window.paceOptions = { elements: false, restartOnRequestAfter: false };
+    </script>
+    <script src="{{ url_for('static', filename='js/pace.js') }}"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            color: #f0f6fc; line-height: 1.6; min-height: 100vh;
+            display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;
+        }
+        body::before {
+            content: ''; position: fixed; inset: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 166, 87, 0.12) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(40, 81, 231, 0.10) 0%, transparent 50%);
+            z-index: -1;
+        }
+        .error-container {
+            max-width: 620px; text-align: center; padding: 3rem 2rem;
+            background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(10px);
+            border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.18);
+            position: relative; z-index: 1;
+        }
+        .logo { width: 120px; height: auto; margin-bottom: 1.5rem; opacity: 0.9; }
+        .error-code { font-size: 3.75rem; font-weight: 300; margin-bottom: 0.25rem; color: #ffa657; }
+        .error-title { font-size: 1.35rem; margin-bottom: 0.75rem; color: #f0f6fc; font-weight: 500; }
+        .error-message { font-size: 1rem; margin-bottom: 1.25rem; color: #8b949e; }
+        .hint { font-size: 0.9rem; color: #8b949e; margin-bottom: 1.5rem; }
+        .actions { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+        .btn { display: inline-block; padding: 12px 20px; background: rgba(255,255,255,0.10); color: #f0f6fc;
+               text-decoration: none; border-radius: 8px; font-weight: 500; transition: all 0.25s ease;
+               border: 1px solid rgba(255,255,255,0.20); backdrop-filter: blur(5px); }
+        .btn:hover { background: rgba(255,255,255,0.18); transform: translateY(-2px);
+                     box-shadow: 0 8px 24px rgba(0,0,0,0.20); text-decoration: none; color: #ffffff; }
+        .btn-primary { background: rgba(40,81,231,0.35); border-color: rgba(40,81,231,0.55); }
+        .btn-primary:hover { background: rgba(40,81,231,0.55); }
+        .small { font-size: 0.85rem; color: #8b949e; margin-top: 1rem; }
+        .count { color: #ffa657; font-variant-numeric: tabular-nums; }
+        @media (max-width: 480px) {
+            .error-code { font-size: 3rem; }
+            .error-title { font-size: 1.1rem; }
+            .btn { width: 100%; max-width: 220px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="error-container">
+        <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Wegweiser Logo" class="logo">
+        <div class="error-code">Session expired</div>
+        <div class="error-title">For your security, please sign in again</div>
+        <div class="error-message">
+            It looks like your session timed out or the page was open for too long.
+            To continue, please log in again.{{ ' Details: ' + reason if reason else '' }}
+        </div>
+        <div class="hint">Tip: If you were typing into a form, copy your text before continuing.</div>
+        <div class="actions">
+            <a href="{{ url_for('login_bp.login') }}" class="btn btn-primary">Login</a>
+            <a href="javascript:location.reload()" class="btn">Reload page</a>
+            <a href="javascript:history.back()" class="btn">Go back</a>
+        </div>
+        <div class="small">Redirecting to login in <span id="count" class="count">5</span>…</div>
+    </div>
+
+    <script>
+        (function () {
+            let s = 5; const el = document.getElementById('count');
+            const t = setInterval(function () { s--; if (el) el.textContent = s;
+                if (s <= 0) { clearInterval(t); window.location.href = "{{ url_for('login_bp.login') }}"; } }, 1000);
+        })();
+    </script>
+</body>
+
+</html>
+

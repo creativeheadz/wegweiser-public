@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<!-- Filepath: app/templates/login/index.html -->
+<html lang="en" data-bs-theme="{{ session.get('theme', 'dark') }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Wegweiser</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Font Awesome for icons -->
+    <link href="{{ url_for('static', filename='fontawesome/css/all.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='fontawesome/css/fontawesome.min.css') }}" rel="stylesheet">
+
+    <!-- Base CSS for variables -->
+    <link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <script src="https://www.google.com/recaptcha/api.js?render={{ config.RECAPTCHA_PUBLIC_KEY }}" async defer></script>
+    <script>
+        // Safari-specific fix: Ensure reCAPTCHA loads properly
+        var recaptchaLoaded = false;
+        var recaptchaToken = null;
+        
+        function initRecaptcha() {
+            if (typeof grecaptcha === 'undefined' || !grecaptcha.ready) {
+                console.warn('reCAPTCHA not ready, retrying...');
+                setTimeout(initRecaptcha, 500);
+                return;
+            }
+            
+            grecaptcha.ready(function () {
+                try {
+                    grecaptcha.execute('{{ config.RECAPTCHA_PUBLIC_KEY }}', { action: 'login' })
+                        .then(function (token) {
+                            recaptchaToken = token;
+                            recaptchaLoaded = true;
+                            var hiddenField = document.getElementById('g-recaptcha-response');
+                            if (hiddenField) {
+                                hiddenField.value = token;
+                            }
+                            console.log('reCAPTCHA token loaded successfully');
+                        })
+                        .catch(function(error) {
+                            console.error('reCAPTCHA execution error:', error);
+                        });
+                } catch (error) {
+                    console.error('reCAPTCHA initialization error:', error);
+                }
+            });
+        }
+        
+        // Start initialization when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initRecaptcha);
+        } else {
+            initRecaptcha();
+        }
+
+        function checkCapsLock(event) {
+            var capsLockWarning = document.getElementById("caps-lock-warning");
+            if (event.getModifierState("CapsLock")) {
+                capsLockWarning.style.display = "block";
+            } else {
+                capsLockWarning.style.display = "none";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var passwordField = document.getElementById('password');
+            passwordField.addEventListener('keydown', checkCapsLock);
+        });
+    </script>
+
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon-32x32.png') }}" type="image/png">
+</head>
+
+<body class="auth-page">
+    <!-- Floating particles background -->
+    <div class="auth-particles">
+        <div class="particle particle-1"></div>
+        <div class="particle particle-2"></div>
+        <div class="particle particle-3"></div>
+        <div class="particle particle-4"></div>
+        <div class="particle particle-5"></div>
+        <div class="particle particle-6"></div>
+    </div>
+
+    <!-- Central Notification Container -->
+    <div id="notification-container" class="notification-container auth-notifications">
+        {% for notification in get_all_notifications() %}
+        {{ notification|safe }}
+        {% endfor %}
+    </div>
+
+    <div class="auth-card">
+        <!-- Mascot Character -->
+        {% include 'components/mascot-guide.html' %}
+
+        <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Wegweiser Logo" class="auth-logo">
+        <h1>Login</h1>
+
+        <form method="post" id="loginForm" onsubmit="return validateLoginForm();">
+            {{ form.hidden_tag() }}
+            <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+            <input type="text" name="website" id="website" value="" style="position:absolute;left:-9999px;width:1px;height:1px;" tabindex="-1" autocomplete="off" aria-hidden="true">
+            
+            <div class="auth-form-group">
+                <label for="email">Email</label>
+                {{ form.email(class_="auth-form-control", id="email", required=true,
+                autocomplete="username", value=session.get('email', ''), placeholder="Enter your email") }}
+                <i class="fas fa-envelope auth-form-icon"></i>
+            </div>
+            <div class="auth-form-group">
+                <label for="password">Password</label>
+                {{ form.password(class_="auth-form-control", id="password", required=true,
+                autocomplete="current-password", placeholder="Enter your password") }}
+                <i class="fas fa-lock auth-form-icon"></i>
+                <div id="caps-lock-warning" class="caps-lock-warning">Your Caps Lock is ON</div>
+            </div>
+            <button type="submit" class="auth-btn auth-btn-primary">Login</button>
+        </form>
+
+
+
+        {% if show_resend_link %}
+        <div class="auth-verification-notice">
+            <p>Need to verify your email? <a href="{{ url_for('auth_bp.resend_verification') }}" class="auth-link">Resend verification email</a></p>
+        </div>
+        {% endif %}
+
+        <p class="auth-footer">Don't have an account? <a href="{{ url_for('register_bp.register') }}"
+                class="auth-link">Register here.</a></p>
+
+        <div class="auth-legal-links">
+            <a href="{{ url_for('index.privacy_policy') }}" class="auth-legal-link">Privacy Policy</a>
+            <span class="auth-legal-separator">|</span>
+            <a href="{{ url_for('index.terms_of_service') }}" class="auth-legal-link">Terms of Service</a>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/compass-tracker.js') }}"></script>
+    
+    <script>
+        // Form validation with reCAPTCHA check
+        function validateLoginForm() {
+            var tokenField = document.getElementById('g-recaptcha-response');
+            
+            if (!tokenField || !tokenField.value) {
+                console.warn('reCAPTCHA token not found, attempting to generate...');
+                
+                // Safari fallback: Try to execute reCAPTCHA one more time
+                if (typeof grecaptcha !== 'undefined' && grecaptcha.execute) {
+                    try {
+                        grecaptcha.execute('{{ config.RECAPTCHA_PUBLIC_KEY }}', { action: 'login' })
+                            .then(function (token) {
+                                tokenField.value = token;
+                                // Submit form programmatically
+                                document.getElementById('loginForm').submit();
+                            })
+                            .catch(function(error) {
+                                console.error('reCAPTCHA retry failed:', error);
+                                alert('Security verification failed. Please refresh the page and try again.');
+                            });
+                        return false; // Prevent default submission
+                    } catch (error) {
+                        console.error('reCAPTCHA execution error:', error);
+                        alert('Security verification failed. Please refresh the page and try again.');
+                        return false;
+                    }
+                } else {
+                    alert('Security verification is still loading. Please wait a moment and try again.');
+                    return false;
+                }
+            }
+            
+            return true; // Allow submission
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1056 @@
+/* Modern Layout Components for Wegweiser
+   Provides structural styling for the application
+*/
+
+/* ==========================================================================
+   UNIFIED LAYOUT SURFACES
+   Applies cohesive color hierarchy across layout elements
+   ========================================================================== */
+
+/* Page background - deepest layer */
+body {
+    background-color: var(--page-bg, var(--surface-ground, #0d0f12));
+}
+
+/* Main content wrapper - base surface */
+.main-wrapper {
+    background-color: var(--surface-base, #13161b);
+}
+
+/* Sidebar - raised surface, same level as cards */
+.sidebar-wrapper {
+    background-color: var(--sidebar-bg, var(--surface-raised, #1a1d24));
+    border-right: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+/* Top header - distinct navbar surface for visual separation */
+.top-header {
+    background-color: var(--navbar-bg, var(--header-bg, var(--surface-navbar, #1e2229)));
+    border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+/* Cards within main content - raised from base */
+.card {
+    background-color: var(--card-bg, var(--surface-raised, #1a1d24));
+    border: 1px solid var(--border-default, rgba(255, 255, 255, 0.10));
+}
+
+/* Card headers - slightly elevated for depth */
+.card-header {
+    background-color: var(--surface-overlay, #21252d);
+    border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+/* Dropdowns and popovers - overlay level */
+.dropdown-menu {
+    background-color: var(--dropdown-bg, var(--surface-overlay, #21252d));
+    border: 1px solid var(--border-default, rgba(255, 255, 255, 0.10));
+}
+
+/* ==========================================================================
+   LAYOUT STRUCTURE
+   ========================================================================== */
+
+/* App Container */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Main Wrapper */
+.main-wrapper {
+  flex: 1;
+  margin-left: 260px;
+  padding-top: 60px;
+  /* Changed from 70px to match sidebar header */
+  min-height: 100vh;
+  transition: var(--transition-base);
+  overflow-x: hidden;
+  background-color: var(--body-bg, #F8F9FA);
+  /* Default fallback */
+}
+
+/* Main Content */
+.main-content {
+  padding: var(--spacer-lg);
+  background-color: transparent;
+  width: 100%;
+}
+
+/* Header - Glassmorphism Enhanced */
+.top-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 260px;
+  height: 60px;
+  /* Changed from 70px to match sidebar header */
+  background: var(--header-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  box-shadow: var(--glass-shadow);
+  z-index: 100;
+  transition: var(--transition-base);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.top-header .navbar {
+  height: 100%;
+  padding: 0 var(--spacer-lg);
+}
+
+.top-header .navbar-brand {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.top-header .nav-link {
+  color: var(--text-primary);
+  padding: 0.5rem;
+  border-radius: var(--border-radius);
+  transition: var(--transition-base);
+}
+
+.top-header .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.top-header .nav-right-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.top-header .dropdown-toggle::after {
+  display: none;
+}
+
+.top-header .user-profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(var(--primary-rgb), 0.3);
+}
+
+.top-header .badge-notify {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 50%;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--accent-gold);
+  color: white;
+}
+
+.btn-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: var(--font-size-xl);
+  cursor: pointer;
+  padding: 0.25rem;
+  margin-right: 0.5rem;
+  border-radius: var(--border-radius);
+  transition: var(--transition-base);
+}
+
+.btn-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Sidebar - Glassmorphism Enhanced */
+.sidebar-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100vh;
+  background: var(--sidebar-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-right: 1px solid var(--glass-border);
+  z-index: 1030;
+  transition: var(--transition-base);
+  box-shadow: var(--glass-shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacer);
+  border-bottom: 1px solid var(--glass-border);
+  flex-shrink: 0;
+}
+
+
+
+.sidebar-header .sidebar-full-logo {
+  width: auto;
+  height: auto;
+  max-height: 40px;
+  margin-right: 8px;
+}
+
+.sidebar-header h5 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  /* Reduced from 1.1rem for more compact header */
+  color: var(--text-primary);
+}
+
+.sidebar-header .sidebar-close {
+  display: none;
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xl);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+/* Sidebar User Profile Section */
+.sidebar-user-profile {
+  position: relative;
+  border-bottom: 1px solid var(--glass-border);
+  transition: all 0.3s ease;
+}
+
+.sidebar-user-profile img {
+  border: 2px solid rgba(var(--primary-rgb), 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  object-fit: cover;
+}
+
+.sidebar-user-profile:hover img {
+  border-color: rgba(var(--primary-rgb), 0.4);
+  box-shadow: 0 6px 16px rgba(var(--primary-rgb), 0.2);
+  transform: scale(1.05);
+}
+
+.sidebar-user-greeting h6 {
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  letter-spacing: 0.3px;
+  margin-top: 0.5rem;
+}
+
+/* Contained scroll panel inside sidebar */
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: calc(100vh - 120px); /* 60px (sidebar-header) + 60px (sidebar-footer) */
+  padding: 0.5rem 0; /* vertical breathing room for panel + footer */
+}
+
+
+
+.sidebar-scroll {
+  flex: 1 1 auto; /* take remaining space and align to top */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* align menu items to top */
+  min-height: 0; /* allow child to scroll */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 0.25rem; /* inset so scrollbar feels inside */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+  /* Gradient mask to hint overflow (WebKit) */
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,0.85) 0px, #000 24px, #000 calc(100% - 24px), rgba(0,0,0,0.85) 100%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.85) 0px, #000 24px, #000 calc(100% - 24px), rgba(0,0,0,0.85) 100%);
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 0; /* hidden by default */
+}
+.sidebar-scroll:hover::-webkit-scrollbar {
+  width: 6px; /* visible only on hover */
+}
+
+.sidebar-scroll::-webkit-scrollbar:horizontal {
+  display: none; /* hide horizontal scrollbar completely */
+}
+/* Hide scrollbar by default, show on hover */
+.sidebar-scroll {
+  scrollbar-width: none; /* Firefox - hide by default */
+}
+.sidebar-scroll:hover {
+  scrollbar-width: thin; /* Firefox - show on hover */
+}
+/* WebKit scrollbar styling - hidden by default, visible on hover */
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+}
+.sidebar-scroll:hover::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+.sidebar-scroll:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+/* Remove scroll arrows */
+.sidebar-scroll::-webkit-scrollbar-button {
+  display: none;
+}
+.sidebar-scroll:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+.sidebar-scroll:hover::-webkit-scrollbar-thumb:active {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+/* Footer styling */
+.sidebar-footer-inner {
+  padding: 0.5rem;
+}
+
+.sidebar-quick-icons {
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 1.5rem;
+}
+
+.sidebar-quick-icons a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(var(--primary-rgb), 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text-secondary);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+  border: 1px solid rgba(var(--primary-rgb), 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover effect with glassmorphism enhancement */
+.sidebar-quick-icons a:hover {
+  background: rgba(var(--primary-rgb), 0.2);
+  color: var(--primary);
+  transform: translateY(-2px);
+  border-color: rgba(var(--primary-rgb), 0.3);
+  box-shadow: 0 8px 16px rgba(var(--primary-rgb), 0.15);
+}
+
+/* Ripple effect on click */
+.sidebar-quick-icons a::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(var(--primary-rgb), 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  pointer-events: none;
+}
+
+.sidebar-quick-icons a:active::before {
+  width: 100px;
+  height: 100px;
+}
+
+.sidebar-quick-icons a i {
+  font-size: var(--font-size-base);
+  /* Reduced from 1rem (16px) to 0.875rem (14px) */
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar-user-info {
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.5rem;
+}
+
+.user-avatar {
+  flex-shrink: 0;
+}
+
+.user-details {
+  min-width: 0; /* allow text truncation */
+}
+
+.user-name {
+  color: var(--text-primary);
+}
+
+.btn-xs {
+  padding: 0.15rem 0.3rem;
+  font-size: var(--font-size-xs);
+  /* Reduced from 0.7rem (11.2px) to 0.625rem (10px) */
+}
+
+.sidebar-stats {
+  padding-top: 0.5rem;
+}
+
+.stat-item {
+  display: inline-block;
+}
+
+.stat-value {
+  font-size: var(--font-size-base);
+  /* Reduced from 1.1rem (17.6px) to 0.9375rem (15px) */
+  color: var(--text-primary);
+}
+
+.stat-label {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Keep sections and nav inside scroll panel */
+.sidebar-content .sidebar-nav { padding: 0; margin: 0; overflow: visible; flex: 0 0 auto; }
+
+/* Fixed footer inside sidebar */
+.sidebar-footer {
+  height: 60px; /* same as .sidebar-header-info */
+  flex: 0 0 60px; /* fixed footer height */
+  padding: 0 0.5rem; /* horizontal only so total height stays 60px */
+  border-top: 1px solid var(--glass-border);
+  background: transparent; /* keep glass look consistent */
+  display: flex;
+  align-items: center; /* center footer content vertically */
+  justify-content: center;
+}
+.sidebar-footer-inner { height: 100%; }
+
+/* legacy rule kept for safety: sidebar-nav no longer scrolls; scroll moved to .sidebar-scroll
+.sidebar-nav {
+  flex: 0 0 auto;
+  overflow: visible;
+  padding: 0;
+}*/
+
+.sidebar-nav::-webkit-scrollbar {
+  width: 3px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background-color: rgba(var(--primary-rgb), 0.4);
+  border-radius: 3px;
+}
+
+.menu-label {
+  font-size: var(--font-size-xs);
+  /* 11px */
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  padding: 0.5rem 0.75rem;
+  letter-spacing: 0.5px;
+  margin-top: 0.1875rem;
+  /* Set to 3px */
+  margin-bottom: 0.25rem;
+  border-left: 3px solid var(--primary);
+  background: rgba(var(--primary-rgb), 0.05);
+  border-radius: 0 4px 4px 0;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Dot indicator before section label */
+.menu-label::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.sidebar-nav ul {
+  padding: 0;
+  margin: 0 0 0.1875rem 0;
+  /* Set to 3px for tighter section spacing */
+  list-style: none;
+  position: relative;
+}
+
+/* Subtle hierarchy connector lines - disabled (replaced by section timeline) */
+.sidebar-nav ul::before {
+  content: none;
+}
+
+.sidebar-section:hover .sidebar-nav ul::before {
+  opacity: 0;
+}
+
+/* Hover effect on menu label */
+.menu-label:hover::before {
+  transform: scale(1.3);
+  box-shadow: 0 0 8px rgba(var(--primary-rgb), 0.6);
+}
+
+.sidebar-nav .nav-link {
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary);
+  padding: 0.375rem 0.75rem;
+  /* Further reduced padding for more compact look */
+  margin: 1px var(--spacer-sm);
+  /* Reduced margin from 2px to 1px */
+  border-radius: var(--border-radius);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: var(--font-size-sm);
+  /* Reduced to 12px as requested */
+  border-left: 3px solid transparent;
+  position: relative;
+}
+
+.sidebar-nav .nav-link .parent-icon {
+  width: 18px;
+  /* Further reduced from 20px to 18px */
+  height: 18px;
+  /* Further reduced from 20px to 18px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.375rem;
+  /* Reduced margin for tighter spacing */
+  font-size: 0.75rem;
+  /* Reduced from 0.875rem (14px) to 0.75rem (12px) */
+  color: inherit;
+  border-radius: 3px;
+  /* Slightly smaller radius to match smaller icon */
+  background: rgba(var(--primary-rgb), 0.05);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.sidebar-nav .nav-link .menu-title {
+  flex: 1;
+}
+
+.sidebar-nav .nav-link:hover {
+  background-color: rgba(var(--primary-rgb), 0.08);
+  color: var(--text-primary);
+  transform: translateX(2px);
+  border-left-color: var(--primary);
+}
+
+.sidebar-nav .nav-link:hover .parent-icon {
+  background: rgba(var(--primary-rgb), 0.15);
+  color: var(--primary);
+}
+
+.sidebar-nav .nav-link.active {
+  background-color: rgba(var(--primary-rgb), 0.15);
+  border-left-color: var(--primary);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.sidebar-nav .nav-link.active .parent-icon {
+  background: rgba(var(--primary-rgb), 0.25);
+  color: var(--primary);
+}
+
+/* Sidebar submenu */
+.sidebar-nav .submenu {
+  padding-left: var(--spacer);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.sidebar-nav .submenu.show {
+  max-height: 1000px;
+}
+
+.sidebar-nav .has-arrow {
+  position: relative;
+}
+
+.sidebar-nav .has-arrow::after {
+  content: '\f105';
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  position: absolute;
+  right: var(--spacer);
+  transition: transform 0.3s ease;
+  color: var(--text-secondary);
+}
+
+.sidebar-nav .has-arrow[aria-expanded="true"]::after {
+  transform: rotate(90deg);
+}
+
+/* Improve section grouping with timeline-style dots and lines */
+.sidebar-section {
+  --timeline-x: 14px;
+  --dot-size: 10px;
+  --dot-border: 2px;
+  --dot-total: calc(var(--dot-size) + 2 * var(--dot-border));
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.sidebar-section:last-child {
+  margin-bottom: 0;
+}
+
+/* Timeline dot indicator - positioned at top */
+.sidebar-section::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--timeline-x) - (var(--dot-total) / 2));
+  top: 0;
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 50%;
+  background: rgba(var(--primary-rgb), 0.4);
+  border: var(--dot-border) solid rgba(var(--primary-rgb), 0.2);
+  transition: all 0.3s ease;
+  box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.2);
+  z-index: 2;
+}
+
+.sidebar-section:hover::after {
+  background: rgba(var(--primary-rgb), 0.8);
+  border-color: rgba(var(--primary-rgb), 0.6);
+  box-shadow: 0 0 8px rgba(var(--primary-rgb), 0.4);
+  transform: scale(1.2);
+}
+
+/* Vertical connecting line on the left - starts below top dot, ends above bottom dot */
+.sidebar-section::before {
+  content: '';
+  position: absolute;
+  left: var(--timeline-x);
+  top: var(--dot-total); /* leave space equal to dot outer size */
+  bottom: var(--dot-total);
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--primary-rgb), 0.22) 0%,
+    rgba(var(--primary-rgb), 0.12) 55%,
+    rgba(var(--primary-rgb), 0.06) 100%
+  );
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+
+/* Core Section - Blue gradient */
+.sidebar-section.core-section::before {
+  background: linear-gradient(
+    to bottom,
+    rgba(40, 81, 231, 0.22) 0%,
+    rgba(40, 81, 231, 0.12) 55%,
+    rgba(40, 81, 231, 0.06) 100%
+  );
+}
+
+.sidebar-section.core-section::after {
+  background: rgba(40, 81, 231, 0.4);
+  border-color: rgba(40, 81, 231, 0.2);
+}
+
+.sidebar-section.core-section:hover::after {
+  background: rgba(40, 81, 231, 0.8);
+  border-color: rgba(40, 81, 231, 0.6);
+  box-shadow: 0 0 8px rgba(40, 81, 231, 0.4);
+}
+
+/* Management Section - Teal gradient */
+.sidebar-section.management-section::before {
+  background: linear-gradient(
+    to bottom,
+    rgba(6, 166, 169, 0.22) 0%,
+    rgba(6, 166, 169, 0.12) 55%,
+    rgba(6, 166, 169, 0.06) 100%
+  );
+}
+
+.sidebar-section.management-section::after {
+  background: rgba(6, 166, 169, 0.4);
+  border-color: rgba(6, 166, 169, 0.2);
+}
+
+.sidebar-section.management-section:hover::after {
+  background: rgba(6, 166, 169, 0.8);
+  border-color: rgba(6, 166, 169, 0.6);
+  box-shadow: 0 0 8px rgba(6, 166, 169, 0.4);
+}
+
+/* User Section - Purple gradient */
+.sidebar-section.user-section::before {
+  background: linear-gradient(
+    to bottom,
+    rgba(124, 58, 237, 0.22) 0%,
+    rgba(124, 58, 237, 0.12) 55%,
+    rgba(124, 58, 237, 0.06) 100%
+  );
+}
+
+.sidebar-section.user-section::after {
+  background: rgba(124, 58, 237, 0.4);
+  border-color: rgba(124, 58, 237, 0.2);
+}
+
+.sidebar-section.user-section:hover::after {
+  background: rgba(124, 58, 237, 0.8);
+  border-color: rgba(124, 58, 237, 0.6);
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.4);
+}
+
+/* Help & Support Section - Amber gradient */
+.sidebar-section.help-section::before {
+  background: linear-gradient(
+    to bottom,
+    rgba(245, 158, 11, 0.22) 0%,
+    rgba(245, 158, 11, 0.12) 55%,
+    rgba(245, 158, 11, 0.06) 100%
+  );
+}
+
+.sidebar-section.help-section::after {
+  background: rgba(245, 158, 11, 0.4);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.sidebar-section.help-section:hover::after {
+  background: rgba(245, 158, 11, 0.8);
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
+
+/* Admin Section - Red gradient */
+.sidebar-section.admin-section::before {
+  background: linear-gradient(
+    to bottom,
+    rgba(239, 68, 68, 0.22) 0%,
+    rgba(239, 68, 68, 0.12) 55%,
+    rgba(239, 68, 68, 0.06) 100%
+  );
+}
+
+.sidebar-section.admin-section::after {
+  background: rgba(239, 68, 68, 0.4);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.sidebar-section.admin-section:hover::after {
+  background: rgba(239, 68, 68, 0.8);
+  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+/* Keep line visible for last section so it terminates with the bottom dot */
+.sidebar-section:last-child::before {
+  bottom: var(--dot-total);
+}
+
+/* Bottom dot to cap the line at the end of each section */
+.sidebar-section .collapsible-section {
+  position: relative;
+}
+
+.sidebar-section .collapsible-section::after {
+  content: '';
+  position: absolute;
+  left: calc(var(--timeline-x) - (var(--dot-total) / 2));
+  bottom: 0;
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 50%;
+  background: rgba(var(--primary-rgb), 0.4);
+  border: var(--dot-border) solid rgba(var(--primary-rgb), 0.2);
+  z-index: 2;
+}
+
+/* Section-specific bottom dot colors */
+.sidebar-section.core-section .collapsible-section::after {
+  background: rgba(40, 81, 231, 0.4);
+  border-color: rgba(40, 81, 231, 0.2);
+}
+
+.sidebar-section.management-section .collapsible-section::after {
+  background: rgba(6, 166, 169, 0.4);
+  border-color: rgba(6, 166, 169, 0.2);
+}
+
+.sidebar-section.user-section .collapsible-section::after {
+  background: rgba(124, 58, 237, 0.4);
+  border-color: rgba(124, 58, 237, 0.2);
+}
+
+.sidebar-section.help-section .collapsible-section::after {
+  background: rgba(245, 158, 11, 0.4);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.sidebar-section.admin-section .collapsible-section::after {
+  background: rgba(239, 68, 68, 0.4);
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+/* Color-coded sections */
+.sidebar-section.core-section .menu-label {
+  border-left-color: #2851E7;
+  background: rgba(40, 81, 231, 0.05);
+}
+
+.sidebar-section.management-section .menu-label {
+  border-left-color: #06A6A9;
+  background: rgba(6, 166, 169, 0.05);
+}
+
+.sidebar-section.user-section .menu-label {
+  border-left-color: #7C3AED;
+  background: rgba(124, 58, 237, 0.05);
+}
+
+.sidebar-section.help-section .menu-label {
+  border-left-color: #FFAB00;
+  background: rgba(255, 171, 0, 0.05);
+}
+
+.sidebar-section.admin-section .menu-label {
+  border-left-color: #E83C4B;
+  background: rgba(232, 60, 75, 0.05);
+}
+
+/* Ensure label indicator dots match section colors */
+.sidebar-section.core-section .menu-label::before { background: #2851E7; }
+.sidebar-section.management-section .menu-label::before { background: #06A6A9; }
+.sidebar-section.user-section .menu-label::before { background: #7C3AED; }
+.sidebar-section.help-section .menu-label::before { background: #FFAB00; }
+.sidebar-section.admin-section .menu-label::before { background: #E83C4B; }
+
+/* Collapsible sections for less used areas */
+.collapsible-section {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+  opacity: 0;
+}
+
+.collapsible-section.expanded {
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.section-toggle {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-toggle::after {
+  content: '\f078';
+  /* fa-chevron-down */
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900;
+  font-size: 0.7rem;
+  transition: transform 0.3s ease;
+  color: var(--text-secondary);
+}
+
+.section-toggle.expanded::after {
+  transform: rotate(180deg);
+}
+
+/* Administrative section - less used, so collapsible */
+.admin-section .collapsible-section {
+  padding-left: 0.5rem;
+}
+
+/* Footer Visibility Fix */
+.main-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.main-content {
+  flex: 1 0 auto;
+}
+
+.page-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  position: relative;
+  z-index: 10;
+  /* Ensure footer appears above other elements */
+  background: inherit;
+  /* Match the background of parent for consistency */
+  padding: 1rem 0;
+  border-top: 1px solid var(--border-light);
+  /* subtle separator */
+}
+
+/* Footer Content Layout */
+.footer-content {
+  font-size: var(--font-size-base);
+}
+
+.footer-copyright {
+  color: var(--text-muted, rgba(255, 255, 255, 0.7));
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-link {
+  color: var(--text-muted, rgba(255, 255, 255, 0.7));
+  text-decoration: none;
+  font-size: var(--font-size-base);
+  transition: color 0.3s ease;
+  white-space: nowrap;
+}
+
+.footer-link:hover {
+  color: var(--primary-color, #ffffff);
+  text-decoration: none;
+}
+
+.footer-separator {
+  color: var(--text-muted, rgba(255, 255, 255, 0.5));
+  margin: 0 0.25rem;
+}
+
+/* Responsive footer layout */
+@media (max-width: 992px) {
+  .footer-content {
+    flex-direction: column !important;
+    text-align: center;
+    gap: 0.5rem;
+  }
+
+  .footer-copyright {
+    order: 2;
+  }
+
+  .footer-links {
+    order: 1;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .footer-links {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .footer-separator {
+    display: none;
+  }
+
+  .footer-link {
+    font-size: var(--font-size-sm);
+  }
+
+  .footer-content {
+    font-size: var(--font-size-sm);
+  }
+}
+
+/* Fix for sticky footer on mobile */
+@media (max-width: 768px) {
+  .main-wrapper {
+    min-height: calc(100vh - 60px);
+    /* Adjust based on your header height */
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .btn-toggle {
+    display: block;
+  }
+
+  .sidebar-wrapper {
+    transform: translateX(-100%);
+  }
+
+  .sidebar-wrapper.show {
+    transform: translateX(0);
+  }
+
+  .sidebar-header .sidebar-close {
+    display: block;
+  }
+
+  .main-wrapper,
+  .top-header,
+  .page-footer {
+    margin-left: 0;
+    left: 0;
+  }
+
+  /* Overlay for mobile sidebar - ensure it's hidden by default and transparent */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    /* Transparent background */
+    z-index: 1020;
+    /* Ensure it's below sidebar but above content if shown */
+    display: none;
+    /* Hidden by default */
+    transition: background-color 0.3s ease-in-out;
+    /* Smooth transition if shown */
+  }
+
+  .overlay.show {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent black when shown */
+  }
+}

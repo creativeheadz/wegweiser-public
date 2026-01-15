@@ -1,0 +1,124 @@
+<!-- Filepath: app/templates/integrations/index-vsa10.html -->
+{% extends "base.html" %}
+{% from 'components/guided_tour.html' import tour_breadcrumb_button, include_tour_system %}
+
+{% block title %}VSA Integration Wizard - Wegweiser{% endblock %}
+{% block content %}
+<div class="main-content">
+    {% from "components/breadcrumb.html" import breadcrumb %}
+    {% call breadcrumb(title='Integrations', items=[
+        {'text': 'VSA 10 Integration Wizard', 'icon': 'bx bx-code-block'}
+    ]) %}
+        {{ tour_breadcrumb_button(tour_data) }}
+    {% endcall %}
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="mb-0">VSA Integration Wizard</h4>
+            <hr/>
+            <div class="wizard-progress mb-4">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ step * 25 }}%;" aria-valuenow="{{ step * 25 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <div class="d-flex justify-content-between mt-2">
+                    <span class="{% if step >= 1 %}text-success{% else %}text-muted{% endif %}">Connection</span>
+                    <span class="{% if step >= 2 %}text-success{% else %}text-muted{% endif %}">Fetch Data</span>
+                    <span class="{% if step >= 3 %}text-success{% else %}text-muted{% endif %}">Select Items</span>
+                    <span class="{% if step >= 4 %}text-success{% else %}text-muted{% endif %}">Import</span>
+                </div>
+            </div>
+
+
+            {% if step == 1 %}
+            <form method="POST" action="{{ url_for('vsa_integration_bp.vsa_integration_wizard') }}">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.endpoint.label(class="form-label") }}
+                    {{ form.endpoint(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.token_id.label(class="form-label") }}
+                    {{ form.token_id(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.token_secret.label(class="form-label") }}
+                    {{ form.token_secret(class="form-control") }}
+                </div>
+                {{ form.submit(class="btn btn-primary") }}
+            </form>
+            {% endif %}
+
+            {% if step == 2 %}
+            <h5>Organizations, Sites, and Groups</h5>
+            <form method="POST" action="{{ url_for('vsa_integration_bp.select_items') }}">
+                {{ form.hidden_tag() }}
+                <div class="row">
+                    {% for org in org_data %}
+                    <div class="col-12 mb-3">
+                        <div class="form-check d-flex align-items-center">
+                            <input class="form-check-input me-2" type="checkbox" name="selected_orgs" value="{{ org.id }}" id="org_{{ org.id }}">
+                            <label class="form-check-label d-flex align-items-center" for="org_{{ org.id }}">
+                                <i class="fa-solid fa-building me-2"></i> {{ org.name }}
+                            </label>
+                        </div>
+                        {% for site in org.sites %}
+                        <div class="ps-4 mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="fa-solid fa-location-dot me-2"></i> <strong>{{ site.name }}</strong>
+                            </div>
+                            {% for group in site.groups %}
+                            <div class="ps-4">
+                                <div class="form-check d-flex align-items-center">
+                                    <input class="form-check-input me-2" type="checkbox" name="selected_groups" value="{{ group.id }}" id="group_{{ group.id }}">
+                                    <label class="form-check-label d-flex align-items-center" for="group_{{ group.id }}">
+                                        <i class="fa-solid fa-users me-2"></i> {{ group.name }}
+                                    </label>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {{ form.submit(class="btn btn-primary") }}
+            </form>
+            {% endif %}
+
+            {% if step == 3 %}
+            <h5>Confirm Selection</h5>
+            <p>The following items will be imported:</p>
+            <form method="POST" action="{{ url_for('vsa_integration_bp.import_items') }}">
+                {{ form.hidden_tag() }}
+                <ul class="list-group mb-3">
+                    {% for org in selected_data %}
+                    <li class="list-group-item">
+                        {{ org.name }}
+                        <ul class="list-unstyled ps-4">
+                            {% for site in org.sites %}
+                                {% for group in site.groups %}
+                                <li>{{ site.name }} - {{ group.name }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {{ form.submit(class="btn btn-primary") }}
+            </form>
+            {% endif %}
+
+            {% if step == 4 %}
+            <h5>Import Complete</h5>
+            <p>The selected items have been imported into your Wegweiser tenant.</p>
+            <a href="{{ url_for('dashboard_bp.dashboard') }}" class="btn btn-primary">Return to Dashboard</a>
+            {% endif %}
+        </div>
+    </div>
+{% block extra_scripts %}
+{{ include_tour_system(tour_data.page_identifier if tour_data else 'integrations-vsa10', tour_data) }}
+{% endblock %}
+
+</div>
+
+{% endblock %}

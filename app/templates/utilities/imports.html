@@ -1,0 +1,15 @@
+{# 
+   Utility macro for importing Python utilities into Jinja templates
+   Usage: {% from 'utilities/imports.html' import import_utility %}
+          {{ import_utility('utility_name') }}
+#}
+
+{% macro import_utility(utility_name) %}
+    {% if utility_name == 'text_formatter' %}
+        {% set text_formatter = g.get('text_formatter') %}
+        {% if text_formatter is none %}
+            {% from 'app.utilities.text_formatter' import text_formatter %}
+            {% do g.set('text_formatter', text_formatter) %}
+        {% endif %}
+    {% endif %}
+{% endmacro %}

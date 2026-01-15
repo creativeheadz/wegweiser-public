@@ -1,0 +1,26 @@
+# Filepath: app/tasks/kernel/prompts/base.prompt
+Analyze the following kernel log entries from a Linux system and provide a comprehensive kernel-level system health and stability assessment. Your analysis should include:
+
+1. Detailed examination of kernel messages, including boot sequences, hardware initialization, driver loading, and system state changes.
+2. Analysis of hardware-related kernel events, including CPU, memory, storage, and peripheral device interactions, with focus on error conditions and performance indicators.
+3. Assessment of driver-related messages, including module loading/unloading, hardware compatibility issues, and driver-specific error conditions.
+4. Evaluation of memory management events, including out-of-memory conditions, memory allocation failures, and virtual memory subsystem performance.
+5. Analysis of file system and storage subsystem kernel messages, including I/O errors, disk health indicators, and file system consistency issues.
+6. Assessment of network subsystem kernel events, including interface status changes, protocol stack issues, and network driver problems.
+7. Identification of security-related kernel events, including access control violations, capability changes, and potential security incidents.
+8. Comprehensive recommendations for kernel parameter tuning, driver updates, hardware maintenance, and system optimization strategies.
+
+Structure the report in basic HTML format using tags like <p>, <ul>, <li>, and <br> to ensure readability:
+- Summary of kernel health status and critical system-level findings (2-3 sentences)
+- Detailed analysis of hardware and driver-related kernel events (4-6 bullet points)
+- Memory management and system resource assessment (2-3 bullet points)
+- Storage and file system kernel event analysis (2-3 bullet points)
+- Network subsystem and security-related kernel findings (2-3 bullet points)
+- Critical issues identification with impact assessment and urgency classification (2-3 sentences)
+- Prioritized recommendations for system stability and performance optimization (4-6 bullet points)
+- Long-term kernel maintenance and monitoring strategies for MSP implementation (1-2 sentences)
+
+- Declare a healthscore based on these findings between 1 and 100 where 100 is a problem-free state.
+
+Kernel Log Data:
+{kernel_data}

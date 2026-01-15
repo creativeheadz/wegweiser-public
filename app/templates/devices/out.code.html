@@ -1,0 +1,88 @@
+<div class="row g-4 mt-4">
+    {% for log_type, data in device.eventlogs.items() %}
+    <div class="col-lg-6">
+        <div class="card h-100 shadow">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas {% if 'Security' in log_type %}fa-shield-halved{% elif 'System' in log_type %}fa-sliders-h{% elif 'Application' in log_type %}fa-layer-group{% else %}fa-file-lines{% endif %} fs-2 text-primary me-2"></i>
+                <h6 class="card-title mb-0">{{ log_type.replace('eventsFiltered-', '') }} Events</h6>
+            </div>
+            <div class="card-body">
+                <!-- Analysis Timing -->
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="badge bg-primary">
+                        <i class="fa-regular fa-clock" style="font-size: var(--font-size-base);"></i>
+                        Last Analysis: {{ data.processed_at.strftime('%Y-%m-%d %H:%M') }}
+                    </span>
+                    {% if data.processing_status.has_backlog %}
+                    <span class="badge bg-warning">
+                        <i class="fa-solid fa-hourglass-half" style="font-size: var(--font-size-base);"></i>
+                        {{ data.processing_status.pending_count }} Updates Pending
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- Event Counts -->
+                {% if data.event_summary %}
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="badge bg-danger">
+                        <i class="fa-solid fa-circle-exclamation" style="font-size: var(--font-size-base);"></i>
+                        {{ data.event_summary.error_count }} Errors
+                    </span>
+                    <span class="badge bg-warning">
+                        <i class="fa-solid fa-triangle-exclamation" style="font-size: var(--font-size-base);"></i>
+                        {{ data.event_summary.warning_count }} Warnings
+                    </span>
+                    <span class="badge bg-info">
+                        <i class="fa-solid fa-exclamation" style="font-size: var(--font-size-base);"></i>
+                        {{ data.event_summary.critical_count }} Critical
+                    </span>
+                </div>
+
+                <!-- Latest Events Summary -->
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px">Level</th>
+                                <th>Latest Events</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in data.event_summary.top_events[:3] %}
+                            <tr>
+                                <td>
+                                    <span
+                                        class="badge {% if event.Level == 'ERROR' %}bg-danger{% elif event.Level == 'WARNING' %}bg-warning{% else %}bg-info{% endif %}">
+                                        {{ event.Level }}
+                                    </span>
+                                </td>
+                                <td class="text-truncate" style="max-width: 300px;">
+                                    {{ event.Message }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-circle-info me-2"></i>
+                    <span>No event summary available</span>
+                </div>
+                {% endif %}
+
+                <!-- Analysis History -->
+                {% if data.consolidation_info.has_history %}
+                <div class="mt-3">
+                    <small class="text-muted">
+                        <i class="fa-solid fa-clock-rotate-left" style="font-size: var(--font-size-base);"></i>
+                        {{ data.consolidation_info.consolidated_count }} previous analyses from
+                        {{ data.consolidation_info.oldest_consolidated.strftime('%Y-%m-%d') }}
+                    </small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>

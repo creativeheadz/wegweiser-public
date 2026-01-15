@@ -1,0 +1,384 @@
+<!-- Filepath: app/templates/dashboard/index.html -->
+{% extends "base.html" %}
+{% from 'components/guided_tour.html' import tour_breadcrumb_button, include_tour_system %}
+
+{% block title %}Dashboard - Wegweiser{% endblock %}
+
+{% block styles %}
+{{ super() }}
+{% endblock %}
+{% block extra_head %}
+{{ super() }}
+<link href="{{ url_for('static', filename='css/devices.css') }}" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}
+<div class="main-content p-4">
+    {% call breadcrumb(title='Welcome!', items=[{'text': 'Dashboard', 'icon': 'fas fa-tachometer-alt'}]) %}
+        {{ tour_breadcrumb_button(tour_data) }}
+    {% endcall %}
+
+    <!-- Quickstart Teaser Banner -->
+    <div class="quickstart-teaser mb-4" id="quickstart-teaser" style="display: none;">
+        <div class="card border-0 bg-gradient-primary">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="teaser-icon">
+                                <i class="fas fa-rocket fa-3x text-white"></i>
+                            </div>
+                            <div class="text-white">
+                                <h4 class="mb-1 text-white">Welcome to Wegweiser! 🚀</h4>
+                                <p class="mb-0 opacity-75">Get started with our quick setup guide to maximize your MSP monitoring capabilities. It only takes a few minutes!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                        <div class="d-flex flex-column flex-lg-row gap-2 justify-content-lg-end">
+                            <a href="{{ url_for('quickstart_bp.quickstart') }}" class="btn btn-light btn-lg">
+                                <i class="fas fa-play me-2"></i>Start Quick Guide
+                            </a>
+                            <button class="btn btn-outline-light" onclick="dismissQuickstartTeaser()">
+                                <i class="fas fa-times me-1"></i>Dismiss
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="progress bg-white bg-opacity-25" style="height: 6px;">
+                            <div class="progress-bar bg-white" role="progressbar" style="width: 0%" id="teaser-progress"></div>
+                        </div>
+                        <small class="text-white opacity-75 mt-1 d-block">
+                            <span id="teaser-progress-text">0 of 4 steps completed</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform Statistics Section -->
+    <div class="row g-4 mb-4">
+        <!-- Mac OS Card -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 stat-card bg-primary">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                    <i class="fas fa-laptop fa-2x mb-3"></i>
+                    <h5 class="card-title mb-1">Mac OS</h5>
+                    <h3 class="mb-0">{{ mac_count }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Windows Card -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 stat-card bg-primary">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                    <i class="fab fa-windows fa-2x mb-3"></i>
+                    <h5 class="card-title mb-1">Windows</h5>
+                    <h3 class="mb-0">{{ windows_count }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Linux Card -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 stat-card bg-primary">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                    <i class="fab fa-linux fa-2x mb-3"></i>
+                    <h5 class="card-title mb-1">Linux</h5>
+                    <h3 class="mb-0">{{ linux_count }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other Devices Card -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 stat-card bg-primary">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                    <i class="fas fa-server fa-2x mb-3"></i>
+                    <h5 class="card-title mb-1">Other Devices</h5>
+                    <h3 class="mb-0">{{ other_count }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Statistics Section -->
+    <div class="row g-4 mb-4">
+        <!-- Processed Analyses Card -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 bg-primary dashboard-stat">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                    <i class="fas fa-check-circle fa-2x mb-3"></i>
+                    <h5 class="card-title mb-1">Processed Analyses</h5>
+                    <h3 class="mb-0">{{ processed_count }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consolidated Card -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 bg-secondary dashboard-stat-alt">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                    <i class="fas fa-code-branch fa-2x mb-3"></i>
+                    <h5 class="card-title mb-1">Consolidated</h5>
+                    <h3 class="mb-0">{{ consolidated_count }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Failed Analyses Card -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 bg-danger dashboard-stat">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                    <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
+                    <h5 class="card-title mb-1">Failed Analyses</h5>
+                    <h3 class="mb-0">{{ failed_count }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Analyses Card -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 bg-warning dashboard-stat">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                    <i class="fas fa-clock fa-2x mb-3"></i>
+                    <h5 class="card-title mb-1">Pending Analyses</h5>
+                    <h3 class="mb-0">{{ pending_count }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Organization and Wegcoin Row -->
+    <div class="row g-4 mb-4">
+        <!-- Wegcoin Available Card -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 bg-primary-light dashboard-stat">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                    <i class="fas fa-wallet fa-2x mb-3"></i>
+                    <h5 class="card-title mb-1">Available Wegcoins</h5>
+                    <h3 class="mb-0">{{ wegcoin_balance }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wegcoin Spent Card -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 bg-primary-dark dashboard-stat">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                    <i class="fas fa-shopping-cart fa-2x mb-3"></i>
+                    <h5 class="card-title mb-1">Total Spent Wegcoins</h5>
+                    <h3 class="mb-0">{{ wegcoin_spent }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Organizations Card -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 bg-secondary dashboard-stat-alt">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                    <i class="fas fa-building fa-2x mb-3"></i>
+                    <h5 class="card-title mb-1">Organizations</h5>
+                    <h3 class="mb-0">{{ org_count }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Groups Card -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card h-100 bg-info dashboard-stat">
+                <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                    <i class="fas fa-folder fa-2x mb-3"></i>
+                    <h5 class="card-title mb-1">Groups</h5>
+                    <h3 class="mb-0">{{ group_count }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+        <!-- Device Connectivity Summary -->
+        <div class="row g-4 mb-4" id="connectivity-status-summary">
+            <!-- Online -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 bg-success dashboard-stat">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                        <i class="fas fa-check-circle fa-2x mb-3 os-icon os-online"></i>
+                        <h5 class="card-title mb-1">Online</h5>
+                        <h3 class="mb-0" id="count-online">0</h3>
+                    </div>
+                </div>
+            </div>
+            <!-- Stale -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 bg-warning dashboard-stat">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                        <i class="fas fa-exclamation-circle fa-2x mb-3 os-icon os-stale"></i>
+                        <h5 class="card-title mb-1">Stale</h5>
+                        <h3 class="mb-0" id="count-stale">0</h3>
+                    </div>
+                </div>
+            </div>
+            <!-- Offline -->
+            <div class="col-lg-4 col-md-6">
+                <div class="card h-100 bg-danger dashboard-stat">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center p-4">
+                        <i class="fas fa-times-circle fa-2x mb-3 os-icon"></i>
+                        <h5 class="card-title mb-1">Offline</h5>
+                        <h3 class="mb-0" id="count-offline">0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</div>
+{{ super() }}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if quickstart teaser should be shown
+        checkQuickstartTeaserVisibility();
+        updateTeaserProgress();
+    });
+
+    function checkQuickstartTeaserVisibility() {
+        const completedSteps = getQuickstartProgress();
+        const dismissed = localStorage.getItem('quickstart-teaser-dismissed');
+        const teaser = document.getElementById('quickstart-teaser');
+
+        // Show teaser if not all steps are complete and not dismissed
+        if (completedSteps.length < 4 && !dismissed) {
+            teaser.style.display = 'block';
+        }
+    }
+
+    function getQuickstartProgress() {
+        const saved = localStorage.getItem('quickstart-progress');
+        return saved ? JSON.parse(saved) : [];
+    }
+
+    // Connectivity summary (Online / Stale / Offline) for current tenant
+    (function() {
+        const tenantUuid = "{{ session.get('tenant_uuid') or '' }}";
+        const elOnline = document.getElementById('count-online');
+        const elStale = document.getElementById('count-stale');
+        const elOffline = document.getElementById('count-offline');
+        if (!elOnline || !elStale || !elOffline) return;
+
+        async function pollConnectivitySummary() {
+            if (!tenantUuid) return;
+            let online = 0, stale = 0, offline = 0;
+            try {
+                const res = await fetch(`/api/nats/tenant/${tenantUuid}/devices`);
+                if (res.ok) {
+                    const json = await res.json();
+                    if (json && Array.isArray(json.devices)) {
+                        json.devices.forEach(d => {
+                            const s = (d.status || (d.is_online ? 'Online' : 'Offline')).toLowerCase();
+                            if (s === 'online') online++;
+                            else if (s === 'stale') stale++;
+                            else if (s === 'offline') offline++;
+                        });
+                    }
+                }
+            } catch (e) {
+                // leave counts as-is on error
+            }
+            elOnline.textContent = online;
+            elStale.textContent = stale;
+            elOffline.textContent = offline;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            pollConnectivitySummary();
+            setInterval(pollConnectivitySummary, 20000);
+        });
+    })();
+
+    function updateTeaserProgress() {
+        const completedSteps = getQuickstartProgress();
+        const progressBar = document.getElementById('teaser-progress');
+        const progressText = document.getElementById('teaser-progress-text');
+
+        if (progressBar && progressText) {
+            const percentage = (completedSteps.length / 4) * 100;
+            progressBar.style.width = percentage + '%';
+            progressText.textContent = `${completedSteps.length} of 4 steps completed`;
+
+            // If all steps are complete, hide the teaser
+            if (completedSteps.length >= 4) {
+                document.getElementById('quickstart-teaser').style.display = 'none';
+            }
+        }
+    }
+
+    function dismissQuickstartTeaser() {
+        localStorage.setItem('quickstart-teaser-dismissed', 'true');
+        document.getElementById('quickstart-teaser').style.display = 'none';
+    }
+
+    // Listen for storage changes to update progress when user completes steps in another tab
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'quickstart-progress') {
+            updateTeaserProgress();
+            checkQuickstartTeaserVisibility();
+        }
+    });
+</script>
+
+<style>
+/* Quickstart Teaser Styles */
+.quickstart-teaser .card {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--info) 100%);
+    border: none;
+    box-shadow: var(--glass-shadow), 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.quickstart-teaser .card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--glass-shadow), 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
+.teaser-icon {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius-lg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.btn-outline-light:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .teaser-icon {
+        width: 60px;
+        height: 60px;
+    }
+
+    .teaser-icon i {
+        font-size: 2rem !important;
+    }
+
+    .quickstart-teaser h4 {
+        font-size: 1.25rem;
+    }
+}
+</style>
+
+<!-- Include the guided tour system -->
+{{ include_tour_system('dashboard', tour_data) }}
+{% endblock %}

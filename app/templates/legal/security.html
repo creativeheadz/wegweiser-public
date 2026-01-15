@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Policy - Wegweiser</title>
+    
+    <!-- Pace loading indicator -->
+    <link href="{{ url_for('static', filename='css/pace.minimal.css') }}" rel="stylesheet">
+    <script>
+        window.paceOptions = {
+            elements: false,
+            restartOnRequestAfter: false
+        };
+    </script>
+    <script src="{{ url_for('static', filename='js/pace.js') }}"></script>
+    
+    <style>
+        /* Standalone legal page styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            color: #f0f6fc;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        /* Background image */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('{{ url_for("static", filename="images/bg-themes/15.jpg") }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        .legal-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .legal-content {
+            line-height: 1.6;
+            color: var(--text-color, #ffffff);
+        }
+        
+        .legal-content h1 {
+            color: var(--primary-color, #ffffff);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .legal-content h2 {
+            color: var(--primary-color, #ffffff);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 0.5rem;
+        }
+        
+        .legal-content p {
+            margin-bottom: 1rem;
+        }
+        
+        .legal-content ul {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+        
+        .legal-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary-color, #ffffff);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .back-link:hover {
+            opacity: 1;
+        }
+        
+        .contact-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .security-highlight {
+            background: rgba(0, 255, 0, 0.1);
+            padding: 1rem;
+            border-left: 3px solid rgba(0, 255, 0, 0.5);
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="legal-container">
+        <a href="javascript:history.back()" class="back-link">← Back</a>
+        
+        <div class="legal-content">
+            <h1>Security Policy</h1>
+            
+            <p><strong>Last Updated:</strong> {{ current_year|default('2025') }}</p>
+            
+            <h2>1. Our Commitment to Security</h2>
+            <p>At Wegweiser, security is fundamental to our AI-powered device intelligence platform. We implement comprehensive security measures to protect your data, systems, and privacy while providing reliable MSP services.</p>
+            
+            <h2>2. Data Protection</h2>
+            <p>We employ multiple layers of security to protect your information:</p>
+            <ul>
+                <li><strong>Encryption:</strong> All data is encrypted in transit using TLS 1.3 and at rest using AES-256</li>
+                <li><strong>Access Controls:</strong> Role-based access control (RBAC) with principle of least privilege</li>
+                <li><strong>Authentication:</strong> Multi-factor authentication (MFA) support for enhanced account security</li>
+                <li><strong>Network Security:</strong> Firewalls, intrusion detection, and network segmentation</li>
+            </ul>
+            
+            <h2>3. Infrastructure Security</h2>
+            <p>Our platform infrastructure includes:</p>
+            <ul>
+                <li>Regular security assessments and penetration testing</li>
+                <li>Automated vulnerability scanning and patch management</li>
+                <li>Secure development lifecycle (SDLC) practices</li>
+                <li>24/7 security monitoring and incident response</li>
+                <li>Backup and disaster recovery procedures</li>
+            </ul>
+            
+            <h2>4. Agent Security</h2>
+            <p>Our monitoring agents are designed with security in mind:</p>
+            <ul>
+                <li>Encrypted communication channels with certificate pinning</li>
+                <li>Minimal system privileges and sandboxed execution</li>
+                <li>Regular security updates and automatic patching</li>
+                <li>Tamper detection and integrity verification</li>
+            </ul>
+            
+            <h2>5. Compliance and Standards</h2>
+            <p>We adhere to industry-standard security frameworks and regulations:</p>
+            <ul>
+                <li>ISO 27001 security management principles</li>
+                <li>GDPR compliance for data protection</li>
+                <li>SOC 2 Type II controls implementation</li>
+                <li>Regular third-party security audits</li>
+            </ul>
+            
+            <h2>6. Incident Response</h2>
+            <p>In the event of a security incident, we have established procedures to:</p>
+            <ul>
+                <li>Rapidly detect and contain security threats</li>
+                <li>Assess the scope and impact of incidents</li>
+                <li>Notify affected customers within 72 hours when required</li>
+                <li>Implement corrective measures and prevent recurrence</li>
+                <li>Conduct post-incident reviews and improvements</li>
+            </ul>
+            
+            <h2>7. Responsible Disclosure</h2>
+            <div class="security-highlight">
+                <p><strong>Security Researchers:</strong> We welcome responsible disclosure of security vulnerabilities. Please report security issues to our dedicated security team.</p>
+            </div>
+            
+            <h2>8. User Security Responsibilities</h2>
+            <p>To maintain security, we recommend that you:</p>
+            <ul>
+                <li>Use strong, unique passwords and enable MFA</li>
+                <li>Keep your systems and agents updated</li>
+                <li>Monitor access logs and user activity</li>
+                <li>Report suspicious activity immediately</li>
+                <li>Follow security best practices for your endpoints</li>
+            </ul>
+            
+            <h2>9. Data Retention and Deletion</h2>
+            <p>We maintain clear policies for data handling:</p>
+            <ul>
+                <li>Data is retained only as long as necessary for service provision</li>
+                <li>Secure deletion procedures for end-of-life data</li>
+                <li>Customer-controlled data retention settings</li>
+                <li>Regular purging of unnecessary logs and temporary data</li>
+            </ul>
+            
+            <h2>10. Security Updates</h2>
+            <p>This security policy is reviewed and updated regularly to reflect:</p>
+            <ul>
+                <li>Changes in our security posture and capabilities</li>
+                <li>Evolution of threat landscape and best practices</li>
+                <li>Regulatory requirements and compliance standards</li>
+                <li>Customer feedback and security recommendations</li>
+            </ul>
+            
+            <h2>11. Contact Our Security Team</h2>
+            <div class="contact-info">
+                <p>For security-related inquiries, vulnerability reports, or incident notifications:</p>
+                <p><strong>Security Email:</strong> security@wegweiser.tech</p>
+                <p><strong>PGP Key:</strong> Available upon request</p>
+                <p><strong>Response Time:</strong> Within 24 hours for critical issues</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

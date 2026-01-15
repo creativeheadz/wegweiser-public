@@ -1,0 +1,611 @@
+/* Unified Gauges and Charts Styling for Wegweiser
+   Consistent styling for all gauges and charts in the system health overview
+*/
+
+/* =====================================================
+   UNIFIED METRICS CONTAINER
+   ===================================================== */
+
+/* Removed - no longer needed with new layout */
+
+/* =====================================================
+   UNIFIED GAUGES STYLING
+   ===================================================== */
+
+/* Removed - gauges now use simple stacking with mb-3 */
+
+/* Removed - no longer needed with new layout */
+
+.gauge-card {
+    background: var(--card-bg);
+    border: var(--card-border);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.gauge-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="dark"] .gauge-card {
+    background: #1a1a1a;
+}
+
+.gauge-header {
+    padding: 0.75rem 1rem;
+    background: transparent;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--card-border);
+    flex-shrink: 0;
+}
+
+[data-bs-theme="dark"] .gauge-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+    color: #e9ecef;
+}
+
+[data-bs-theme="light"] .gauge-header {
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+    color: #212529;
+}
+
+.gauge-label {
+    margin: 0;
+}
+
+.gauge-body {
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 120px;
+}
+
+.unified-gauge-container {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.unified-gauge-container canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Gauge value display styling */
+.gauge-value {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    text-align: center;
+}
+
+[data-bs-theme="dark"] .gauge-value {
+    color: #e9ecef;
+}
+
+[data-bs-theme="light"] .gauge-value {
+    color: #212529;
+}
+
+/* =====================================================
+   UNIFIED CHARTS STYLING
+   ===================================================== */
+
+/* Charts now stack naturally with mb-3 spacing */
+
+/* Removed - no longer needed */
+/* Removed - charts now stack vertically in left column */
+
+
+.unified-chart-card {
+    display: flex;
+    flex-direction: column;
+    border: var(--card-border);
+    background: var(--card-bg);
+    height: 100%;
+}
+
+[data-bs-theme="dark"] .unified-chart-card {
+    background: #1a1a1a;
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-bs-theme="light"] .unified-chart-card {
+    background: #fff;
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+.unified-chart-card .card-header {
+    padding: 0.75rem 1rem;
+    background: transparent;
+    color: var(--text-primary);
+    border: none;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+}
+
+[data-bs-theme="dark"] .unified-chart-card .card-header {
+    color: #e9ecef;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-bs-theme="light"] .unified-chart-card .card-header {
+    color: #212529;
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+.chart-title {
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.unified-chart-card .card-body {
+    padding: 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.unified-chart-container {
+    width: 100%;
+    height: 100%;
+    min-height: 160px;
+}
+
+/* =====================================================
+   RESPONSIVE ADJUSTMENTS
+   ===================================================== */
+
+@media (max-width: 991px) {
+    .gauge-body {
+        min-height: 140px;
+    }
+
+    .unified-gauge-container {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+@media (max-width: 768px) {
+    .gauge-body {
+        min-height: 150px;
+    }
+
+    .unified-gauge-container {
+        width: 130px;
+        height: 130px;
+    }
+
+    .unified-chart-card .card-body {
+        min-height: auto;
+    }
+
+    .unified-chart-container {
+        min-height: 180px;
+    }
+}
+
+@media (max-width: 576px) {
+    .gauge-header {
+        padding: 0.6rem 0.8rem;
+        font-size: var(--font-size-base);
+    }
+
+    .gauge-body {
+        padding: 0.75rem;
+        min-height: 130px;
+    }
+
+    .unified-gauge-container {
+        width: 110px;
+        height: 110px;
+    }
+
+    .unified-chart-card .card-header {
+        padding: 0.6rem 0.8rem;
+        font-size: var(--font-size-base);
+    }
+
+    .unified-chart-card .card-body {
+        padding: 0.75rem;
+    }
+
+    .chart-title {
+        font-size: var(--font-size-base);
+    }
+
+    .unified-chart-container {
+        min-height: 150px;
+    }
+}
+
+/* =====================================================
+   MODERN HORIZONTAL GAUGE CARDS
+   ===================================================== */
+
+.modern-gauge-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.modern-gauge-card:hover {
+    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.15);
+    transform: translateY(-2px);
+}
+
+[data-bs-theme="dark"] .modern-gauge-card:hover {
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+}
+
+.modern-gauge-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.modern-gauge-icon {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: linear-gradient(310deg,#7928ca,#ff0080);
+    color: white;
+    font-size: 1.75rem;
+    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.3);
+}
+
+[data-bs-theme="dark"] .modern-gauge-icon {
+    background: linear-gradient(310deg,#7928ca,#ff0080);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+}
+
+.modern-gauge-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.modern-gauge-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modern-gauge-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(310deg,#7928ca,#ff0080);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+[data-bs-theme="dark"] .modern-gauge-value {
+    background: linear-gradient(310deg,#7928ca,#ff0080);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.modern-gauge-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(147, 51, 234, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+[data-bs-theme="dark"] .modern-gauge-bar {
+    background: rgba(124, 58, 237, 0.15);
+}
+
+.modern-gauge-bar-fill {
+    height: 100%;
+    background: linear-gradient(310deg,#7928ca,#ff0080);
+    border-radius: 4px;
+    transition: width 0.6s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+[data-bs-theme="dark"] .modern-gauge-bar-fill {
+    background: linear-gradient(310deg,#7928ca,#ff0080);
+}
+
+/* Animated shimmer effect */
+.modern-gauge-bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+/* =====================================================
+   MODERN COMPACT CHART CARDS
+   ===================================================== */
+
+.modern-chart-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    overflow: visible;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.modern-chart-card:hover {
+    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.15);
+    transform: translateY(-2px);
+}
+
+[data-bs-theme="dark"] .modern-chart-card:hover {
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+}
+
+.modern-chart-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%);
+    border-bottom: 1px solid var(--border-color);
+}
+
+[data-bs-theme="dark"] .modern-chart-header {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+}
+
+.modern-chart-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #9333EA 0%, #EC4899 100%);
+    color: white;
+    font-size: 0.875rem;
+}
+
+[data-bs-theme="dark"] .modern-chart-icon {
+    background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+}
+
+.modern-chart-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+}
+
+.modern-chart-body {
+    padding: 0.75rem;
+}
+
+.modern-chart-container {
+    width: 100%;
+    min-height: 300px;
+    position: relative;
+}
+
+/* Ensure uPlot charts fit properly */
+.modern-chart-container .uplot {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Compact chart styling - smaller fonts, tighter spacing */
+.modern-chart-container .u-axis {
+    font-size: 10px;
+}
+
+.modern-chart-container .u-legend {
+    display: none;
+}
+
+.modern-chart-container .u-over {
+    border-radius: 4px;
+}
+
+/* =====================================================
+   UNIFIED MODERN CARD DESIGN SYSTEM
+   ===================================================== */
+
+/* Modern detail cards - used for all device info cards */
+.modern-detail-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.modern-detail-card:hover {
+    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.15);
+    transform: translateY(-2px);
+}
+
+[data-bs-theme="dark"] .modern-detail-card:hover {
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+}
+
+.modern-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%);
+    border-bottom: 1px solid var(--border-color);
+}
+
+[data-bs-theme="dark"] .modern-detail-header {
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+}
+
+.modern-detail-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #9333EA 0%, #EC4899 100%);
+    color: white;
+    font-size: 1rem;
+}
+
+[data-bs-theme="dark"] .modern-detail-icon {
+    background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+}
+
+.modern-detail-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+    margin: 0;
+}
+
+.modern-detail-body {
+    padding: 1.25rem;
+}
+
+/* =====================================================
+   SYSTEM DETAILS STYLING
+   ===================================================== */
+
+/* AI insight icons in detail cards */
+.ai-insight-icon-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.ai-insight-icon {
+    cursor: pointer;
+    color: #9333EA;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+    margin-left: 0.25rem;
+    font-size: 0.85em;
+}
+
+.ai-insight-icon:hover {
+    opacity: 1;
+}
+
+[data-bs-theme="dark"] .ai-insight-icon {
+    color: #7c3aed;
+}
+
+/* =====================================================
+   THEME SUPPORT
+   ===================================================== */
+
+:root {
+    --primary-color: #9333EA;
+    --secondary-color: #EC4899;
+    --card-bg: #fff;
+    --card-border: 1px solid #e5e7eb;
+    --border-radius: 0.375rem;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+}
+
+[data-bs-theme="dark"] {
+    --primary-color: #7c3aed;
+    --secondary-color: #06b6d4;
+    --card-bg: #1a1a1a;
+    --card-border: 1px solid rgba(255, 255, 255, 0.1);
+    --text-primary: #e5e7eb;
+    --text-secondary: #9ca3af;
+}
+
+/* =====================================================
+   ICON STYLING
+   ===================================================== */
+
+.gauge-header i,
+.unified-chart-card .card-header i {
+    font-size: var(--font-size-md);
+    opacity: 0.95;
+}
+
+/* =====================================================
+   LOADING AND ERROR STATES
+   ===================================================== */
+
+.unified-chart-container.loading,
+.gauge-body.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.unified-chart-container.error,
+.gauge-body.error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* =====================================================
+   PRINT STYLING
+   ===================================================== */
+
+@media print {
+    .unified-gauges-container,
+    .unified-chart-card {
+        page-break-inside: avoid;
+    }
+}

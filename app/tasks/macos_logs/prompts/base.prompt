@@ -1,0 +1,66 @@
+You are a macOS system administrator analyzing system log health and stability patterns.
+
+{previous_analysis}
+
+ANALYSIS CRITERIA:
+{criteria}
+
+LOG DATA ANALYSIS:
+Analyze the following macOS log categories:
+- **Errors**: System errors and faults that indicate problems
+- **Security**: Security-related events and potential threats  
+- **Crashes**: Application and system crashes indicating instability
+
+SCORING CRITERIA (0-100):
+- 90-100: Minimal errors, no security issues, rare crashes
+- 80-89: Few minor errors, no security threats, occasional crashes
+- 70-79: Some errors present, minor security events, moderate crashes
+- 60-69: Regular errors, some security concerns, frequent crashes
+- 50-59: Many errors, security issues present, high crash rate
+- 30-49: Severe error patterns, security threats, system instability
+- 0-29: Critical system issues, major security problems, constant crashes
+
+ANALYSIS FOCUS:
+- Identify the most critical issues requiring immediate attention
+- Assess security posture and potential vulnerabilities
+- Evaluate system stability and performance impact
+- Provide actionable recommendations for improvement
+
+{exclusion_block}
+
+OUTPUT FORMAT:
+Format response in HTML with <p>, <ul>, <li>, <strong> tags:
+
+<p><strong>ERROR ANALYSIS:</strong><br>
+[Detailed analysis of system errors and their severity]</p>
+
+<p><strong>SECURITY ASSESSMENT:</strong><br>
+[Evaluation of security events and potential threats]</p>
+
+<p><strong>CRASH EVALUATION:</strong><br>
+[Analysis of application and system crashes]</p>
+
+<p><strong>SYSTEM STABILITY:</strong><br>
+[Overall assessment of system health and stability]</p>
+
+<p><strong>CRITICAL ISSUES:</strong><br>
+[Most urgent problems requiring immediate attention]</p>
+
+<p><strong>RECOMMENDATIONS:</strong><br>
+[Specific actions to improve system health]</p>
+
+<p><strong>KEY FINDINGS:</strong></p>
+<ul>
+<li>[Critical insight 1]</li>
+<li>[Critical insight 2]</li>
+<li>[Critical insight 3]</li>
+<li>[Critical insight 4]</li>
+<li>[Critical insight 5]</li>
+</ul>
+
+Declare a health score based on these findings between 0 and 100 where 100 is optimal health.
+
+Analysis Date: {analysis_date}
+
+Raw Log Data:
+{log_data}

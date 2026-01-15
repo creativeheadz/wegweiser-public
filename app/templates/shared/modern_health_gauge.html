@@ -1,0 +1,53 @@
+{# Modern Health Gauge Component - Reusable across all entity levels #}
+{# 
+    Parameters:
+    - entity_type: 'device', 'group', 'organisation', 'tenant'
+    - entity_uuid: UUID of the entity
+    - health_score: Current health score value
+    - show_history: Boolean to show history chart (default: true)
+    - history_endpoint: API endpoint for history data (optional)
+#}
+
+{% set show_history = show_history if show_history is defined else true %}
+
+<div class="row g-4">
+    {# Modern Horizontal Gauge #}
+    <div class="col-12">
+        <div class="modern-gauge-card">
+            <div class="modern-gauge-content">
+                <div class="modern-gauge-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="modern-gauge-info">
+                    <div class="modern-gauge-label">Health Score</div>
+                    <div class="modern-gauge-value" id="health-score-value-{{ entity_type }}">{% if health_score is not none %}{{ "%.0f"|format(health_score) }}%{% else %}N/A{% endif %}</div>
+                    <div class="modern-gauge-bar">
+                        <div class="modern-gauge-bar-fill" id="health-score-bar-{{ entity_type }}" style="width: {{ health_score|default(0) }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# History Chart (if enabled) #}
+    {% if show_history and history_endpoint %}
+    <div class="col-12">
+        <div class="modern-chart-card">
+            <div class="modern-chart-header">
+                <div class="modern-chart-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span class="modern-chart-title">Health Score History</span>
+            </div>
+            <div class="modern-chart-body">
+                <div id="health-history-{{ entity_type }}" 
+                     class="modern-chart-container" 
+                     data-entity-type="{{ entity_type }}"
+                     data-entity-uuid="{{ entity_uuid }}"
+                     data-history-endpoint="{{ history_endpoint }}"></div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+

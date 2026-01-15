@@ -1,0 +1,25 @@
+# Filepath: app/tasks/programs/prompts/base.prompt
+Analyze the following list of installed programs on a Windows system and provide a comprehensive software inventory and security assessment. Your analysis should include:
+
+1. Detailed categorization of installed software by type (business applications, system utilities, security tools, development software, etc.) and assessment of their necessity and usage patterns.
+2. Identification of potentially unwanted programs (PUPs), bloatware, trial software, and applications that may pose security or performance risks.
+3. Comprehensive assessment of software versions, identifying outdated applications with known security vulnerabilities, end-of-life software, and applications requiring immediate updates.
+4. Analysis of software licensing compliance, including identification of unlicensed software, expired licenses, or applications requiring license management attention.
+5. Evaluation of software conflicts, duplicate functionality, and applications that may be causing system performance degradation or stability issues.
+6. Assessment of software installation sources, digital signatures, and publisher reputation to identify potentially malicious or untrusted applications.
+7. Analysis of resource-intensive applications, startup programs, and background services that may impact system performance.
+8. Comprehensive recommendations for software hygiene, update management, and security optimization strategies tailored for MSP operations.
+
+Structure the report in basic HTML format using tags such as <p>, <ul>, <li>, and <br> to ensure readability:
+- Summary of software inventory status and key security findings (2-3 sentences)
+- Detailed analysis of installed programs with categorization and risk assessment (5-7 bullet points)
+- Identification of potentially unwanted programs and security risks (3-4 bullet points)
+- Software licensing and compliance considerations (2-3 bullet points)
+- Performance impact assessment and optimization opportunities (2-3 bullet points)
+- Prioritized software maintenance recommendations with security focus (3-4 bullet points)
+- Long-term software management and update strategy suggestions (1-2 sentences)
+
+- Declare a healthscore based on these findings between 1 and 100 where 100 is a problem-free state.
+
+Installed Programs Data:
+{program_data}

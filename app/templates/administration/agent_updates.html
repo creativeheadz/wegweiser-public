@@ -1,0 +1,485 @@
+<!-- Filepath: app/templates/administration/agent_updates.html -->
+{% extends 'base.html' %}
+
+{% block title %}Agent Updates{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Global state
+  let selectedVersion = null;
+  let selectedPlatform = null;
+
+  // Initialize page
+  document.addEventListener('DOMContentLoaded', function() {
+    // Set up event listeners for update selection
+    document.querySelectorAll('.update-package-card').forEach(card => {
+      card.addEventListener('click', function() {
+        // Remove selection from all cards
+        document.querySelectorAll('.update-package-card').forEach(c => c.classList.remove('border-primary', 'selected'));
+
+        // Add selection to clicked card
+        this.classList.add('border-primary', 'selected');
+
+        // Store selected version and platform
+        selectedVersion = this.dataset.version;
+        selectedPlatform = this.dataset.platform;
+
+        // Enable deploy button
+        document.getElementById('deployBtn').disabled = false;
+      });
+    });
+  });
+
+  // Deploy update
+  function deployUpdate() {
+    if (!selectedVersion || !selectedPlatform) {
+      alert('Please select an update package first');
+      return;
+    }
+
+    const targetType = document.getElementById('targetType').value;
+    const targetUuid = document.getElementById('targetUuid').value;
+    const applyMode = document.getElementById('applyMode').value;
+    const targetComponent = document.getElementById('targetComponent').value;
+
+    if (!targetUuid) {
+      alert('Please enter a target UUID');
+      return;
+    }
+
+    if (!confirm(`Are you sure you want to deploy version ${selectedVersion} to ${targetType} ${targetUuid}?\n\nApply mode: ${applyMode}\nTarget component: ${targetComponent}\nPlatform: ${selectedPlatform}`)) {
+      return;
+    }
+
+    // Disable button during deployment
+    const deployBtn = document.getElementById('deployBtn');
+    deployBtn.disabled = true;
+    deployBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Deploying...';
+
+    $.ajax({
+      url: "{{ url_for('agent_updates_bp.deploy_agent_update') }}",
+      method: "POST",
+      contentType: "application/json",
+      headers: {
+        'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')
+      },
+      data: JSON.stringify({
+        update_version: selectedVersion,
+        platform: selectedPlatform,
+        target_type: targetType,
+        target_uuid: targetUuid,
+        apply_mode: applyMode,
+        target_component: targetComponent
+      }),
+      success: function(data) {
+        if (data.success) {
+          alert(`Update deployed successfully!\n\n${data.message}`);
+          location.reload();  // Refresh to show updated stats
+        } else {
+          alert(`Deployment failed: ${data.error}`);
+          deployBtn.disabled = false;
+          deployBtn.innerHTML = '<i class="fas fa-rocket me-2"></i>Deploy Update';
+        }
+      },
+      error: function(xhr) {
+        const error = xhr.responseJSON?.error || 'Unknown error occurred';
+        alert(`Deployment failed: ${error}`);
+        deployBtn.disabled = false;
+        deployBtn.innerHTML = '<i class="fas fa-rocket me-2"></i>Deploy Update';
+      }
+    });
+  }
+
+  // View device update history
+  function viewDeviceHistory(deviceUuid) {
+    window.location.href = `{{ url_for('agent_updates_bp.get_device_update_history', device_uuid='PLACEHOLDER') }}`.replace('PLACEHOLDER', deviceUuid);
+  }
+
+  // Format file size
+  function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+    if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    return (bytes / (1024 * 1024 * 1024)).toFixed(2) + ' GB';
+  }
+
+  // Format timestamp
+  function formatTimestamp(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleString();
+  }
+
+  // Get status badge class
+  function getStatusBadgeClass(status) {
+    switch(status) {
+      case 'success': return 'bg-success';
+      case 'failed': return 'bg-danger';
+      case 'pending': return 'bg-warning';
+      case 'staged': return 'bg-info';
+      case 'rolled_back': return 'bg-secondary';
+      default: return 'bg-secondary';
+    }
+  }
+</script>
+
+<style>
+.update-package-card {
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent !important;
+}
+
+.update-package-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.update-package-card.selected {
+  border-color: var(--bs-primary) !important;
+  background-color: rgba(var(--bs-primary-rgb), 0.05);
+}
+
+.stat-card {
+  border-left: 4px solid var(--bs-primary);
+}
+
+.version-badge {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.75rem;
+}
+
+.history-table {
+  font-size: 0.9rem;
+}
+
+.hash-truncate {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <!-- Page Header -->
+  <div class="col-12 mb-4">
+    <div class="card rounded-4">
+      <div class="card-header py-3">
+        <div class="d-flex align-items-center justify-content-between">
+          <h5 class="mb-0">
+            <i class="fas fa-sync-alt me-2"></i>Agent Update Management
+          </h5>
+          <span class="badge bg-primary">System Administration</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p class="mb-0 text-muted">
+          <i class="fas fa-info-circle me-2"></i>
+          Deploy agent updates across your fleet. Updates are delivered via snippet execution and support both immediate hot-reload and scheduled reboot modes.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Row -->
+  <div class="col-12 mb-4">
+    <div class="row g-3">
+      <!-- Total Devices -->
+      <div class="col-md-3">
+        <div class="card stat-card rounded-4 h-100">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <p class="mb-1 text-muted small">Total Devices</p>
+                <h3 class="mb-0">{{ version_distribution.total_devices }}</h3>
+              </div>
+              <div class="text-primary">
+                <i class="fas fa-server fa-2x"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Success Rate -->
+      <div class="col-md-3">
+        <div class="card stat-card rounded-4 h-100" style="border-left-color: var(--bs-success);">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <p class="mb-1 text-muted small">Update Success Rate</p>
+                <h3 class="mb-0 text-success">{{ update_history_stats.success_rate }}%</h3>
+              </div>
+              <div class="text-success">
+                <i class="fas fa-check-circle fa-2x"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Updates -->
+      <div class="col-md-3">
+        <div class="card stat-card rounded-4 h-100" style="border-left-color: var(--bs-info);">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <p class="mb-1 text-muted small">Recent Updates</p>
+                <h3 class="mb-0 text-info">{{ update_history_stats.total_updates }}</h3>
+              </div>
+              <div class="text-info">
+                <i class="fas fa-history fa-2x"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Failed Updates -->
+      <div class="col-md-3">
+        <div class="card stat-card rounded-4 h-100" style="border-left-color: var(--bs-danger);">
+          <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <p class="mb-1 text-muted small">Failed Updates</p>
+                <h3 class="mb-0 text-danger">{{ update_history_stats.failed }}</h3>
+              </div>
+              <div class="text-danger">
+                <i class="fas fa-exclamation-triangle fa-2x"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Version Distribution -->
+  <div class="col-md-6 mb-4">
+    <div class="card rounded-4 h-100">
+      <div class="card-header py-3">
+        <h6 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Version Distribution</h6>
+      </div>
+      <div class="card-body">
+        {% if version_distribution.versions %}
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Version</th>
+                  <th class="text-end">Devices</th>
+                  <th class="text-end">Percentage</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for version_stat in version_distribution.versions %}
+                <tr>
+                  <td>
+                    <span class="version-badge badge bg-secondary">{{ version_stat.version }}</span>
+                  </td>
+                  <td class="text-end">{{ version_stat.count }}</td>
+                  <td class="text-end">
+                    <div class="progress" style="height: 20px; min-width: 80px;">
+                      <div class="progress-bar" role="progressbar"
+                           style="width: {{ version_stat.percentage }}%;"
+                           aria-valuenow="{{ version_stat.percentage }}"
+                           aria-valuemin="0" aria-valuemax="100">
+                        {{ version_stat.percentage }}%
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="text-muted text-center mb-0">No version data available</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Available Updates -->
+  <div class="col-md-6 mb-4">
+    <div class="card rounded-4 h-100">
+      <div class="card-header py-3">
+        <h6 class="mb-0"><i class="fas fa-download me-2"></i>Available Update Packages</h6>
+      </div>
+      <div class="card-body">
+        {% if available_updates %}
+          <div class="row g-2">
+            {% for update in available_updates %}
+            <div class="col-12">
+              <div class="card update-package-card"
+                   data-version="{{ update.version }}"
+                   data-platform="{{ update.platform }}">
+                <div class="card-body py-2">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                      <h6 class="mb-1">
+                        <i class="fas fa-box me-2 text-primary"></i>
+                        {{ update.version }}
+                      </h6>
+                      <small class="text-muted">
+                        <i class="fab fa-{{ 'windows' if update.platform == 'Windows' else 'linux' if update.platform == 'Linux' else 'apple' }} me-1"></i>
+                        {{ update.platform }} |
+                        {{ (update.file_size / 1024 / 1024)|round(2) }} MB |
+                        {{ update.created_at.strftime('%Y-%m-%d %H:%M') }}
+                      </small>
+                    </div>
+                    <div>
+                      <i class="fas fa-check-circle text-success"></i>
+                    </div>
+                  </div>
+                  <small class="hash-truncate text-muted d-block mt-1" title="{{ update.sha256 }}">
+                    SHA256: {{ update.sha256[:16] }}...
+                  </small>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="text-center text-muted py-4">
+            <i class="fas fa-inbox fa-3x mb-3"></i>
+            <p class="mb-0">No update packages available</p>
+            <small>Place update packages in /opt/wegweiser/installerFiles/{Platform}/updates/</small>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Deployment Configuration -->
+  <div class="col-12 mb-4">
+    <div class="card rounded-4">
+      <div class="card-header py-3">
+        <h6 class="mb-0"><i class="fas fa-cog me-2"></i>Deployment Configuration</h6>
+      </div>
+      <div class="card-body">
+        <div class="row g-3">
+          <!-- Target Type -->
+          <div class="col-md-3">
+            <label class="form-label">Target Type</label>
+            <select class="form-select" id="targetType">
+              <option value="device">Single Device</option>
+              <option value="group">Device Group</option>
+              <option value="org">Organization</option>
+              <option value="tenant">Entire Tenant</option>
+            </select>
+          </div>
+
+          <!-- Target UUID -->
+          <div class="col-md-3">
+            <label class="form-label">Target UUID</label>
+            <input type="text" class="form-control" id="targetUuid" placeholder="Enter UUID">
+            <small class="text-muted">Device, Group, Org, or Tenant UUID</small>
+          </div>
+
+          <!-- Apply Mode -->
+          <div class="col-md-3">
+            <label class="form-label">Apply Mode</label>
+            <select class="form-select" id="applyMode">
+              <option value="immediate">Immediate (Hot-reload)</option>
+              <option value="scheduled_reboot">Scheduled Reboot</option>
+            </select>
+            <small class="text-muted">Immediate: restart service now</small>
+          </div>
+
+          <!-- Target Component -->
+          <div class="col-md-3">
+            <label class="form-label">Target Component</label>
+            <select class="form-select" id="targetComponent">
+              <option value="both">Both (Agent + NATS)</option>
+              <option value="agent">Agent Only</option>
+              <option value="nats_agent">NATS Agent Only</option>
+            </select>
+          </div>
+
+          <!-- Deploy Button -->
+          <div class="col-12">
+            <button class="btn btn-primary btn-lg w-100" id="deployBtn" onclick="deployUpdate()" disabled>
+              <i class="fas fa-rocket me-2"></i>Deploy Update
+            </button>
+            <small class="text-muted d-block mt-2 text-center">
+              <i class="fas fa-info-circle me-1"></i>
+              Select an update package above to enable deployment
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Update History -->
+  <div class="col-12">
+    <div class="card rounded-4">
+      <div class="card-header py-3">
+        <h6 class="mb-0"><i class="fas fa-history me-2"></i>Recent Update History</h6>
+      </div>
+      <div class="card-body">
+        {% if recent_history %}
+          <div class="table-responsive">
+            <table class="table table-hover history-table">
+              <thead>
+                <tr>
+                  <th>Device UUID</th>
+                  <th>Version</th>
+                  <th>Previous</th>
+                  <th>Apply Mode</th>
+                  <th>Status</th>
+                  <th>Initiated</th>
+                  <th>Completed</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for history in recent_history %}
+                <tr>
+                  <td>
+                    <code class="small">{{ history.deviceuuid }}</code>
+                  </td>
+                  <td>
+                    <span class="badge bg-primary">{{ history.update_version }}</span>
+                  </td>
+                  <td>
+                    {% if history.previous_version %}
+                      <span class="badge bg-secondary">{{ history.previous_version }}</span>
+                    {% else %}
+                      <span class="text-muted">-</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <small>{{ history.apply_mode }}</small>
+                  </td>
+                  <td>
+                    <span class="badge {{ 'bg-success' if history.status == 'success' else 'bg-danger' if history.status == 'failed' else 'bg-warning' if history.status == 'pending' else 'bg-info' }}">
+                      {{ history.status }}
+                    </span>
+                  </td>
+                  <td>
+                    <small>{{ history.initiated_at.strftime('%Y-%m-%d %H:%M') if history.initiated_at else '-' }}</small>
+                  </td>
+                  <td>
+                    <small>{{ history.completed_at.strftime('%Y-%m-%d %H:%M') if history.completed_at else '-' }}</small>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="text-center text-muted py-4">
+            <i class="fas fa-clock fa-3x mb-3"></i>
+            <p class="mb-0">No update history yet</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

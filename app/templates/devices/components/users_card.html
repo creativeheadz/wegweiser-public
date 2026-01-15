@@ -1,0 +1,33 @@
+{# User Accounts Card Component - Content Only #}
+{% if device.modular_data and device.modular_data.users %}
+<div class="row">
+    <div class="col-md-3">
+        <p class="mb-1"><strong>Total Users:</strong> {{ device.modular_data.users.user_count }}</p>
+    </div>
+    <div class="col-md-3">
+        <p class="mb-1"><strong>Administrators:</strong> {{ device.modular_data.users.admin_users }}</p>
+    </div>
+    <div class="col-md-3">
+        <p class="mb-1"><strong>Active:</strong> {{ device.modular_data.users.active_users }}</p>
+    </div>
+</div>
+
+{% if device.modular_data.users.users %}
+<div class="row mt-3">
+    <div class="col-12">
+        <h6 class="mb-2">Active Users</h6>
+        <div class="small">
+            {% for user in device.modular_data.users.users[:5] %}
+            {% if user.is_active %}
+            <div class="mb-2">
+                <strong>{{ user.username }}</strong>
+                {% if user.is_admin %}<span class="badge bg-warning ms-1">Admin</span>{% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endif %}
+

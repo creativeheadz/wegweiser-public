@@ -1,0 +1,730 @@
+<!-- Device-Specific Scripts -->
+<script>
+    window.device_uuid = "{{ device.deviceuuid }}";
+
+    // PDF Export Function
+    function exportDevicePdf() {
+        const exportBtn = document.getElementById('exportPdfBtn');
+        const originalText = exportBtn.innerHTML;
+
+        // Show loading state
+        exportBtn.disabled = true;
+        exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Generating PDF...';
+
+        // Create download link
+        const downloadUrl = `/devices/device/${window.device_uuid}/export-pdf`;
+
+        // Create temporary link and trigger download
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Reset button after a short delay
+        setTimeout(() => {
+            exportBtn.disabled = false;
+            exportBtn.innerHTML = originalText;
+        }, 2000);
+    }
+
+
+    // Update Last Update from NATS heartbeat as a fallback (even if no metrics yet)
+    (function initHeartbeatLastUpdate(){
+        const lu = document.getElementById('realtimeLastUpdate');
+        if (!lu) return;
+        async function refreshHeartbeat() {
+            try {
+                const res = await fetch(`/api/nats/device/${window.device_uuid}/status`);
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data && data.success && data.last_heartbeat) {
+                    const ts = /^[0-9]{13}$/.test(String(data.last_heartbeat)) ? data.last_heartbeat : data.last_heartbeat * 1000;
+                    lu.textContent = new Date(ts).toLocaleTimeString();
+                }
+            } catch (e) { /* ignore */ }
+        }
+        refreshHeartbeat();
+        setInterval(refreshHeartbeat, 20000);
+    })();
+
+    // Live update the single-device header OS icon based on connectivity status
+    (function updateHeaderOsIcon(){
+        const headerIcon = document.querySelector(`#general-info-{{ device.deviceuuid }} .os-icon`);
+        if (!headerIcon) return;
+        async function refreshHeaderIcon() {
+            try {
+                const res = await fetch(`/api/nats/device/${window.device_uuid}/status`);
+                if (!res.ok) return;
+                const data = await res.json();
+                const statusLower = (data.status || (data.is_online ? 'Online' : 'Offline')).toLowerCase();
+                headerIcon.classList.remove('os-online','os-stale');
+                if (statusLower === 'online') headerIcon.classList.add('os-online');
+                else if (statusLower === 'stale') headerIcon.classList.add('os-stale');
+            } catch (e) { /* ignore */ }
+        }
+        refreshHeaderIcon();
+        setInterval(refreshHeaderIcon, 20000);
+    })();
+
+    // Fleet status counts (Online / Stale / Offline) on single-device page
+    (function fleetStatusSummary(){
+        const container = document.getElementById('fleet-status-summary');
+        if (!container) return;
+        const elOnline = document.getElementById('count-online');
+        const elStale = document.getElementById('count-stale');
+        const elOffline = document.getElementById('count-offline');
+        const tenantUuid = "{{ session.get('tenant_uuid') or '' }}";
+
+        function applyCountsFromDevices(devices) {
+            let online = 0, stale = 0, offline = 0;
+            devices.forEach(d => {
+                const status = (d.status || (d.is_online ? 'Online' : 'Offline')).toLowerCase();
+                if (status === 'online') online++;
+                else if (status === 'stale') stale++;
+                else if (status === 'offline') offline++;
+            });
+            if (elOnline) elOnline.textContent = online;
+            if (elStale) elStale.textContent = stale;
+            if (elOffline) elOffline.textContent = offline;
+        }
+
+        async function refreshCounts() {
+            let usedTenant = false;
+            try {
+                if (tenantUuid) {
+                    const res = await fetch(`/api/nats/tenant/${tenantUuid}/devices`);
+                    if (res.ok) {
+                        const json = await res.json();
+                        if (json && Array.isArray(json.devices)) {
+                            applyCountsFromDevices(json.devices);
+                            usedTenant = true;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Tenant status fetch failed for fleet summary');
+            }
+
+            if (!usedTenant) {
+                // Fallback: count only this device
+                try {
+                    const res = await fetch(`/api/nats/device/${window.device_uuid}/status`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        const status = (data.status || (data.is_online ? 'Online' : 'Offline')).toLowerCase();
+                        const devices = [{ status }];
+                        applyCountsFromDevices(devices);
+                    }
+                } catch (e) { /* ignore */ }
+            }
+        }
+
+        refreshCounts();
+        setInterval(refreshCounts, 20000);
+    })();
+
+    {% if session.get('role') == 'admin' %}
+    // Real-time Metrics Monitor for Admin Users
+    class DeviceRealtimeMonitor {
+        constructor(deviceUuid) {
+            this.deviceUuid = deviceUuid;
+            this.isConnected = false;
+            this.messageCount = 0;
+            this.gauges = {};
+            this.lastNetworkIn = 0;
+            this.lastNetworkOut = 0;
+            this.lastNetworkTime = 0;
+
+            this.initializeGauges();
+            this.startMonitoring();
+        }
+
+        initializeGauges() {
+            // Check if Chart.js is available
+            if (typeof Chart === 'undefined') {
+                console.warn('Chart.js not loaded yet, retrying in 100ms...');
+                setTimeout(() => this.initializeGauges(), 100);
+                return;
+            }
+
+            // Initialize gauges
+            this.initializeGauge('cpuGauge', 'CPU', '#007bff');
+            this.initializeGauge('memoryGauge', 'Memory', '#17a2b8');
+            this.initializeGauge('diskGauge', 'Disk', '#ffc107');
+            this.initializeGauge('loadGauge', 'Load', '#dc3545');
+        }
+
+        initializeGauge(canvasId, label, color) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+
+            // Check if Chart.js is loaded
+            if (typeof Chart === 'undefined') {
+                console.warn(`Chart.js not loaded yet for gauge ${canvasId}`);
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            this.gauges[canvasId] = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [0, 100],
+                        backgroundColor: [color, '#e9ecef'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: false,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+        }
+
+        startMonitoring() {
+            this.isConnected = true;
+            this.updateConnectionStatus('Live', 'success');
+
+            console.log(`Starting real-time metrics monitoring for device: ${this.deviceUuid}`);
+
+            // Poll for new data every 2 seconds
+            this.pollInterval = setInterval(() => {
+                this.fetchLatestMetrics();
+            }, 2000);
+
+            // Also fetch immediately
+            this.fetchLatestMetrics();
+        }
+
+        async fetchLatestMetrics() {
+            if (!this.isConnected) return;
+
+            try {
+                const metrics = ['cpu_percent', 'memory_percent', 'disk_percent', 'network_bytes_in', 'network_bytes_out', 'uptime'];
+
+                for (const metric of metrics) {
+                    const response = await fetch(`/admin/nats-demo/api/metrics/${this.deviceUuid}/${metric}?limit=1`);
+                    const data = await response.json();
+
+                    if (data.data && data.data.length > 0) {
+                        const latestValue = data.data[data.data.length - 1];
+                        this.updateMetric(metric, latestValue.value, latestValue.timestamp);
+                    }
+                }
+
+                this.messageCount++;
+                const msgEl = document.getElementById('realtimeMessageCount');
+                if (msgEl) msgEl.textContent = this.messageCount;
+
+            } catch (error) {
+                console.error('Error fetching real-time metrics:', error);
+                this.updateConnectionStatus('Error', 'danger');
+            }
+        }
+
+        updateMetric(metricType, value, timestamp) {
+            const now = new Date(timestamp);
+            const timeStr = now.toLocaleTimeString();
+
+            switch (metricType) {
+                case 'cpu_percent':
+                    this.updateGauge('cpuGauge', value);
+                    const el = document.getElementById('cpuValue');
+                    if (el) el.textContent = `${value.toFixed(1)}%`;
+                    break;
+
+                case 'memory_percent':
+                    this.updateGauge('memoryGauge', value);
+                    const mel = document.getElementById('memoryValue');
+                    if (mel) mel.textContent = `${value.toFixed(1)}%`;
+                    break;
+
+                case 'disk_percent':
+                    this.updateGauge('diskGauge', value);
+                    const del = document.getElementById('diskValue');
+                    if (del) del.textContent = `${value.toFixed(1)}%`;
+                    break;
+
+                case 'network_bytes_in':
+                    this.updateNetworkMetric('in', value, timestamp);
+                    break;
+
+                case 'network_bytes_out':
+                    this.updateNetworkMetric('out', value, timestamp);
+                    break;
+
+                case 'uptime':
+                    // System load approximation from uptime (simplified)
+                    const loadValue = Math.min(value / 3600, 10); // Convert to hours, cap at 10
+                    this.updateGauge('loadGauge', Math.min(loadValue * 10, 100));
+                    const lel = document.getElementById('loadValue');
+                    if (lel) lel.textContent = loadValue.toFixed(1);
+                    break;
+            }
+
+            const lu = document.getElementById('realtimeLastUpdate');
+            if (lu) lu.textContent = timeStr;
+        }
+
+        updateGauge(gaugeId, value) {
+            const gauge = this.gauges[gaugeId];
+            if (gauge) {
+                gauge.data.datasets[0].data = [value, 100 - value];
+                gauge.update('none');
+            }
+        }
+
+        updateNetworkMetric(direction, bytes, timestamp) {
+            const currentTime = timestamp;
+
+            if (direction === 'in') {
+                if (this.lastNetworkTime > 0) {
+                    const timeDiff = (currentTime - this.lastNetworkTime) / 1000; // seconds
+                    const bytesDiff = bytes - this.lastNetworkIn;
+                    const bytesPerSecond = Math.max(0, bytesDiff / timeDiff);
+
+                    const niv = document.getElementById('networkInValue');
+                    if (niv) niv.textContent = this.formatBytes(bytesPerSecond) + '/s';
+                }
+                this.lastNetworkIn = bytes;
+            } else {
+                if (this.lastNetworkTime > 0) {
+                    const timeDiff = (currentTime - this.lastNetworkTime) / 1000;
+                    const bytesDiff = bytes - this.lastNetworkOut;
+                    const bytesPerSecond = Math.max(0, bytesDiff / timeDiff);
+
+                    const nov = document.getElementById('networkOutValue');
+                    if (nov) nov.textContent = this.formatBytes(bytesPerSecond) + '/s';
+                }
+                this.lastNetworkOut = bytes;
+            }
+
+            this.lastNetworkTime = currentTime;
+        }
+
+        formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(Math.abs(bytes)) / Math.log(k));
+
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        updateConnectionStatus(status, type) {
+            const statusElement = document.getElementById('realtimeStatus');
+            if (statusElement) {
+                statusElement.textContent = status;
+                statusElement.className = `badge bg-${type}`;
+            }
+        }
+
+        stopMonitoring() {
+            this.isConnected = false;
+            if (this.pollInterval) {
+                clearInterval(this.pollInterval);
+            }
+            this.updateConnectionStatus('Stopped', 'secondary');
+        }
+    }
+
+    // Initialize real-time monitoring for admin users
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('cpuGauge')) {
+            window.realtimeMonitor = new DeviceRealtimeMonitor(window.device_uuid);
+        }
+    });
+    {% endif %}
+
+    // Add event listener to handle card hover effects in theme-aware manner
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize any dynamic card elements that get added later
+        const analysesGrid = document.getElementById('dynamic-analyses-grid');
+        if (analysesGrid) {
+            const observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    if (mutation.addedNodes.length) {
+                        const cards = document.querySelectorAll('.card:not(.init-hover)');
+                        cards.forEach(card => {
+                            card.classList.add('init-hover');
+                        });
+                    }
+                });
+            });
+
+            observer.observe(analysesGrid, {
+                childList: true,
+                subtree: true
+            });
+        }
+    });
+</script>
+
+<!-- Base Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/uplot@1.6.31/dist/uPlot.iife.min.js"></script>
+<script src="{{ url_for('static', filename='js/common/gauge_chart.js') }}"></script>
+<script src="{{ url_for('static', filename='js/device/unified_charts_config.js') }}"></script>
+<script src="{{ url_for('static', filename='js/device/health_overview.js') }}"></script>
+<script src="{{ url_for('static', filename='js/scroll-to-top.js') }}"></script>
+
+
+
+
+<script>
+    /**
+     * Load device analyses and render consolidated accordion view
+     * @param {string} device_uuid - The device UUID to load analyses for
+     */
+    function loadDeviceAnalyses(device_uuid) {
+        $.get(`/devices/device/${device_uuid}/analyses`, function (data) {
+            // Render the consolidated analyses card
+            $('#dynamic-analyses-grid').html(data);
+
+            // Initialize Bootstrap components for newly added elements
+            initializeAnalysisAccordion();
+        }).fail(function (error) {
+            console.error("Failed to load device analyses:", error);
+
+            // Show error message to user
+            $('#dynamic-analyses-grid').html(`
+                <div class="col-12">
+                    <div class="card shadow alert alert-warning">
+                        <div class="card-body">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Could not load analyses.</strong> Please try refreshing the page.
+                        </div>
+                    </div>
+                </div>
+            `);
+        });
+    }
+
+    /**
+     * Initialize accordion interactions and smooth transitions
+     */
+    function initializeAnalysisAccordion() {
+        // Re-initialize all Bootstrap popovers and tooltips if needed
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Add smooth scroll behavior when accordion items are opened
+        const accordionButtons = document.querySelectorAll('#analysisAccordion .accordion-button');
+        accordionButtons.forEach(button => {
+            button.addEventListener('shown.bs.collapse', function () {
+                // Smooth scroll to the opened accordion item if it's below fold
+                const accordionItem = this.closest('.accordion-item');
+                if (accordionItem && accordionItem.offsetTop > window.innerHeight) {
+                    accordionItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        });
+
+        // Log successful load for debugging
+        console.log(`Successfully loaded analyses for device. Found ${accordionButtons.length} analysis items.`);
+
+        // Ensure single-open behavior on individual clicks: close others before toggling the clicked one
+        const analysisAccordion = document.getElementById('analysisAccordion');
+        if (analysisAccordion) {
+            analysisAccordion.querySelectorAll('.accordion-button').forEach((btn) => {
+                btn.addEventListener('click', (e) => {
+                    const targetSel = btn.getAttribute('data-bs-target');
+                    if (!targetSel) return;
+                    const targetEl = document.querySelector(targetSel);
+                    if (!targetEl) return;
+
+                    // If this click would open the target, close all other open panels first
+                    const willOpen = !targetEl.classList.contains('show');
+                    if (willOpen) {
+                        document.querySelectorAll('#analysisAccordion .accordion-collapse.show').forEach((openEl) => {
+                            if (openEl !== targetEl) {
+                                bootstrap.Collapse.getOrCreateInstance(openEl, { toggle: false }).hide();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        // Expand/Collapse all handlers
+        const expandAllBtn = document.getElementById('expandAllAnalyses');
+        const collapseAllBtn = document.getElementById('collapseAllAnalyses');
+
+        if (expandAllBtn) {
+            expandAllBtn.addEventListener('click', () => {
+                document.querySelectorAll('#analysisAccordion .accordion-collapse').forEach((el) => {
+                    const inst = bootstrap.Collapse.getOrCreateInstance(el, { toggle: false });
+                    inst.show();
+                });
+            });
+        }
+
+        if (collapseAllBtn) {
+            collapseAllBtn.addEventListener('click', () => {
+                document.querySelectorAll('#analysisAccordion .accordion-collapse').forEach((el) => {
+                    const inst = bootstrap.Collapse.getOrCreateInstance(el, { toggle: false });
+                    inst.hide();
+                });
+            });
+        }
+    }
+
+    // Trigger the AJAX call on page load
+    $(document).ready(function () {
+        const device_uuid = "{{ device.deviceuuid }}";
+        loadDeviceAnalyses(device_uuid);
+    });
+</script>
+
+<script>
+    // Initialize popovers (excluding IP info buttons which are handled separately)
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]:not(.ip-info-btn)'))
+    const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+        return new bootstrap.Popover(popoverTriggerEl, {
+            html: true
+        })
+    });
+
+    // Add event listener for IP info buttons
+    document.addEventListener('click', function(event) {
+        if (event.target.closest('.ip-info-btn')) {
+            event.preventDefault();
+            event.stopPropagation();
+            loadIpInfo(event.target.closest('.ip-info-btn'));
+        }
+    });
+
+    // Function to load IP information
+    async function loadIpInfo(button) {
+        const ip = button.getAttribute('data-ip');
+
+        // Check if popover is already shown and hide it
+        let popover = bootstrap.Popover.getInstance(button);
+        if (popover) {
+            // If popover exists and is shown, hide it and return
+            const popoverElement = document.querySelector('.popover');
+            if (popoverElement) {
+                popover.hide();
+                return;
+            }
+        }
+
+        // Create new popover with loading content
+        if (popover) {
+            popover.dispose();
+        }
+
+        popover = new bootstrap.Popover(button, {
+            html: true,
+            trigger: 'manual', // Use manual trigger so we control show/hide
+            placement: 'auto',
+            title: 'IP Information',
+            content: '<div class="p-2"><i class="fas fa-spinner fa-spin me-2"></i>Loading...</div>'
+        });
+
+        // Show the popover with loading message
+        popover.show();
+
+        try {
+            const response = await fetch(`https://ipapi.co/${ip}/json/`);
+            const data = await response.json();
+
+            const content = `
+                <div class="p-2">
+                    <p class="mb-1"><strong>Location:</strong> ${data.city || 'Unknown'}, ${data.country_name || 'Unknown'}</p>
+                    <p class="mb-1"><strong>ISP:</strong> ${data.org || 'Unknown'}</p>
+                    <p class="mb-1"><strong>Region:</strong> ${data.region || 'Unknown'}</p>
+                    <p class="mb-0"><strong>Timezone:</strong> ${data.timezone || 'Unknown'}</p>
+                </div>
+            `;
+
+            // Update the popover content
+            popover.dispose();
+            popover = new bootstrap.Popover(button, {
+                html: true,
+                trigger: 'manual',
+                placement: 'auto',
+                title: 'IP Information',
+                content: content
+            });
+
+            popover.show();
+
+        } catch (error) {
+            console.error('Error fetching IP info:', error);
+
+            // Show error message in popover
+            const errorContent = `
+                <div class="p-2 text-danger">
+                    <p class="mb-0">Failed to load IP information</p>
+                </div>
+            `;
+
+            popover.dispose();
+            popover = new bootstrap.Popover(button, {
+                html: true,
+                trigger: 'manual',
+                placement: 'auto',
+                title: 'IP Information',
+                content: errorContent
+            });
+
+            popover.show();
+        }
+
+        // Add click outside to close functionality
+        setTimeout(() => {
+            const handleClickOutside = (event) => {
+                const popoverElement = document.querySelector('.popover');
+                if (popoverElement && !popoverElement.contains(event.target) && !button.contains(event.target)) {
+                    popover.hide();
+                    document.removeEventListener('click', handleClickOutside);
+                }
+            };
+            document.addEventListener('click', handleClickOutside);
+        }, 100);
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deviceUUID = "{{ device.deviceuuid }}";
+        const tagsContainer = document.getElementById('tags-container');
+        const addTagForm = document.getElementById('add-tag-form');
+        const newTagInput = document.getElementById('new-tag-input');
+
+        // Copy functionality is now handled by the centralized copy utility
+        // No need for duplicate copy code here
+
+        // Fetch and display tags
+        async function fetchTags() {
+            const response = await fetch(`/tags/gettags/${deviceUUID}`);
+            const tags = await response.json();
+            tagsContainer.innerHTML = '';
+            tags.forEach(tag => {
+                const tagElement = createTagElement(tag.taguuid, tag.tagvalue);
+                tagsContainer.appendChild(tagElement);
+            });
+        }
+
+        // Create a tag element
+        function createTagElement(taguuid, tagvalue) {
+            const tagElement = document.createElement('span');
+            tagElement.className = 'badge bg-primary d-flex align-items-center';
+            tagElement.innerHTML = `
+                ${tagvalue}
+                <button type="button" class="btn-close ms-2" aria-label="Remove" data-taguuid="${taguuid}"></button>
+            `;
+            tagElement.querySelector('.btn-close').addEventListener('click', () => removeTag(taguuid));
+            return tagElement;
+        }
+
+        // Add a new tag
+        addTagForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const tagvalue = newTagInput.value.trim();
+            if (tagvalue) {
+                const response = await fetch(`/devices/${deviceUUID}/tags`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ tag_value: tagvalue })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    fetchTags(); // Refresh the tags list
+                    newTagInput.value = '';
+                } else {
+                    console.error('Failed to create tag:', await response.json());
+                }
+            }
+        });
+
+        // Remove a tag
+        async function removeTag(taguuid) {
+            const response = await fetch(`/devices/${deviceUUID}/tags/${taguuid}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.ok) {
+                fetchTags();
+            } else {
+                console.error('Failed to remove tag:', await response.json());
+            }
+        }
+
+        // Initial fetch of tags
+        fetchTags();
+    });
+</script>
+
+<!-- Chat System Components -->
+<script type="module">
+    import { ChatUI } from "{{ url_for('static', filename='js/chat/ChatUI.js') }}";
+    import { ChatNetworkManager } from "{{ url_for('static', filename='js/chat/ChatNetworkManager.js') }}";
+    import { ChatMessageHandler } from "{{ url_for('static', filename='js/chat/ChatMessageHandler.js') }}";
+    import { ChatStateManager } from "{{ url_for('static', filename='js/chat/ChatStateManager.js') }}";
+    import { UnifiedChat } from "{{ url_for('static', filename='js/chat/unified-chat.js') }}";
+
+    // Make UnifiedChat available globally
+    window.UnifiedChat = UnifiedChat;
+    window.ChatUI = ChatUI;
+    window.ChatNetworkManager = ChatNetworkManager;
+    window.ChatMessageHandler = ChatMessageHandler;
+    window.ChatStateManager = ChatStateManager;
+
+    // Initialize chat when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            const chatConfig = {
+                container: document.getElementById('chatContainer'),
+                form: document.getElementById('chatForm'),
+                entityType: 'device',
+                entityUuid: '{{ device.deviceuuid }}',
+                entityName: '{{ device.devicename }}'
+            };
+
+            window.currentChat = new UnifiedChat(chatConfig);
+
+            // Handle offcanvas events
+            const chatOffcanvas = document.getElementById('chatOffcanvas');
+            if (chatOffcanvas) {
+                chatOffcanvas.addEventListener('shown.bs.offcanvas', () => {
+                    if (window.currentChat?.chatUI) {
+                        window.currentChat.chatUI.scrollToBottom();
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Failed to initialize chat:', error);
+        }
+    });
+</script>
+
+
+<script>
+    // Toggle Chat Function
+    function toggleChatOffcanvas() {
+        const chatOffcanvas = document.getElementById('chatOffcanvas');
+        const bsOffcanvas = bootstrap.Offcanvas.getInstance(chatOffcanvas) ||
+            new bootstrap.Offcanvas(chatOffcanvas);
+
+        if (chatOffcanvas.classList.contains('show')) {
+            bsOffcanvas.hide();
+        } else {
+            bsOffcanvas.show();
+        }
+    }
+</script>

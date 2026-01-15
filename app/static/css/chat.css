@@ -1,0 +1,655 @@
+/* Filepath: app/static/css/chat.css */
+/* Combined styles from both ChatUI.js and previous css */
+
+/* Chat Container */
+#chatContainer {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    padding: 1rem 0;
+}
+
+/* Chat Messages */
+.chat-message {
+    max-width: 85%;
+    margin: 0.5rem 1rem;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    /* Increased left padding for icon */
+    border-radius: 8px;
+    position: relative;
+    color: var(--text-primary);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+/* Add icons to messages */
+.chat-message::before {
+    position: absolute;
+    left: 0.75rem;
+    top: 0.75rem;
+    font-size: var(--font-size-md);
+    opacity: 0.8;
+}
+
+.chat-message.ai::before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    background-image: url("../images/010-vegvisir.svg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+}
+
+.chat-message.user::before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 50%;
+}
+
+.chat-message.error::before {
+    content: "\f071";
+    /* exclamation-triangle */
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    /* solid style */
+    color: var(--danger);
+}
+
+.chat-message.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.chat-message.user {
+    margin-left: auto;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+}
+
+.chat-message.ai {
+    margin-right: auto;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+}
+
+.chat-message.error {
+    background: var(--card-bg);
+    border: 1px solid var(--danger);
+    color: var(--danger);
+    margin: 0.5rem auto;
+    max-width: 90%;
+}
+
+/* Light theme hover effects */
+[data-bs-theme="light"] .chat-message:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+/* Enhanced dark theme chat styling with pure monochromatic glassmorphism */
+[data-bs-theme="dark"] {
+    .chat-message.user {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: var(--foreground-intense, #e6eefA);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .chat-message.ai {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: var(--foreground-intense, #e6eefA);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+
+    .chat-message.error {
+        background: rgba(255, 90, 105, 0.1);
+        border: 1px solid rgba(255, 90, 105, 0.4);
+        color: #FF5A69;
+    }
+
+    .chat-message:hover {
+        background-color: rgba(255, 255, 255, 0.10);
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* Message Content */
+.message-text {
+    line-height: 1.5;
+    word-wrap: break-word;
+}
+
+/* --- CODE BLOCKS --- */
+.message-text pre {
+    position: relative;
+    background: var(--body-bg) !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    padding: 0.8em 1em 0.8em 1em !important;
+    margin: 0.5em 0 !important;
+    overflow: auto !important;
+    font-size: 1em !important;
+    font-family: var(--font-mono) !important;
+    color: var(--text-primary) !important;
+    overflow-x: auto !important;
+    box-shadow: none !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: relative;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+}
+
+/* Copy button styling */
+.message-text pre .copy-button {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: var(--body-bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    z-index: 2;
+}
+
+.message-text pre .copy-button:hover {
+    opacity: 1;
+}
+
+.message-text pre .copy-status {
+    position: absolute;
+    top: 0.5rem;
+    right: 2.5rem;
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.message-text pre code {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: inherit !important;
+    color: inherit !important;
+    display: block !important;
+    width: 100% !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+    overflow-wrap: break-word !important;
+}
+
+/* Enhanced theme-specific code block styles with nicestyle.css contrast */
+[data-bs-theme="dark"] .message-text pre {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: #cccccc !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-bs-theme="dark"] .message-text pre .copy-button {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: var(--foreground-intense, #e6eefA);
+}
+
+[data-bs-theme="dark"] .message-text pre .copy-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--link-foreground, #4daafc);
+}
+
+[data-bs-theme="dark"] .message-text code:not(pre code) {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--link-foreground, #4daafc);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+[data-bs-theme="blue"] .message-text pre {
+    background: rgba(13, 28, 64, 0.4) !important;
+    border-color: rgba(65, 90, 159, 0.5) !important;
+}
+
+[data-bs-theme="monochrome"] .message-text pre {
+    background: #0a0a0a !important;
+    border-color: #333 !important;
+}
+
+/* Inline code styling */
+.message-text code:not(pre code) {
+    background: rgba(var(--primary-rgb), 0.05);
+    color: var(--primary);
+    border-radius: 4px;
+    padding: 0.2em 0.4em;
+    font-size: 0.97em;
+    font-family: var(--font-mono);
+    border: 1px solid var(--border-light);
+}
+
+/* --- COPY BUTTON --- */
+.copy-button {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    z-index: 2;
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.copy-button .fa-copy {
+    font-size: 1.1em;
+}
+
+.copy-button:hover,
+.copy-button:focus {
+    color: var(--primary);
+    background: rgba(var(--primary-rgb), 0.1);
+    opacity: 1;
+}
+
+.copy-button:active {
+    color: var(--primary-dark);
+    background: rgba(var(--primary-rgb), 0.2);
+}
+
+/* Only show copy button on hover for less clutter */
+.message-text pre:hover .copy-button {
+    opacity: 1;
+    visibility: visible;
+}
+
+.message-text pre .copy-button {
+    opacity: 0.7;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+}
+
+/* Chat Input Container - Glassmorphism Enhanced */
+.chat-input-container {
+    position: sticky;
+    bottom: 0;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    padding: 1rem;
+    border-top: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+}
+
+/* Enhanced dark theme input container */
+[data-bs-theme="dark"] .chat-input-container {
+    background: var(--glass-bg);
+    border-top: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow), 0 -2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Typing Animation */
+.typing-animation {
+    display: flex;
+    gap: 4px;
+    padding: 8px 12px;
+    background: rgba(var(--primary-rgb), 0.05);
+    border-radius: 12px;
+    margin: 0.5rem 1rem;
+}
+
+.typing-animation span {
+    width: 8px;
+    height: 8px;
+    background: var(--primary);
+    border-radius: 50%;
+    animation: bounce 1.5s infinite;
+}
+
+.typing-animation span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-animation span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+    }
+
+    30% {
+        transform: translateY(-4px);
+    }
+}
+
+/* Thought Process */
+.thought-process {
+    background: rgba(var(--primary-rgb), 0.03);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 0 8px;
+    font-size: var(--font-size-base);
+}
+
+.thought-content {
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+}
+
+.thought-indicators {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.thought-indicators .indicator {
+    width: 6px;
+    height: 6px;
+    background: var(--text-secondary);
+    border-radius: 50%;
+    opacity: 0.3;
+    animation: thinking 1.4s infinite;
+}
+
+.thought-indicators .indicator:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.thought-indicators .indicator:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes thinking {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+/* Floating Chat Tab - Glassmorphism Enhanced */
+.floating-chat-tab {
+    position: fixed;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%) rotate(-90deg);
+    transform-origin: 100% 50%;
+    background: rgba(var(--primary-rgb), 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(var(--primary-rgb), 0.3);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px 12px 0 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 1040;
+    transition: all 0.3s ease;
+    box-shadow: var(--glass-shadow), 0 2px 8px rgba(0, 0, 0, 0.15);
+    font-weight: 500;
+    font-size: var(--font-size-base);
+    line-height: 1.5;
+    height: 48px;
+    white-space: nowrap;
+    justify-content: center;
+}
+
+.floating-chat-tab:hover {
+    background: var(--primary-dark);
+    /* DISABLED: Movement effect removed - original: right: 32px; */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.floating-chat-tab .material-icons-outlined {
+    transform: rotate(90deg);
+    font-size: var(--font-size-xl);
+}
+
+.offcanvas.show+.floating-chat-tab {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Offcanvas Chat Window - Glassmorphism Enhanced */
+/* Increase specificity by adding the ID */
+#chatOffcanvas.offcanvas.offcanvas-end {
+    width: 800px;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    color: var(--text-primary);
+    border-left: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+}
+
+/* Side-by-side layout adjustments */
+#chatOffcanvas.offcanvas.offcanvas-end.show ~ #terminalOffcanvas.offcanvas.offcanvas-end {
+    width: 50vw !important;
+}
+
+#terminalOffcanvas.offcanvas.offcanvas-end.show ~ #chatOffcanvas.offcanvas.offcanvas-end {
+    width: 50vw !important;
+}
+
+/* When both are open, adjust positioning */
+body:has(#chatOffcanvas.show):has(#terminalOffcanvas.show) #chatOffcanvas {
+    width: 50vw !important;
+}
+
+body:has(#chatOffcanvas.show):has(#terminalOffcanvas.show) #terminalOffcanvas {
+    width: 50vw !important;
+    right: 50vw !important;
+}
+
+/* Enhanced dark theme offcanvas */
+[data-bs-theme="dark"] #chatOffcanvas.offcanvas.offcanvas-end {
+    background: var(--glass-bg);
+    border-left: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow), -4px 0 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+
+    /* Increase specificity for the responsive rule too */
+    #chatOffcanvas.offcanvas.offcanvas-end {
+        width: 100%;
+    }
+
+}
+
+/* Token info display */
+.token-info {
+    display: inline-flex;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    background-color: rgba(var(--primary-rgb), 0.08);
+    padding: 2px 6px;
+    border-radius: 12px;
+    margin-left: 8px;
+}
+
+.token-info .material-icons-outlined {
+    font-size: var(--font-size-base);
+    margin-right: 4px;
+}
+
+/* Wegcoin status widget */
+.wegcoin-status {
+    display: flex;
+    align-items: center;
+}
+
+.wegcoin-badge {
+    display: flex;
+    align-items: center;
+    background: rgba(var(--primary-rgb), 0.15);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(var(--primary-rgb), 0.3);
+    color: var(--primary);
+    padding: 4px 8px;
+    border-radius: 16px;
+    font-size: 0.9em;
+    font-weight: 600;
+    white-space: nowrap;
+    /* Maintain high contrast per user preference */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.wegcoin-badge .material-icons-outlined {
+    font-size: var(--font-size-md);
+    margin-right: 4px;
+}
+
+/* Ensure the header elements are properly aligned */
+.offcanvas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.offcanvas-header .btn-close {
+    margin-left: 0.5rem;
+}
+
+.offcanvas-header h5 {
+    color: var(--text-primary);
+}
+
+.offcanvas-header small {
+    color: var(--text-secondary);
+}
+
+/* Enhanced dark theme header and additional elements */
+[data-bs-theme="dark"] {
+    .offcanvas-header {
+        background-color: var(--body-bg, #0D1117);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .offcanvas-header h5 {
+        color: var(--foreground-intense, #e6eefA);
+    }
+
+    .offcanvas-header small {
+        color: var(--foreground, #9ba3b4);
+    }
+
+    .floating-chat-tab {
+        background: rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6),
+                    0 2px 8px rgba(0, 0, 0, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        color: var(--text-primary, #e6eefA);
+    }
+
+    .floating-chat-tab:hover {
+        background: rgba(255, 255, 255, 0.18);
+        border-color: rgba(255, 255, 255, 0.35);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7),
+                    0 4px 12px rgba(0, 0, 0, 0.4),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        transform: translateY(-50%) rotate(-90deg) translateX(-2px);
+        color: white;
+    }
+
+    .typing-animation {
+        background: rgba(0, 120, 212, 0.15);
+    }
+
+    .thought-process {
+        background: rgba(0, 120, 212, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .thought-content {
+        color: var(--foreground, #9ba3b4);
+    }
+
+    .wegcoin-badge {
+        background-color: rgba(0, 120, 212, 0.2);
+        color: var(--link-foreground, #4daafc);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .token-info {
+        background-color: rgba(0, 120, 212, 0.15);
+        color: var(--foreground, #9ba3b4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Enhanced light theme glassmorphism for floating chat tab */
+[data-bs-theme="light"] {
+    .floating-chat-tab {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12),
+                    0 4px 16px rgba(0, 0, 0, 0.08),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        color: var(--text-primary, #333);
+    }
+
+    .floating-chat-tab:hover {
+        background: rgba(255, 255, 255, 0.95);
+        border-color: rgba(0, 0, 0, 0.25);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18),
+                    0 6px 20px rgba(0, 0, 0, 0.12),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        transform: translateY(-50%) rotate(-90deg) translateX(-2px);
+        color: var(--text-primary, #222);
+    }
+}

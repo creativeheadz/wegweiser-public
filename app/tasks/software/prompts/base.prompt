@@ -1,0 +1,25 @@
+# Filepath: app/tasks/software/prompts/base.prompt
+Analyze the following system software configuration details for a Windows Server and provide a comprehensive system software and security assessment. Your analysis should include:
+
+1. Detailed evaluation of operating system version, build number, patch level, and update status, including assessment of security update compliance and end-of-life considerations.
+2. Comprehensive analysis of system security configuration, including Windows Defender status, firewall settings, User Account Control (UAC) configuration, and security policy implementations.
+3. Assessment of system services, roles, and features installed, evaluating their necessity, security implications, and potential attack surface reduction opportunities.
+4. Evaluation of system hardening measures, including account policies, audit settings, registry security configurations, and compliance with security benchmarks.
+5. Analysis of antivirus and endpoint protection solutions, including real-time protection status, definition updates, scan schedules, and threat detection capabilities.
+6. Assessment of system backup and recovery configurations, including backup software status, retention policies, and disaster recovery preparedness.
+7. Evaluation of system performance optimization settings, including power management, virtual memory configuration, and resource allocation policies.
+8. Comprehensive recommendations for security enhancement, performance optimization, and proactive system maintenance strategies for MSP operations.
+
+Structure the report in basic HTML format using tags such as <p>, <ul>, <li>, and <br> to ensure readability:
+- Summary of system software status and critical security findings (2-3 sentences)
+- Detailed analysis of operating system configuration and patch status (4-5 bullet points)
+- Security measures assessment including antivirus, firewall, and hardening status (4-6 bullet points)
+- System services and features evaluation with security implications (2-3 bullet points)
+- Backup and disaster recovery configuration assessment (2-3 bullet points)
+- Performance optimization and system maintenance recommendations (3-4 bullet points)
+- Long-term security and compliance strategy suggestions for MSP consideration (1-2 sentences)
+
+- Declare a healthscore based on these findings between 1 and 100 where 100 is a problem-free state.
+
+System Software Configuration Data:
+{software_data}

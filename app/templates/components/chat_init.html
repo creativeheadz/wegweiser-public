@@ -1,0 +1,167 @@
+<!-- Filepath: app/templates/components/chat_init.html -->
+<script type="module">
+    import { ChatUI } from "{{ url_for('static', filename='js/chat/ChatUI.js') }}";
+    import { ChatNetworkManager } from "{{ url_for('static', filename='js/chat/ChatNetworkManager.js') }}";
+    import { ChatMessageHandler } from "{{ url_for('static', filename='js/chat/ChatMessageHandler.js') }}";
+    import { ChatStateManager } from "{{ url_for('static', filename='js/chat/ChatStateManager.js') }}";
+    import { UnifiedChat } from "{{ url_for('static', filename='js/chat/unified-chat.js') }}";
+    import { verifyComponents, verifyDomElements } from "{{ url_for('static', filename='js/chat/version-check.js') }}";
+
+    // Make chat components globally available 
+    window.ChatUI = ChatUI;
+    window.ChatNetworkManager = ChatNetworkManager;
+    window.ChatMessageHandler = ChatMessageHandler;
+    window.ChatStateManager = ChatStateManager;
+    window.UnifiedChat = UnifiedChat;
+
+    // Initialize chat when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            // Verify all required components are available
+            if (!verifyComponents()) {
+                console.error('Chat initialization failed: Missing required components');
+                return;
+            }
+
+            // Verify all required DOM elements
+            const requiredElements = {
+                'chatContainer': document.getElementById('chatContainer'),
+                'chatForm': document.getElementById('chatForm'),
+                'messageInput': document.getElementById('messageInput'),
+                'chatOffcanvas': document.getElementById('chatOffcanvas'),
+                'thoughtProcess': document.getElementById('thoughtProcess')
+            };
+
+            if (!verifyDomElements(requiredElements)) {
+                console.error('Chat initialization failed: Missing required DOM elements');
+                return;
+            }
+
+            const chatConfig = {
+                container: requiredElements.chatContainer,
+                form: requiredElements.chatForm,
+                input: requiredElements.messageInput,
+                thoughtProcess: requiredElements.thoughtProcess,
+                entityType: '{{ entity_type }}',
+                entityUuid: '{{ entity_uuid }}',
+                entityName: '{{ entity_name }}'
+            };
+
+            console.log('Initializing chat with config:', chatConfig);
+            window.currentChat = new UnifiedChat(chatConfig);
+
+            // Handle offcanvas events
+            const chatOffcanvas = requiredElements.chatOffcanvas;
+            if (chatOffcanvas) {
+                chatOffcanvas.addEventListener('shown.bs.offcanvas', () => {
+                    if (window.currentChat?.chatUI) {
+                        window.currentChat.chatUI.scrollToBottom();
+                    }
+                });
+
+                const userProfileUrl = chatOffcanvas.dataset.userProfile;
+
+                // Add user profile picture to CSS
+                document.documentElement.style.setProperty('--user-profile-url', `url('${userProfileUrl}')`);
+
+                // Add style for user profile in chat
+                const styleEl = document.createElement('style');
+                styleEl.textContent = `.chat-message.user::before { background-image: url('${userProfileUrl}'); }`;
+                document.head.appendChild(styleEl);
+            }
+        } catch (error) {
+            console.error('Failed to initialize chat:', error);
+            const chatContainer = document.getElementById('chatContainer');
+            if (chatContainer) {
+                chatContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Chat initialization failed</strong>
+                        <p>Please refresh the page and try again.</p>
+                    </div>
+                `;
+            }
+        }
+    });
+
+    // Function to load and update Wegcoin balance
+    async function updateWegcoinBalance() {
+        try {
+            const response = await fetch('/ai/tenant/wegcoin_balance');
+            const data = await response.json();
+            
+            if (data.balance !== undefined) {
+                const balanceElement = document.getElementById('wegcoinBalance');
+                if (balanceElement) {
+                    balanceElement.textContent = data.balance;
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load Wegcoin balance:', error);
+        }
+    }
+    
+    // Call when chat is opened
+    document.getElementById('chatOffcanvas').addEventListener('shown.bs.offcanvas', updateWegcoinBalance);
+    
+    // Update after each message
+    window.addEventListener('ai-response-received', updateWegcoinBalance);
+    
+    // Handle insufficient Wegcoins events
+    window.addEventListener('insufficient-wegcoins', () => {
+        const insufficientModal = new bootstrap.Modal(document.getElementById('insufficientWegcoinsModal'));
+        insufficientModal.show();
+    });
+
+    // Toggle Chat Function - Make it global
+    window.toggleChatOffcanvas = function() {
+        const chatOffcanvas = document.getElementById('chatOffcanvas');
+        const bsOffcanvas = bootstrap.Offcanvas.getInstance(chatOffcanvas) || 
+                           new bootstrap.Offcanvas(chatOffcanvas);
+        
+        if (chatOffcanvas.classList.contains('show')) {
+            bsOffcanvas.hide();
+        } else {
+            bsOffcanvas.show();
+        }
+    };
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize hljs if it exists
+        if (window.hljs) {
+            hljs.configure({
+                tabReplace: '    ', // 4 spaces
+                languages: ['javascript', 'html', 'css', 'python', 'bash', 'powershell']
+            });
+            
+            // Highlight any existing code blocks
+            document.querySelectorAll('pre code').forEach(block => {
+                hljs.highlightElement(block);
+            });
+        }
+    });
+</script>
+
+<style>
+    /* Connectivity indicator styles */
+    .connectivity-indicator {
+        display: flex;
+        align-items: center;
+    }
+    
+    .connectivity-indicator i {
+        font-size: 1.2rem;
+    }
+    
+    .connectivity-indicator .text-success {
+        color: #28a745;
+    }
+    
+    .connectivity-indicator .text-danger {
+        color: #dc3545;
+    }
+    
+    .connectivity-indicator .text-warning {
+        color: #ffc107;
+    }
+</style>

@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="{{ session.get('theme', 'light') }}">
+
+<head>
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    {% from 'components/breadcrumb.html' import breadcrumb %}
+
+    <title>Wegweiser | Your Intelligent Onboarding Assistant</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Font Awesome (all.min.css includes everything - removed redundant fontawesome.min.css) -->
+    <link href="{{ url_for('static', filename='fontawesome/css/all.min.css') }}" rel="stylesheet">
+
+
+
+    <!-- uPlot for charts (deferred to avoid render-blocking) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uplot@1.6.31/dist/uPlot.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/uplot@1.6.31/dist/uPlot.iife.min.js"></script>
+
+    <!-- DataTables CSS - loaded async since only needed for modal tables
+         These styles are small (~10KB combined) and don't affect initial render -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.7/css/dataTables.bootstrap5.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/datatables.net-responsive-bs5@2.5.0/css/responsive.bootstrap5.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link href="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/datatables.net-responsive-bs5@2.5.0/css/responsive.bootstrap5.min.css" rel="stylesheet">
+    </noscript>
+
+    <!-- Modernized CSS -->
+    <link href="{{ url_for('static', filename='css/base.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/themes.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/glassmorphism.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/background-animations.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/layout.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/components.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/logo-variants.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/unified_gauges_charts.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/groups.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/organisations.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/chat.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/terminal.css') }}" rel="stylesheet">
+
+    <!-- Centralized Component Styles -->
+    <link href="{{ url_for('static', filename='css/legal.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/errors.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/faq.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/dashboard-custom.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/wegcoins.css') }}" rel="stylesheet">
+    <!-- animate.css - load async, non-critical for initial render -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/></noscript>
+
+    <!-- Mobile Responsiveness Overrides (must be loaded last) -->
+    <link href="{{ url_for('static', filename='css/mobile.css') }}" rel="stylesheet">
+
+    <!-- DataTables - REMOVED: Not actively used, saves ~300KB payload -->
+    <!-- Can be re-added when table views are reactivated -->
+
+    <!-- Pace.js preloader REMOVED for performance
+         - Saves ~15KB JS + ~2.5KB CSS
+         - Eliminates render-blocking script in <head>
+         - Removes continuous DOM polling overhead
+         - Fixes Safari animation issues (see SAFARI_LOGIN_FIX.md)
+    -->
+    <!-- Google Charts - deferred (only loads API, actual charts loaded on-demand) -->
+    <script defer src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <!-- marked.js for Markdown parsing - deferred -->
+    <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Highlight.js for syntax highlighting - deferred -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/powershell.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+
+    <!-- Extra head content -->
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+    <!-- Notification Container -->
+    <div id="notification-container" class="notification-container">
+        {% for notification in get_all_notifications() %}
+        {{ notification|safe }}
+        {% endfor %}
+    </div>
+
+    <!-- Floating particles REMOVED for performance
+         - Eliminated 6 fixed-position DOM elements with continuous CSS animations
+         - Reduced GPU compositing layers and paint overhead
+         - Background gradient mesh in background-animations.css provides similar effect with lower cost
+    -->
+
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar-wrapper">
+            <div class="sidebar-header">
+                <img src="{{ url_for('static', filename='images/logo1-sidebar.png') }}" alt="Logo" class="sidebar-full-logo light-theme-logo">
+                <img src="{{ url_for('static', filename='images/logo2-sidebar.png') }}" alt="Logo" class="sidebar-full-logo dark-theme-logo">
+                <button type="button" class="sidebar-close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+
+
+            <div class="sidebar-content">
+              <div class="sidebar-scroll">
+                <!-- User Profile Section -->
+                <div class="sidebar-user-profile text-center py-4 mb-3">
+                    <img src="{{ url_for('static', filename=user.profile_picture or 'images/profilepictures/default.png') }}"
+                        class="rounded-circle mb-2 d-block mx-auto" width="60" height="60" alt="User Profile">
+                    <div class="sidebar-user-greeting">
+                        <h6 class="mb-0 fw-medium">Hello, {{ session['userfirstname'] }}</h6>
+                    </div>
+                </div>
+
+                <div class="sidebar-nav">
+                <!-- Core Navigation (most used) -->
+                <div class="sidebar-section core-section">
+                    <div class="menu-label section-toggle">Core</div>
+                    <ul class="collapsible-section {% if 'dashboard_bp' in request.endpoint or 'devices_bp' in request.endpoint or 'groups_bp' in request.endpoint or 'organisations_bp' in request.endpoint %}expanded{% endif %}">
+                        <li>
+                            <a href="{{ url_for('dashboard_bp.dashboard') }}"
+                                class="nav-link {% if request.endpoint == 'dashboard_bp.dashboard' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-home"></i></div>
+                                <div class="menu-title">Dashboard</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('devices_bp.handle_devices') }}"
+                                class="nav-link {% if request.endpoint == 'devices_bp.handle_devices' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-laptop"></i></div>
+                                <div class="menu-title">Devices</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('groups_bp.groups_page') }}"
+                                class="nav-link {% if request.endpoint == 'groups_bp.groups_page' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-users"></i></div>
+                                <div class="menu-title">Groups</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('organisations_bp.organisations_page') }}"
+                                class="nav-link {% if request.endpoint == 'organisations_bp.organisations_page' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-sitemap"></i></div>
+                                <div class="menu-title">Organizations</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Tenant Management (medium priority) -->
+                <div class="sidebar-section management-section">
+                    <div class="menu-label section-toggle">Management</div>
+                    <ul class="collapsible-section {% if 'tenant' in request.endpoint or 'payments_bp' in request.endpoint or 'vsa_integration_bp' in request.endpoint or 'csv_import_bp' in request.endpoint or 'settings_bp' in request.endpoint %}expanded{% endif %}">
+                        <li>
+                            <a href="{{ url_for('tenant.get_tenants_overview') }}"
+                                class="nav-link {% if request.endpoint == 'tenant.get_tenants_overview' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-chart-bar"></i></div>
+                                <div class="menu-title">Tenant Overview</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('payments_bp.payment') }}"
+                                class="nav-link {% if request.endpoint == 'payments_bp.payment' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-coins"></i></div>
+                                <div class="menu-title">Wegcoins</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('vsa_integration_bp.vsa_integration_wizard') }}"
+                                class="nav-link {% if request.endpoint == 'vsa_integration_bp.vsa_integration_wizard' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-plug"></i></div>
+                                <div class="menu-title">VSA Integration</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('csv_import_bp.csv_import') }}"
+                                class="nav-link {% if request.endpoint == 'csv_import_bp.csv_import' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-file-csv"></i></div>
+                                <div class="menu-title">Import Orgs/Groups</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('tenant.tenant_profile') }}"
+                                class="nav-link {% if request.endpoint == 'tenant.tenant_profile' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-cog"></i></div>
+                                <div class="menu-title">Configure Tenant</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('settings_bp.settings_index') }}"
+                                class="nav-link {% if request.endpoint == 'settings_bp.settings_index' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-sliders-h"></i></div>
+                                <div class="menu-title">Analysis Settings</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- User (collapsible by default in mobile view) -->
+                <div class="sidebar-section user-section">
+                    <div class="menu-label section-toggle">User</div>
+                    <ul
+                        class="collapsible-section {% if 'profile' in request.endpoint or 'messagecentre' in request.endpoint %}expanded{% endif %}">
+                        <li>
+                            <a href="{{ url_for('profile_bp.profile') }}"
+                                class="nav-link {% if request.endpoint == 'profile_bp.profile' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-user"></i></div>
+                                <div class="menu-title">Profile</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('messagecentre_bp.messagecentre') }}"
+                                class="nav-link {% if request.endpoint == 'messagecentre_bp.messagecentre' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-envelope"></i></div>
+                                <div class="menu-title">Messages</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Help & Support (collapsible) -->
+                <div class="sidebar-section help-section">
+                    <div class="menu-label section-toggle">Help & Support</div>
+                    <ul
+                        class="collapsible-section {% if 'quickstart' in request.endpoint or 'faq' in request.endpoint or 'tickets' in request.endpoint %}expanded{% endif %}">
+                        <li>
+                            <a href="{{ url_for('quickstart_bp.quickstart') }}"
+                                class="nav-link {% if request.endpoint == 'quickstart_bp.quickstart' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-rocket"></i></div>
+                                <div class="menu-title">Quick Start</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('faq_bp.faq') }}"
+                                class="nav-link {% if request.endpoint == 'faq_bp.faq' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-question"></i></div>
+                                <div class="menu-title">FAQ</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('tickets_bp.support_dashboard') }}"
+                                class="nav-link {% if request.endpoint == 'tickets_bp.support_dashboard' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-ticket-alt"></i></div>
+                                <div class="menu-title">Support</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Admin (only visible to admins, always collapsed by default) -->
+                {% if session.get('role') == 'admin' %}
+                <div class="sidebar-section admin-section">
+                    <div class="menu-label section-toggle">Admin</div>
+                    <ul class="collapsible-section {% if 'admin' in request.endpoint or 'agent_updates_bp' in request.endpoint %}expanded{% endif %}">
+                        <li>
+                            <a href="{{ url_for('admin_bp.view_tenants') }}"
+                                class="nav-link {% if request.endpoint == 'admin_bp.view_tenants' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-building"></i></div>
+                                <div class="menu-title">Tenants</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('admin_bp.devices_manage') }}"
+                                class="nav-link {% if request.endpoint == 'admin_bp.devices_manage' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-server"></i></div>
+                                <div class="menu-title">Devices</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('admin_snippets_bp.manage_snippets') }}"
+                                class="nav-link {% if request.endpoint == 'admin_snippets_bp.manage_snippets' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-code"></i></div>
+                                <div class="menu-title">Snippets</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('admin_bp.view_logs') }}"
+                                class="nav-link {% if request.endpoint == 'admin_bp.view_logs' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-file-alt"></i></div>
+                                <div class="menu-title">Logs</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('admin_bp.logging_config') }}"
+                                class="nav-link {% if request.endpoint == 'admin_bp.logging_config' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-cog"></i></div>
+                                <div class="menu-title">Logging Config</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('admin_bp.manage_faq') }}"
+                                class="nav-link {% if request.endpoint == 'admin_bp.manage_faq' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-question-circle"></i></div>
+                                <div class="menu-title">FAQ Management</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('admin_bp.manage_tours') }}"
+                                class="nav-link {% if request.endpoint == 'admin_bp.manage_tours' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-route"></i></div>
+                                <div class="menu-title">Tour Management</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('session_admin_bp.view_sessions') }}"
+                                class="nav-link {% if request.endpoint == 'session_admin_bp.view_sessions' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-users-cog"></i></div>
+                                <div class="menu-title">Session Management</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('nats_demo_bp.dashboard') }}"
+                                class="nav-link {% if request.endpoint == 'nats_demo_bp.dashboard' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-satellite-dish"></i></div>
+                                <div class="menu-title">NATS Streaming Demo</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('agent_updates_bp.agent_updates_page') }}"
+                                class="nav-link {% if request.endpoint == 'agent_updates_bp.agent_updates_page' %}active{% endif %}">
+                                <div class="parent-icon"><i class="fas fa-download"></i></div>
+                                <div class="menu-title">Agent Updates</div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                </div> <!-- /.sidebar-nav -->
+              </div> <!-- /.sidebar-scroll -->
+              <div class="sidebar-footer">
+                <div class="sidebar-footer-inner">
+                    <div class="sidebar-quick-icons d-flex align-items-center justify-content-evenly w-100">
+                        <a href="{{ url_for('profile_bp.profile') }}" class="text-muted" title="Profile">
+                            <i class="fas fa-user" style="font-size: 0.875rem;"></i>
+                        </a>
+                        <a href="{{ url_for('settings_bp.settings_index') }}" class="text-muted" title="Settings">
+                            <i class="fas fa-cog" style="font-size: 0.875rem;"></i>
+                        </a>
+                        <a href="{{ url_for('quickstart_bp.quickstart') }}" class="text-muted" title="Quick Start">
+                            <i class="fas fa-rocket" style="font-size: 0.875rem;"></i>
+                        </a>
+                        <a href="{{ url_for('devices_bp.handle_devices') }}" class="text-muted" title="Devices">
+                            <i class="fas fa-laptop" style="font-size: 0.875rem;"></i>
+                        </a>
+                    </div>
+                </div>
+              </div>
+            </div> <!-- /.sidebar-content -->
+        </aside>
+
+        <!-- Overlay for mobile sidebar -->
+        <div class="overlay" style="display: none;"></div>
+        <!-- Main Content -->
+        <div class="d-flex flex-column flex-grow-1">
+            <!-- Header -->
+            <header class="top-header">
+                <nav class="navbar navbar-expand align-items-center gap-4">
+                    <button class="btn-toggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+
+                    <!-- Topbar hamburger toggle (mobile only) -->
+                    <button class="topbar-toggle ms-auto" id="topbarToggle" aria-label="Toggle menu">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </button>
+
+                    <!-- Collapsible topbar content -->
+                    <div class="topbar-collapsible ms-auto d-flex align-items-center" id="topbarCollapsible">
+                        <!-- Agent Status Indicator -->
+                        <div class="agent-status-indicator me-3" title="Agent connectivity status" data-bs-toggle="tooltip">
+                            <div class="agent-status-dot online" id="agentStatusDot"></div>
+                            <div class="agent-status-content">
+                                <span id="agentStatusText" class="agent-status-text">Loading...</span>
+                                <span id="agentStatusDetails" class="agent-status-details"></span>
+                            </div>
+                        </div>
+
+                        <!-- Theme Switcher Toggle -->
+                        <div class="theme-switcher me-3">
+                            <input type="checkbox" name="switcher" id="switcher-input" class="switcher-input">
+                            <label class="switcher-label" for="switcher-input" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
+                                <i class="fas fa-moon"></i>
+                                <span class="switcher-toggler"></span>
+                                <i class="fas fa-sun"></i>
+                            </label>
+                        </div>
+
+                        <!-- Notifications -->
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative"
+                                data-bs-auto-close="outside" data-bs-toggle="dropdown" href="javascript:;">
+                                <i class="fa-solid fa-bell"></i>
+                                <span class="badge-notify bg-danger" id="notificationCount" style="display: none;">0</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end shadow">
+                                <div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
+                                    <h6 class="mb-0">Notifications</h6>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm dropdown-toggle dropdown-toggle-nocaret" type="button"
+                                            data-bs-toggle="dropdown">
+                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="javascript:;" onclick="markAllAsRead()">Mark all as read</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="{{ url_for('settings_bp.settings_index') }}">Settings</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="notificationList" style="max-height: 300px; overflow-y: auto;">
+                                    <!-- Notifications will be dynamically loaded here -->
+                                    <div class="dropdown-item text-center py-3">
+                                        <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p class="mb-0 mt-2 text-muted small">Loading notifications...</p>
+                                    </div>
+                                </div>
+                                <div class="p-2 border-top text-center">
+                                    <a href="{{ url_for('messagecentre_bp.messagecentre') }}" class="small">View All Notifications</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Help -->
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative"
+                                data-bs-toggle="dropdown" href="javascript:;">
+                                <i class="fa-regular fa-circle-question"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end shadow">
+                                <a class="dropdown-item" href="{{ url_for('quickstart_bp.quickstart') }}">
+                                    <i class="fas fa-rocket me-2"></i> Quick Start
+                                </a>
+                                <a class="dropdown-item" href="{{ url_for('faq_bp.faq') }}">
+                                    <i class="fas fa-question-circle me-2"></i> FAQ
+                                </a>
+                                <a class="dropdown-item" href="{{ url_for('tickets_bp.support_dashboard') }}">
+                                    <i class="fas fa-ticket-alt me-2"></i> Support
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- User Profile -->
+                        <div class="nav-item dropdown ms-3">
+                            <a href="javascript:;" class="dropdown-toggle dropdown-toggle-nocaret"
+                                data-bs-toggle="dropdown">
+                                <img src="{{ url_for('static', filename=user.profile_picture or 'images/profilepictures/default.png') }}"
+                                    class="user-profile rounded-circle" alt="User">
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end shadow">
+                                <div class="dropdown-item text-center">
+                                    <img src="{{ url_for('static', filename=user.profile_picture or 'images/profilepictures/default.png') }}"
+                                        class="rounded-circle mb-3 d-block mx-auto" width="80" height="80" alt="User">
+                                    <div class="mt-2">
+                                        <h6 class="mb-0 fw-bold text-center">Hello, {{ session['userfirstname'] }}</h6>
+                                    </div>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item d-flex align-items-center"
+                                    href="{{ url_for('profile_bp.profile') }}">
+                                    <i class="fa-regular fa-user me-2"></i> Profile
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center"
+                                    href="{{ url_for('settings_bp.settings_index') }}">
+                                    <i class="fa-solid fa-gear me-2"></i> Settings
+                                </a>
+                                <a class="dropdown-item d-flex align-items-center"
+                                    href="{{ url_for('dashboard_bp.dashboard') }}">
+                                    <i class="fa-solid fa-gauge me-2"></i> Dashboard
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item d-flex align-items-center"
+                                    href="{{ url_for('login_bp.logout') }}">
+                                    <i class="fa-solid fa-power-off me-2"></i> Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End topbar-collapsible -->
+                </nav>
+                <!-- Overlay for topbar menu (mobile) -->
+                <div class="topbar-overlay" id="topbarOverlay"></div>
+            </header>
+
+            <!-- Main Wrapper -->
+            <main class="main-wrapper">
+                <div class="main-content">
+                    {% block content %}{% endblock %}
+                </div>
+
+                <!-- Footer -->
+                <footer class="page-footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="footer-content d-flex flex-wrap justify-content-between align-items-center">
+                                    <div class="footer-copyright">
+                                        <span class="fw-light">&copy; {{ current_year|default('2025') }}</span>
+                                        <span class="fw-medium">Wegweiser</span>
+                                        <span class="footer-separator">|</span>
+                                        <span class="fw-light">All rights reserved</span>
+                                    </div>
+                                    <div class="footer-links">
+                                        <a href="{{ url_for('index.privacy_policy') }}" class="footer-link">Privacy Policy</a>
+                                        <span class="footer-separator">|</span>
+                                        <a href="{{ url_for('index.terms_of_service') }}" class="footer-link">Terms of Service</a>
+                                        <span class="footer-separator">|</span>
+                                        <a href="{{ url_for('index.security_policy') }}" class="footer-link">Security Policy</a>
+                                        <span class="footer-separator">|</span>
+                                        <a href="mailto:support@wegweiser.tech" class="footer-link">Contact</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </footer>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!-- Core JS - jQuery must load before scripts that depend on it -->
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+
+    <!-- Debug Logger - set window.DEBUG_MODE = true before this to enable verbose logging -->
+    <script src="{{ url_for('static', filename='js/common/debug-logger.js') }}"></script>
+
+    <!-- DataTables JS - MOVED TO PAGE-SPECIFIC: Only load on pages that need tables
+         Saves ~150KB+ on pages without tables. Use the extra_scripts block to include when needed:
+         <script src="https://cdn.jsdelivr.net/npm/datatables.net@1.13.7/js/jquery.dataTables.min.js"></script>
+         <script src="https://cdn.jsdelivr.net/npm/datatables.net-bs5@1.13.7/js/dataTables.bootstrap5.min.js"></script>
+         <script src="https://cdn.jsdelivr.net/npm/datatables.net-responsive@2.5.0/js/dataTables.responsive.min.js"></script>
+         <script src="https://cdn.jsdelivr.net/npm/datatables.net-responsive-bs5@2.5.0/js/responsive.bootstrap5.min.js"></script>
+    -->
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/theme-switcher.js') }}"></script>
+
+    <!-- Agent Status Indicator -->
+    <script src="{{ url_for('static', filename='js/agent-status.js') }}"></script>
+
+    <!-- Notifications JS -->
+    <script src="{{ url_for('static', filename='js/notifications.js') }}"></script>
+
+    <!-- Centralized Utilities -->
+    <script src="{{ url_for('static', filename='js/common/copy-utility.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/highlight-utility.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/theme-toggle.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/notification-management.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/common/chart_utils.js') }}"></script>
+
+    <!-- Scroll to Top Button -->
+    <script src="{{ url_for('static', filename='js/scroll-to-top.js') }}"></script>
+
+
+    <!-- Extra scripts specific to each page -->
+    {% block extra_scripts %}{% endblock %}
+
+    <!-- Global scripts -->
+    {% block global_scripts %}{% endblock %}
+    {% block modals %}{% endblock %}
+
+    <!-- Unified Surface Hierarchy - Load last for consistency overrides -->
+    <link href="{{ url_for('static', filename='css/surface-hierarchy.css') }}" rel="stylesheet">
+</body>
+
+</html>

@@ -1,0 +1,198 @@
+<!-- Filepath: app/templates/organisations/index-single-organisation.html -->
+{% extends "base.html" %}
+{% block title %}Organisation Management - Wegweiser{% endblock %}
+{% block extra_head %}
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+<!-- uPlot CSS already loaded in base.html - removed duplicate -->
+
+{% endblock %}
+{% block content %}
+
+<div class="main-content">
+    {% call breadcrumb(title='Administration', items=[
+    {'text': 'Organisation Management', 'icon': 'fas fa-sitemap', 'url':
+    url_for('organisations_bp.organisations_page')},
+    {'text': organisation.orgname}
+    ]) %}
+    {% endcall %}
+
+
+
+
+    {# General Information Section #}
+    <div id="general-info-{{ organisation.orguuid }}" class="mb-4">
+        <div class="d-flex align-items-center mb-3">
+            <i class="fa-solid fa-building fs-2 text-primary me-2"></i>
+            <h4 class="mb-0">{{ organisation.orgname }}</h4>
+        </div>
+
+        <div class="row g-4">
+            {# Modern Health Score Gauge #}
+            <div class="col-lg-6">
+                <div class="modern-gauge-card">
+                    <div class="modern-gauge-content">
+                        <div class="modern-gauge-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="modern-gauge-info">
+                            <div class="modern-gauge-label">Organisation Health Score</div>
+                            <div class="modern-gauge-value" id="health-score-value-organisation">{% if organisation.health_score is not none %}{{ "%.0f"|format(organisation.health_score) }}%{% else %}N/A{% endif %}</div>
+                            <div class="modern-gauge-bar">
+                                <div class="modern-gauge-bar-fill" id="health-score-bar-organisation" style="width: {{ organisation.health_score|default(0) }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Modern Health History Chart #}
+            <div class="col-lg-6">
+                <div class="modern-chart-card">
+                    <div class="modern-chart-header">
+                        <div class="modern-chart-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <span class="modern-chart-title">Organisation Health Score History</span>
+                    </div>
+                    <div class="modern-chart-body">
+                        <div id="organisation-health-history" class="modern-chart-container"
+                             data-org-uuid="{{ organisation.orguuid }}"
+                             data-health-score="{{ organisation.health_score|default(0) }}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Organisation Overview #}
+        <div class="card shadow mt-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Tenant</label>
+                            <div class="fw-bold">Your Tenant</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Group Count</label>
+                            <div class="fw-bold">{{ organisation.groups|length }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Created At</label>
+                            <div class="fw-bold">{{ organisation.created_at }}</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted">Organisation UUID</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="orgUUID" value="{{ organisation.orguuid }}"
+                                    readonly>
+                                <button class="btn btn-outline-secondary" type="button" id="copyUUIDBtn"
+                                    data-copy="input" data-copy-target="orgUUID"
+                                    data-copy-message="Organisation UUID copied to clipboard!">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <div class="alert alert-info mb-0">
+                            <i class="fas fa-info-circle me-2"></i>
+                            The organisation's current composite health score aggregates to {% if organisation.health_score is not none %}{{ "%.0f"|format(organisation.health_score) }}%{% else %}N/A{% endif %}.
+                            You can see the individual health scores listed below that contribute to the overall score.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Groups Section #}
+    <div id="groups-{{ organisation.orguuid }}" class="mb-4">
+        <div class="d-flex align-items-center mb-3">
+            <i class="fas fa-users me-2"></i>
+            <h4 class="mb-0">Groups</h4>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Group Name</th>
+                                <th>Health Score</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if organisation.groups %}
+                            {% for group in organisation.groups %}
+                            <tr>
+                                <td>{{ group.groupname }}</td>
+                                <td style="width: 50%;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 5px;">
+                                            <div class="progress-bar bg-primary" role="progressbar"
+                                                style="width: {{ group.health_score|default(0) }}%"></div>
+                                        </div>
+                                        <span class="small">{% if group.health_score is not none %}{{ "%.0f"|format(group.health_score) }}%{% else %}N/A{% endif %}</span>
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    <a href="{{ url_for('groups_bp.view_group', group_uuid=group.groupuuid) }}"
+                                        class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    No groups in this organisation.
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Organization Analyses Section #}
+    <div class="mb-4">
+        <div class="d-flex align-items-center mb-3">
+            <h4 class="mb-0">AI Analyses for {{ organisation.orgname }}</h4>
+        </div>
+        <div class="row g-4" id="dynamic-org-analyses-grid">
+            <!-- Dynamic organization analyses cards will be loaded here -->
+        </div>
+    </div>
+
+
+    {# Chat Frame #}
+    {% with entity_type='organisation', entity_uuid=organisation.orguuid, entity_name=organisation.orgname %}
+    {% include "components/chat_component.html" %}
+    {% endwith %}
+
+
+
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+{% include "organisations/scripts.html" %}
+<script>
+    window.orguuid = "{{ organisation.orguuid }}";
+</script>
+<script src="{{ url_for('static', filename='js/scroll-to-top.js') }}"></script>
+<script src="{{ url_for('static', filename='js/org/organisation_health_history.js') }}"></script>
+{# Include the shared chat initialization script #}
+{% with entity_type='organisation', entity_uuid=organisation.orguuid, entity_name=organisation.orgname %}
+{% include "components/chat_init.html" %}
+{% endwith %}
+{% endblock %}

@@ -1,0 +1,21 @@
+# Filepath: app/tasks/system/prompts/base.prompt
+Analyze the following Windows System Event Log summary. Your analysis should:
+
+1. Identify critical system events that impact stability and performance.
+2. Evaluate hardware-related events and driver issues.
+3. Assess system service stability and startup/shutdown patterns.
+4. Identify resource-related issues (CPU, memory, disk).
+5. Provide specific recommendations for system optimization and stability.
+
+Structure your response in basic HTML format with tags such as <p>, <ul>, <li>, and <br> to ensure readability:
+- Summary of system status (2-3 sentences)
+- Critical system events analysis (3-5 bullet points)
+- Hardware and driver assessment (2-3 bullet points)
+- System optimization recommendations (3-4 bullet points)
+- Resource utilization insights (1-2 sentences)
+
+- Declare a healthscore based on these findings between 1 and 100 where 100 is perfect system health.
+
+
+System Event Log Summary:
+{log_data}

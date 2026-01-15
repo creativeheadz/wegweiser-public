@@ -1,0 +1,10 @@
+[Unit]
+Description=Run pending queue monitor every minute
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=60s
+Unit=monitor-pending.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+{% from 'components/guided_tour.html' import tour_breadcrumb_button, include_tour_system %}
+
+
+{% block title %}Analysis Settings - Wegweiser{% endblock %}
+
+{% set icon_mapping = {
+    'journalFiltered': 'fa-solid fa-book',
+    'authFiltered': 'fa-solid fa-user-shield',
+    'eventsFiltered-Application': 'fa-solid fa-laptop-code',
+    'eventsFiltered-Security': 'fa-solid fa-shield-alt',
+    'eventsFiltered-System': 'fa-solid fa-cogs',
+    'syslogFiltered': 'fa-solid fa-server',
+    'kernFiltered': 'fa-solid fa-memory',
+    'msinfo-InstalledPrograms': 'fa-solid fa-box-open',
+    'msinfo-NetworkConfig': 'fa-solid fa-network-wired',
+    'msinfo-StorageInfo': 'fa-solid fa-database',
+    'msinfo-SystemHardwareConfig': 'fa-solid fa-microchip',
+    'msinfo-SystemSoftwareConfig': 'fa-solid fa-code',
+    'windrivers': 'fa-solid fa-wind',
+    'msinfo-RecentAppCrashes': 'fa-solid fa-bug',
+    'group-health-analysis': 'fa-solid fa-users-cog',
+    'macos-hardware-eol-analysis': 'fa-solid fa-microchip',
+    'macos-os-version-analysis': 'fab fa-apple',
+    'macos-log-health-analysis': 'fa-solid fa-heartbeat',
+    'organization-health-analysis': 'fa-solid fa-building',
+    'tenant-ai-recommendations': 'fa-solid fa-robot',
+    'tenant-ai-suggestions': 'fa-solid fa-chart-line',
+    'lynis-audit': 'fa-solid fa-shield-halved',
+    'default': 'fa-solid fa-question'
+} %}
+
+{% block content %}
+
+<div class="main-content">
+    <!-- Updated breadcrumb using the standard component -->
+    {% call breadcrumb(title='Settings', items=[
+        {'text': 'Analysis Settings', 'icon': 'fas fa-sliders-h'}
+    ]) %}
+        {{ tour_breadcrumb_button(tour_data) }}
+    {% endcall %}
+
+    <!-- Global settings card -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-sliders-h me-2"></i>Analysis Settings
+            </h5>
+            <div class="d-flex align-items-center gap-3">
+                <a href="{{ url_for('settings_bp.exclusions_index') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="fas fa-filter me-1"></i>Configure Exclusions
+                </a>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="globalToggle"
+                           {% if global_enabled %}checked{% endif %}
+                           data-analysis-type="global">
+                    <label class="form-check-label" for="globalToggle">Enable All Analyses</label>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="text-muted">Configure which analyses Wegweiser will perform on your devices. Disabling analyses you don't need helps save Wegcoins.</p>
+        </div>
+    </div>
+
+    <!-- Analysis groups organized in separate cards -->
+    {% for group_name, analyses in analysis_groups.items() %}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="card-title mb-0">{{ group_name }}</h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="list-group list-group-flush">
+                {% for analysis in analyses %}
+                <div class="list-group-item p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="icon-container flex-shrink-0 me-3" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background-color: rgba(var(--primary-rgb), 0.1); border-radius: var(--border-radius);">
+                            <i class="{{ icon_mapping.get(analysis.type, icon_mapping['default']) }} text-primary"></i>
+                        </div>
+                        <div class="content-container flex-grow-1 me-3">
+                            <h6 class="mb-1">{{ analysis.name }}</h6>
+                            {% if analysis.description %}
+                            <p class="text-muted mb-0 small">{{ analysis.description }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="cost-container flex-shrink-0 me-3">
+                            <span class="badge bg-warning text-dark rounded-pill" style="font-weight: 600;">
+                                <i class="fas fa-coins me-1"></i>{{ analysis.cost }}
+                            </span>
+                        </div>
+                        <div class="toggle-container flex-shrink-0">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input analysis-toggle"
+                                       type="checkbox"
+                                       id="toggle-{{ analysis.type }}"
+                                       {% if analysis.enabled %}checked{% endif %}
+                                       {% if not global_enabled %}disabled{% endif %}
+                                       data-analysis-type="{{ analysis.type }}">
+                                <label class="form-check-label" for="toggle-{{ analysis.type }}">
+                                    <span class="visually-hidden">{{ analysis.name }}</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Settings page loaded');
+
+    const globalToggle = document.getElementById('globalToggle');
+    const analysisToggles = document.querySelectorAll('.analysis-toggle');
+
+    // Log what we found
+    console.log('Global toggle:', globalToggle);
+    console.log('Analysis toggles found:', analysisToggles.length);
+
+    // Global toggle
+    globalToggle?.addEventListener('change', function() {
+        const enabled = this.checked;
+        console.log('Global toggle clicked:', enabled);
+
+        fetch("{{ url_for('settings_bp.toggle_analysis') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
+            body: new URLSearchParams({
+                'analysis_type': 'global',
+                'enabled': enabled.toString()
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Toggle result:', data);
+            if (data.success) {
+                analysisToggles.forEach(toggle => {
+                    toggle.disabled = !enabled;
+                });
+
+                // Visual feedback
+                const toast = `
+                    <div class="toast align-items-center text-white bg-${enabled ? 'success' : 'info'} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="fas fa-${enabled ? 'check-circle' : 'info-circle'} me-2"></i>
+                                All analyses ${enabled ? 'enabled' : 'disabled'} successfully
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                `;
+
+                const toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+                toastContainer.innerHTML = toast;
+                document.body.appendChild(toastContainer);
+
+                const toastElement = toastContainer.querySelector('.toast');
+                const bsToast = new bootstrap.Toast(toastElement, { delay: 3000 });
+                bsToast.show();
+
+                toastElement.addEventListener('hidden.bs.toast', function() {
+                    document.body.removeChild(toastContainer);
+                });
+
+            } else {
+                console.error('Toggle failed:', data.error);
+                this.checked = !enabled;  // Revert on failure
+            }
+        })
+        .catch(error => {
+            console.error('Toggle error:', error);
+            this.checked = !enabled;  // Revert on failure
+        });
+    });
+
+    // Individual toggles
+    analysisToggles.forEach(toggle => {
+        toggle.addEventListener('change', function() {
+            const analysisType = this.dataset.analysisType;
+            const enabled = this.checked;
+            console.log(`Individual toggle ${analysisType} clicked:`, enabled);
+
+            // Add visual feedback - pulse effect on toggle
+            this.closest('.list-group-item').classList.add('bg-light');
+            setTimeout(() => {
+                this.closest('.list-group-item').classList.remove('bg-light');
+            }, 300);
+
+            fetch("{{ url_for('settings_bp.toggle_analysis') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: new URLSearchParams({
+                    'analysis_type': analysisType,
+                    'enabled': enabled.toString()
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Toggle result:', data);
+                if (data.success) {
+                    // Update toggle states based on server response
+                    analysisToggles.forEach(toggle => {
+                        const type = toggle.dataset.analysisType;
+                        if (data.toggles && type in data.toggles) {
+                            toggle.checked = data.toggles[type];
+                            toggle.disabled = !data.global_enabled;
+                        }
+                    });
+                } else {
+                    console.error('Toggle failed:', data.error);
+                    this.checked = !enabled;  // Revert on failure
+                }
+            })
+            .catch(error => {
+                console.error(`Toggle ${analysisType} error:`, error);
+                this.checked = !enabled;  // Revert on failure
+            });
+        });
+    });
+});
+</script>
+{{ include_tour_system(tour_data.page_identifier if tour_data else 'settings', tour_data) }}
+
+
+<style>
+/* Add some transition effects for toggles */
+.form-check-input {
+    transition: background-color 0.2s, border-color 0.2s, transform 0.1s;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.form-check-input:active {
+    transform: scale(0.9);
+}
+
+.list-group-item {
+    transition: background-color 0.3s;
+}
+
+.icon-container {
+    transition: transform 0.2s;
+}
+
+.list-group-item:hover .icon-container {
+    transform: scale(1.1);
+}
+</style>
+{% endblock %}

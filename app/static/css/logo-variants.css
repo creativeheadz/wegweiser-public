@@ -1,0 +1,37 @@
+/* Logo Variants for Different Themes
+   Adds theme-specific styling to logos
+*/
+
+/* Base logo styles - removed to avoid conflicts with base.css */
+
+/* Removed monochrome and blue theme logo filters as these themes no longer exist */
+
+/* Animation for monochrome logo hover effect */
+@keyframes logoColorReveal {
+  0% {
+    filter: grayscale(100%) brightness(10);
+  }
+  50% {
+    filter: grayscale(50%) brightness(5);
+  }
+  100% {
+    filter: grayscale(0%);
+  }
+}
+
+/* Logo variants for header (if smaller versions are used) */
+.header-logo {
+  height: 64px;
+  width: auto;
+}
+
+/* Reduced motion preference support */
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-full-logo {
+    transition: none;
+  }
+  
+  [data-bs-theme="monochrome"] .sidebar-full-logo:hover {
+    animation: none;
+  }
+}

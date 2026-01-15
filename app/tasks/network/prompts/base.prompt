@@ -1,0 +1,30 @@
+# Filepath: app/tasks/network/prompts/base.prompt
+# Template placeholders:
+#   {criteria} - Tenant-customizable analysis criteria (defaults provided below if not set)
+#   {summary_sentences} - Number of summary sentences (1-10)
+#   {detail_bullets} - Number of interface detail bullets (1-10)
+#   {performance_bullets} - Number of performance bullets (1-10)
+#   {security_bullets} - Number of security bullets (1-10)
+#   {reliability_bullets} - Number of reliability bullets (1-10)
+#   {monitoring_bullets} - Number of monitoring bullets (1-10)
+#   {exclusion_block} - Sandboxed user exclusions/priorities (auto-generated)
+#   {network_data} - The actual network configuration data
+
+Analyze the following network configuration for a Windows system and provide a comprehensive network infrastructure assessment. Your analysis should include:
+
+{criteria}
+
+Structure the report in basic HTML format using tags such as <p>, <ul>, <li>, and <br> to ensure readability:
+- Summary of network infrastructure status and key findings ({summary_sentences} sentences)
+- Detailed analysis of network interfaces and configuration assessment ({detail_bullets} bullet points)
+- Performance bottlenecks and optimization opportunities ({performance_bullets} bullet points)
+- Security considerations and vulnerability assessment ({security_bullets} bullet points)
+- Reliability and redundancy recommendations ({reliability_bullets} bullet points)
+- Proactive monitoring and maintenance strategies for MSP implementation ({monitoring_bullets} bullet points)
+
+{exclusion_block}
+
+- Declare a healthscore based on these findings between 1 and 100 where 100 is a problem-free state.
+
+Network Configuration Data:
+{network_data}

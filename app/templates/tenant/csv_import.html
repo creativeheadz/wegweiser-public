@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Import Organizations and Groups from CSV - Wegweiser{% endblock %}
+{% block content %}
+
+<div class="main-content p-4">
+    <!-- Breadcrumb Navigation -->
+    {% call breadcrumb(title='Administration', items=[
+    {'text': 'Tenant Overview', 'url': url_for('tenant.get_tenants_overview'), 'icon': 'fas fa-building'},
+    {'text': 'CSV Import', 'icon': 'fas fa-file-csv'}
+    ]) %}
+    {% endcall %}
+    
+    <div class="card shadow mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Import Organizations and Groups from CSV</h5>
+        </div>
+        <div class="card-body">
+            
+            {% if step == 1 %}
+            <!-- Step 1: Upload CSV file -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>Upload CSV File</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" enctype="multipart/form-data">
+                                {{ form.csrf_token }}
+                                <div class="form-group">
+                                    {{ form.csv_file.label(class="form-label") }}
+                                    {{ form.csv_file(class="form-control") }}
+                                    {% if form.csv_file.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.csv_file.errors %}
+                                        <span>{{ error }}</span>
+                                        {% endfor %}
+                                    </div>                    {% endif %}
+                </div>
+                <div class="mt-3">
+                    {{ form.submit(class="btn btn-primary") }}
+                    <a href="javascript:void(0)" id="download-template" class="btn btn-outline-secondary">
+                        <i class="fas fa-download"></i> Download Template
+                    </a>
+                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Instructions</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6>Required CSV Format:</h6>
+                            <p>Your CSV file should contain the following columns:</p>
+                            <ul>
+                                <li><strong>orgname</strong>: The name of the organization</li>
+                                <li><strong>groupname</strong>: The name of the group</li>
+                            </ul>
+                            <p>Each row represents a group. If multiple rows have the same organization name, groups will be created under the same organization.</p>
+                            <h6>Example:</h6>
+                            <pre>orgname,groupname
+ExampleOrg1,Group1
+ExampleOrg1,Group2
+ExampleOrg2,Group1</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% elif step == 2 %}
+            <!-- Step 2: Preview and confirm import -->
+            <div class="alert alert-info mb-4">
+                <i class="fas fa-info-circle"></i> Please review the data below before importing.
+            </div>
+            
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Organization</th>
+                            <th>Group</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in preview_data %}
+                        <tr>
+                            <td>{{ item.orgname }}</td>
+                            <td>{{ item.groupname }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('csv_import_bp.csv_import') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+                <form method="POST" action="{{ url_for('csv_import_bp.confirm_import') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-check-circle"></i> Confirm and Import
+                    </button>
+                </form>
+            </div>
+            
+            {% elif step == 3 %}
+            <!-- Step 3: Import results -->
+            <div class="alert alert-success mb-4">
+                <i class="fas fa-check-circle"></i> Import completed successfully!
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Import Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Organizations Created
+                            <span class="badge bg-primary rounded-pill">{{ stats.orgs_created }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Groups Created
+                            <span class="badge bg-primary rounded-pill">{{ stats.groups_created }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Organizations Skipped (Already Exist)
+                            <span class="badge bg-warning rounded-pill">{{ stats.orgs_skipped }}</span>
+                        </li>
+                        {% if stats.errors > 0 %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center text-danger">
+                            Errors
+                            <span class="badge bg-danger rounded-pill">{{ stats.errors }}</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="{{ url_for('tenant.get_tenants_overview') }}" class="btn btn-primary">
+                    <i class="fas fa-home"></i> Return to Tenant Overview
+                </a>
+                <a href="{{ url_for('csv_import_bp.csv_import') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-upload"></i> Import Another File
+                </a>
+            </div>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+
+{{ super() }}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    $(document).ready(function() {
+        // Download template functionality
+        $('#download-template').click(function() {
+            $.ajax({
+                url: '{{ url_for("csv_import_bp.download_template") }}',
+                method: 'GET',
+                success: function(response) {
+                    // Create a Blob with the CSV content
+                    var blob = new Blob([response.csv_content], { type: 'text/csv' });
+                    
+                    // Create a temporary link to download the file
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'org_group_template.csv';
+                    link.click();
+                    
+                    // Clean up
+                    window.URL.revokeObjectURL(link.href);
+                },
+                error: function(xhr, status, error) {
+                    alert('Error downloading template: ' + error);
+                }
+            });
+        });
+    });
+</script>
+{% endblock extra_scripts %}

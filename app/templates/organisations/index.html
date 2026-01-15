@@ -1,0 +1,505 @@
+<!-- Filepath: app/templates/organisations/index.html -->
+{% extends "base.html" %}
+{% from 'components/guided_tour.html' import tour_breadcrumb_button, include_tour_system %}
+
+{% block title %}Organisation Management - Wegweiser{% endblock %}
+{% block extra_head %}
+<link href="{{ url_for('static', filename='css/organisations.css') }}" rel="stylesheet">
+{% endblock %}
+{% block content %}
+
+<div class="main-content p-4">
+    {% call breadcrumb(title='Administration', items=[
+    {'text': 'Organisation Management', 'icon': 'fas fa-sitemap'}
+    ]) %}
+            {{ tour_breadcrumb_button(tour_data) }}
+    {% endcall %}
+
+    <!-- Top Controls Row -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <!-- Search Box -->
+        <div class="search-container mb-3 mb-md-0">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent"><i class="fas fa-search"></i></span>
+                <input type="text" id="searchInput" class="form-control border-start-0"
+                    placeholder="Search organizations...">
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary" id="sortButton">
+                <i class="fas fa-sort me-1"></i> Sort
+            </button>
+            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#createOrgModal">
+                <i class="fas fa-plus me-1"></i> Create New Organisation
+            </button>
+        </div>
+    </div>
+
+
+    <div id="organizationsContainer" class="row g-3 orgs-list">
+        {% for org in organisations %}
+        <div class="col-12 org-card" data-name="{{ org.orgname }}" health="{{ org.health_score }}"
+            groups="{{ org.group_count }}">
+            <div class="row align-items-center p-3 shadow-sm h-100">
+                <!-- Organization Info Section -->
+                <div class="col-12 col-lg-9 mb-3 mb-lg-0">
+                    <div class="d-flex align-items-start gap-2">
+                        <!-- Avatar and Health Gauge Column -->
+                        <div class="d-flex flex-column flex-lg-row align-items-center gap-2 flex-shrink-0 avatar-gauge-wrap">
+                            <div class="avatar rounded-3 border flex-shrink-0">
+                                <span class="initials fs-4">{{ org.initials[:2] }}</span>
+                            </div>
+                            <!-- Health Gauge next to avatar -->
+                            <div class="health-score-compact">
+                                {% if org.health_score is not none and org.health_score > 0 %}
+                                <div class="health-gauge" style="--progress-angle: {{ (org.health_score * 3.6)|round(1) }}deg; width: 45px; height: 45px;">
+                                    <div class="health-gauge-circle"></div>
+                                    <div class="health-gauge-progress"></div>
+                                    <div class="health-gauge-text">{{ org.health_score }}%</div>
+                                </div>
+                                {% elif org.health_score is not none and org.health_score == 0 %}
+                                <div class="health-gauge" style="--progress-angle: 0deg; width: 45px; height: 45px;">
+                                    <div class="health-gauge-circle"></div>
+                                    <div class="health-gauge-progress"></div>
+                                    <div class="health-gauge-text">0%</div>
+                                </div>
+                                {% else %}
+                                <div class="health-gauge" style="--progress-angle: 0deg; width: 45px; height: 45px;">
+                                    <div class="health-gauge-circle"></div>
+                                    <div class="health-gauge-progress"></div>
+                                    <div class="health-gauge-text">N/A</div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="min-width-0" style="width: 100%; max-width: calc(100% - 120px);">
+                            <h6 class="mb-1 fw-bold text-truncate">
+                                <a href="{{ url_for('organisations_bp.view_organisation', org_uuid=org.orguuid) }}"
+                                    class="org-name-link">
+                                    {{ org.orgname }}
+                                </a>
+                            </h6>
+                            <div class="entity-path-compact">
+                                <div class="d-flex flex-column flex-lg-row gap-1 gap-lg-3 align-items-lg-center flex-wrap">
+                                    <small class="text-muted d-flex align-items-center">
+                                        <i class="fas fa-users me-1 flex-shrink-0"></i>
+                                        <span class="text-truncate">{{ org.group_count }} Group{{ 's' if org.group_count != 1 else '' }}</span>
+                                    </small>
+                                    <small class="text-muted d-flex align-items-center">
+                                        <i class="fas fa-server me-1 flex-shrink-0"></i>
+                                        <span class="text-truncate">{{ org.device_count|default(0) }} Device{{ 's' if org.device_count|default(0) != 1 else '' }}</span>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions Section -->
+                <div class="col-6 col-lg-3">
+                    <div class="d-flex align-items-center justify-content-center justify-content-lg-end">
+                        <div class="actions-dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button"
+                                id="orgActions{{ org.orguuid }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="d-none d-md-inline me-1">Actions</span>
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="orgActions{{ org.orguuid }}">
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('organisations_bp.view_organisation', org_uuid=org.orguuid) }}">
+                                        <i class="fas fa-eye me-2"></i>View Organisation
+                                    </a>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item update-org-btn" type="button"
+                                        data-org-name="{{ org.orgname }}" data-org-uuid="{{ org.orguuid }}">
+                                        <i class="fas fa-edit me-2"></i>Edit Organisation
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item add-group-btn" type="button"
+                                        data-org-name="{{ org.orgname }}" data-org-uuid="{{ org.orguuid }}">
+                                        <i class="fas fa-plus me-2"></i>Add Group
+                                    </button>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <button class="dropdown-item text-danger delete-org-btn" type="button"
+                                        data-org-name="{{ org.orgname }}" data-org-uuid="{{ org.orguuid }}">
+                                        <i class="fas fa-trash me-2"></i>Delete Organisation
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Create Organisation Modal -->
+    <div id="createOrgModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Organisation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="createOrgForm" method="POST" action="{{ url_for('organisations_bp.add_organisation') }}">
+                    {{ form.hidden_tag() }}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            {{ form.orgname.label(class="form-label") }}
+                            {{ form.orgname(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.groupname.label(class="form-label") }}
+                            {{ form.groupname(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Create Organisation</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Update Organisation Modal -->
+    <div id="updateOrgModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Organisation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateOrgForm">
+                        <input type="hidden" id="updateOrgUuid">
+                        <div class="mb-3">
+                            <label class="form-label">Organisation Name</label>
+                            <input type="text" class="form-control" id="updateOrgName" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmUpdateBtn">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Organisation Modal -->
+    <div id="deleteOrgModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete the organisation "<span id="deleteOrgName"></span>"?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Group Modal -->
+    <div id="addGroupModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Group</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="addGroupForm" method="POST" action="{{ url_for('groups_bp.add_group') }}">
+                    {{ group_form.hidden_tag() }}
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            {{ group_form.groupname.label(class="form-label") }}
+                            {{ group_form.groupname(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ group_form.orgselect.label(class="form-label") }}
+                            {{ group_form.orgselect(class="form-control") }}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        {{ group_form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Group Modal -->
+    <div id="deleteGroupModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Group Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete the group "<span id="deleteGroupName"></span>"?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteGroupBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ super() }}
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script>
+    $(document).ready(function () {
+        // Search functionality
+        $('#searchInput').on('input', function () {
+            const searchTerm = $(this).val().toLowerCase();
+
+            $('.org-card').each(function () {
+                const orgName = $(this).data('name').toLowerCase();
+                const groupInfo = $(this).find('.text-muted').text().toLowerCase();
+
+                if (orgName.includes(searchTerm) || groupInfo.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+
+        // Sort functionality (toggle between name and health)
+        let sortByHealth = false;
+
+        $('#sortButton').on('click', function () {
+            sortByHealth = !sortByHealth;
+
+            const orgs = $('.org-card').get();
+
+            orgs.sort(function (a, b) {
+                if (sortByHealth) {
+                    return $(b).attr('health') - $(a).attr('health');
+                } else {
+                    return $(a).data('name').localeCompare($(b).data('name'));
+                }
+            });
+
+            $('#organizationsContainer').append(orgs);
+
+            // Update button text
+            $(this).html(sortByHealth ?
+                '<i class="fas fa-sort me-1"></i> Sort by Name' :
+                '<i class="fas fa-sort me-1"></i> Sort by Health');
+        });
+
+        // Organization Create
+        $('#createOrgForm').on('submit', function (e) {
+            e.preventDefault();
+
+            let formData = {
+                orgname: $('#orgname').val(),
+                groupname: $('#groupname').val()
+            };
+
+            $.ajax({
+                url: '/organisations/add',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(formData),
+                headers: {
+                    'X-CSRFToken': $('input[name=csrf_token]').val()
+                },
+                success: function (response) {
+                    $('#createOrgModal').modal('hide');
+                    location.reload();
+                },
+                error: function (xhr) {
+                    $('#createOrgModal').modal('hide');
+                    // Even on error, reload the page to show the flash message
+                    location.reload();
+                }
+            });
+        });
+
+        // Organization Update
+        $('.update-org-btn').click(function () {
+            let orgName = $(this).data('org-name');
+            let orgUuid = $(this).data('org-uuid');
+            $('#updateOrgName').val(orgName);
+            $('#updateOrgUuid').val(orgUuid);
+            $('#updateOrgModal').modal('show');
+        });
+
+        $('#confirmUpdateBtn').click(function () {
+            let orgUuid = $('#updateOrgUuid').val();
+            let orgName = $('#updateOrgName').val();
+
+            $.ajax({
+                url: '/organisations/update',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    orguuid: orgUuid,
+                    updated_fields: {
+                        orgname: orgName
+                    }
+                }),
+                headers: {
+                    'X-CSRFToken': $('input[name=csrf_token]').val()
+                },
+                success: function (response) {
+                    $('#updateOrgModal').modal('hide');
+                    location.reload();
+                },
+                error: function (xhr) {
+                    let errorMessage = xhr.responseJSON && xhr.responseJSON.error
+                        ? xhr.responseJSON.error
+                        : 'Failed to update organisation';
+                    alert('Error: ' + errorMessage);
+                }
+            });
+        });
+
+        // Organization Delete
+        $('.delete-org-btn').click(function () {
+            let orgName = $(this).data('org-name');
+            let orgUuid = $(this).data('org-uuid');
+            $('#deleteOrgName').text(orgName);
+            $('#confirmDeleteBtn').data('org-uuid', orgUuid);
+            $('#deleteOrgModal').modal('show');
+        });
+
+        $('#confirmDeleteBtn').click(function () {
+            let orgUuid = $(this).data('org-uuid');
+
+            $.ajax({
+                url: '/organisations/delete',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ orguuid: orgUuid }),
+                headers: {
+                    'X-CSRFToken': $('input[name=csrf_token]').val()
+                },
+                success: function (response) {
+                    if (response.success) {
+                        $('#deleteOrgModal').modal('hide');
+                        location.reload();
+                    } else {
+                        alert('Error deleting organisation: ' + (response.message || 'Unknown error'));
+                    }
+                },
+                error: function (xhr) {
+                    let errorMessage = xhr.responseJSON && xhr.responseJSON.error
+                        ? xhr.responseJSON.error
+                        : 'Failed to delete organisation';
+                    alert('Error: ' + errorMessage);
+                }
+            });
+        });
+
+        // Group Add - Updated to use existing form
+        $('.add-group-btn').click(function () {
+            let orgUuid = $(this).data('org-uuid');
+            let orgName = $(this).data('org-name');
+            $('#orgselect').val(orgUuid);
+            $('.modal-title', '#addGroupModal').text('Add New Group to ' + orgName);
+            $('#addGroupModal').modal('show');
+        });
+
+        $('#addGroupForm').on('submit', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: '/groups/add',  // Using existing groups route
+                type: 'POST',
+                data: $(this).serialize(),  // Use form serialization for WTForms
+                success: function (response) {
+                    $('#addGroupModal').modal('hide');
+                    location.reload();
+                },
+                error: function (xhr) {
+                    if (xhr.responseJSON && xhr.responseJSON.errors) {
+                        let errors = xhr.responseJSON.errors;
+                        let errorMessage = 'Validation errors:\n';
+                        for (let field in errors) {
+                            errorMessage += `${field}: ${errors[field].join(', ')}\n`;
+                        }
+                        alert(errorMessage);
+                    } else {
+                        alert('Failed to create group');
+                    }
+                }
+            });
+        });
+
+        // Group Delete
+        $('.delete-group-btn').click(function () {
+            let groupName = $(this).data('group-name');
+            let groupUuid = $(this).data('group-uuid');
+            $('#deleteGroupName').text(groupName);
+            $('#confirmDeleteGroupBtn').data('group-uuid', groupUuid);
+            $('#deleteGroupModal').modal('show');
+        });
+
+        $('#confirmDeleteGroupBtn').click(function () {
+            let groupUuid = $(this).data('group-uuid');
+
+            $.ajax({
+                url: '/organisations/delete_group',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ groupuuid: groupUuid }),
+                headers: {
+                    'X-CSRFToken': $('input[name=csrf_token]').val()
+                },
+                success: function (response) {
+                    $('#deleteGroupModal').modal('hide');
+                    location.reload();
+                },
+                error: function (xhr) {
+                    let errorMessage = xhr.responseJSON && xhr.responseJSON.error
+                        ? xhr.responseJSON.error
+                        : 'Failed to delete group';
+                    alert('Error: ' + errorMessage);
+                }
+            });
+        });
+
+        // Clear forms when modals are hidden
+        $('#createOrgModal').on('hidden.bs.modal', function () {
+            $('#createOrgForm')[0].reset();
+        });
+
+        $('#addGroupModal').on('hidden.bs.modal', function () {
+            $('#addGroupForm')[0].reset();
+        });
+
+        $('#updateOrgModal').on('hidden.bs.modal', function () {
+            $('#updateOrgForm')[0].reset();
+        });
+
+
+
+    });
+</script>
+{{ include_tour_system(tour_data.page_identifier if tour_data else 'organisations', tour_data) }}
+
+{% endblock %}

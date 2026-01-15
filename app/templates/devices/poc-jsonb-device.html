@@ -1,0 +1,587 @@
+{% extends "base.html" %}
+{% block title %}{{ device.devicename }} - Device Overview{% endblock %}
+
+{% block extra_head %}
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+<link href="{{ url_for('static', filename='css/devices.css') }}" rel="stylesheet">
+<!-- unified_gauges_charts.css already loaded in base.html - removed duplicate -->
+<link href="{{ url_for('static', filename='css/ai-insights.css') }}" rel="stylesheet">
+<style>
+    /* Metric Grid Cards - Golden Ratio Proportions */
+    .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.618rem; /* Golden ratio */
+        margin-bottom: 1.618rem;
+    }
+
+    .metric-item {
+        background: var(--bs-card-bg);
+        border: 1px solid var(--bs-border-color);
+        border-radius: 0.5rem;
+        padding: 1rem 1.25rem;
+        transition: all 0.3s ease;
+    }
+
+    .metric-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .metric-label {
+        font-size: 0.813rem; /* 13px - harmonious scale */
+        color: var(--bs-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .metric-value {
+        font-size: 0.813remrem;
+        font-weight: 600;
+        color: var(--bs-body-color);
+        line-height: 1.2;
+    }
+
+    .metric-value-small {
+        font-size: 1rem;
+        word-break: break-all;
+    }
+
+    /* Section Headers with Icon */
+    .section-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.5rem;
+        margin-right: 0.75rem;
+        font-size: 1.25rem;
+    }
+
+    /* Data Tables - Clean and Minimal */
+    .data-table {
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .data-table th {
+        font-size: 0.813rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+        padding: 0.75rem 1rem;
+        border-bottom: 2px solid var(--bs-border-color);
+    }
+
+    .data-table td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--bs-border-color-translucent);
+    }
+
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Nested Data Display */
+    .nested-data {
+        background: var(--bs-secondary-bg);
+        border-radius: 0.375rem;
+        padding: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .data-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--bs-border-color-translucent);
+    }
+
+    .data-row:last-child {
+        border-bottom: none;
+    }
+
+    .data-key {
+        font-weight: 500;
+        color: var(--bs-secondary);
+        flex: 0 0 40%;
+    }
+
+    .data-value {
+        color: var(--bs-body-color);
+        text-align: right;
+        flex: 1;
+        word-break: break-word;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--bs-secondary);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+</style>
+{% endblock %}
+
+{# Generic renderer for additional audit_data sections #}
+{% macro render_additional_section(section_key, section_value) %}
+<div class="row g-4 mt-4">
+    <div class="col-12">
+        <div class="card h-100 shadow">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-circle-nodes me-2"></i>
+                <h6 class="card-title mb-0">{{ section_key|replace('_', ' ')|title }}</h6>
+            </div>
+            <div class="card-body">
+                {% if section_value is string or section_value is number or section_value is boolean %}
+                    <div class="data-row">
+                        <div class="data-key">Value</div>
+                        <div class="data-value">{{ section_value }}</div>
+                    </div>
+                {% else %}
+                    <div class="nested-data">
+                        <pre class="mb-0 small">{{ section_value|tojson(indent=2) }}</pre>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% block content %}
+<div class="main-content">
+    {% call breadcrumb(title='Administration', items=[
+        {'text': 'Device Management', 'icon': 'fas fa-server', 'url': url_for('devices_bp.handle_devices')},
+        {'text': device.devicename}
+    ]) %}
+    {% endcall %}
+
+    {# Device Header - Matching existing style #}
+    <div id="general-info-{{ device.deviceuuid }}" class="mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h4 class="mb-0">
+                {% if device.audit_data and device.audit_data.system and device.audit_data.system.devicePlatform %}
+                    {% if 'Windows' in device.audit_data.system.devicePlatform %}
+                    <i class="fa-brands fa-windows fs-2 os-icon me-2"></i>
+                    {% elif 'Linux' in device.audit_data.system.devicePlatform %}
+                    <i class="fa-brands fa-linux fs-2 os-icon me-2"></i>
+                    {% elif 'Darwin' in device.audit_data.system.devicePlatform %}
+                    <i class="fa-brands fa-apple fs-2 os-icon me-2"></i>
+                    {% else %}
+                    <i class="fa-solid fa-computer fs-2 os-icon me-2"></i>
+                    {% endif %}
+                {% else %}
+                    <i class="fa-solid fa-computer fs-2 os-icon me-2"></i>
+                {% endif %}
+                <span class="text-muted" style="font-size: 0.9em;">{{ device.orgname or 'No Org' }} / {{ device.groupname or 'No Group' }} / </span>{{ device.devicename }}
+            </h4>
+        </div>
+    </div>
+
+    {# Health Score Gauge - Same styling as original page #}
+    {% if device.health_score is not none %}
+        {% set entity_type = 'device' %}
+        {% set entity_uuid = device.deviceuuid %}
+        {% set health_score = device.health_score %}
+        {% set show_history = false %}
+        {% include 'shared/modern_health_gauge.html' %}
+    {% endif %}
+
+    {# Dynamic Content from JSONB - Beautifully Rendered #}
+    {% if device.audit_data %}
+
+        {# CPU Section #}
+        {% if device.audit_data.cpu %}
+        <div class="row g-4 mt-4">
+            <div class="col-12">
+                <div class="card h-100 shadow">
+                    <div class="card-header d-flex align-items-center">
+                        <i class="fas fa-microchip me-2"></i>
+                        <h6 class="card-title mb-0">CPU Information</h6>
+                    </div>
+                    <div class="card-body">
+                        {% if device.audit_data.cpu.cpuname %}
+                        <div class="mb-3">
+                            <strong>Processor:</strong> {{ device.audit_data.cpu.cpuname }}
+                        </div>
+                        {% endif %}
+
+                        {% if device.audit_data.cpu.cpu_metrics %}
+                        <div class="metric-grid">
+                            {% if device.audit_data.cpu.cpu_metrics.cores_logical %}
+                            <div class="metric-item">
+                                <div class="metric-label">Logical Cores</div>
+                                <div class="metric-value">{{ device.audit_data.cpu.cpu_metrics.cores_logical }}</div>
+                            </div>
+                            {% endif %}
+
+                            {% if device.audit_data.cpu.cpu_metrics.cores_physical %}
+                            <div class="metric-item">
+                                <div class="metric-label">Physical Cores</div>
+                                <div class="metric-value">{{ device.audit_data.cpu.cpu_metrics.cores_physical }}</div>
+                            </div>
+                            {% endif %}
+
+                            {% if device.audit_data.cpu.cpu_metrics.frequency_current %}
+                            <div class="metric-item">
+                                <div class="metric-label">Current Frequency</div>
+                                <div class="metric-value">{{ "%.2f"|format(device.audit_data.cpu.cpu_metrics.frequency_current) }} GHz</div>
+                            </div>
+                            {% endif %}
+
+                            {% if device.audit_data.cpu.cpu_metrics.frequency_max %}
+                            <div class="metric-item">
+                                <div class="metric-label">Max Frequency</div>
+                                <div class="metric-value">{{ "%.2f"|format(device.audit_data.cpu.cpu_metrics.frequency_max) }} GHz</div>
+                            </div>
+                            {% endif %}
+
+                            {% if device.audit_data.cpu.cpu_metrics.cpu_percent_overall %}
+                            <div class="metric-item">
+                                <div class="metric-label">CPU Usage</div>
+                                <div class="metric-value">
+                                    <span class="badge {% if device.audit_data.cpu.cpu_metrics.cpu_percent_overall >= 80 %}bg-danger{% elif device.audit_data.cpu.cpu_metrics.cpu_percent_overall >= 60 %}bg-warning{% else %}bg-success{% endif %} fs-5">
+                                        {{ "%.1f"|format(device.audit_data.cpu.cpu_metrics.cpu_percent_overall) }}%
+                                    </span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {# CPU Times #}
+                        {% if device.audit_data.cpu.cpu_metrics.cpu_times %}
+                        <div class="nested-data mt-3">
+                            <h6 class="text-muted mb-3">CPU Times</h6>
+                            <div class="metric-grid">
+                                {% for key, value in device.audit_data.cpu.cpu_metrics.cpu_times.items() %}
+                                {% if value is not none %}
+                                <div class="metric-item">
+                                    <div class="metric-label">{{ key|replace('_', ' ')|title }}</div>
+                                    <div class="metric-value">{{ "%.2f"|format(value) }}s</div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Memory Section #}
+        {% if device.audit_data.memory %}
+        <div class="row g-4 mt-4">
+            <div class="col-12">
+                <div class="card h-100 shadow">
+                    <div class="card-header d-flex align-items-center">
+                        <i class="fas fa-memory me-2"></i>
+                        <h6 class="card-title mb-0">Memory Information</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="metric-grid">
+                            {% if device.audit_data.memory.total %}
+                            <div class="metric-item">
+                                <div class="metric-label">Total Memory</div>
+                                <div class="metric-value">{{ "%.2f"|format(device.audit_data.memory.total / 1024 / 1024 / 1024) }} GB</div>
+                            </div>
+                            {% endif %}
+
+                            {% if device.audit_data.memory.available %}
+                            <div class="metric-item">
+                                <div class="metric-label">Available Memory</div>
+                                <div class="metric-value">{{ "%.2f"|format(device.audit_data.memory.available / 1024 / 1024 / 1024) }} GB</div>
+                            </div>
+                            {% endif %}
+
+                            {% if device.audit_data.memory.used %}
+                            <div class="metric-item">
+                                <div class="metric-label">Used Memory</div>
+                                <div class="metric-value">{{ "%.2f"|format(device.audit_data.memory.used / 1024 / 1024 / 1024) }} GB</div>
+                            </div>
+                            {% endif %}
+
+                            {% if device.audit_data.memory.memory_metrics and device.audit_data.memory.memory_metrics.percent %}
+                            <div class="metric-item">
+                                <div class="metric-label">Memory Usage</div>
+                                <div class="metric-value">
+                                    <span class="badge {% if device.audit_data.memory.memory_metrics.percent >= 80 %}bg-danger{% elif device.audit_data.memory.memory_metrics.percent >= 60 %}bg-warning{% else %}bg-success{% endif %} fs-5">
+                                        {{ "%.1f"|format(device.audit_data.memory.memory_metrics.percent) }}%
+                                    </span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {# Extended Memory Metrics #}
+                        {% if device.audit_data.memory.memory_metrics %}
+                        <div class="nested-data mt-3">
+                            <h6 class="text-muted mb-3">Extended Memory Metrics</h6>
+                            <div class="metric-grid">
+                                {% for key, value in device.audit_data.memory.memory_metrics.items() %}
+                                {% if value is number %}
+                                <div class="metric-item">
+                                    <div class="metric-label">{{ key|replace('_', ' ')|title }}</div>
+                                    <div class="metric-value">
+                                        {% if value > 1024 * 1024 * 1024 %}
+                                            {{ "%.2f"|format(value / 1024 / 1024 / 1024) }} GB
+                                        {% elif value > 1024 * 1024 %}
+                                            {{ "%.2f"|format(value / 1024 / 1024) }} MB
+                                        {% elif 'percent' in key %}
+                                            {{ "%.1f"|format(value) }}%
+                                        {% else %}
+                                            {{ value }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Storage Drives Section #}
+        {% if device.audit_data.drives %}
+        <div class="row g-4 mt-4">
+            <div class="col-12">
+                <div class="card h-100 shadow">
+                    <div class="card-header d-flex align-items-center">
+                        <i class="fas fa-hard-drive me-2"></i>
+                        <h6 class="card-title mb-0">Storage Drives</h6>
+                    </div>
+                    <div class="card-body">
+                        {% for drive in device.audit_data.drives %}
+                        <div class="nested-data mb-3">
+                            <h6 class="mb-3">
+                                <i class="fas fa-hdd me-2"></i>
+                                {{ drive.name|default('Drive') }}
+                            </h6>
+                            <div class="metric-grid">
+                                {% if drive.total %}
+                                <div class="metric-item">
+                                    <div class="metric-label">Total Size</div>
+                                    <div class="metric-value">{{ "%.2f"|format(drive.total / 1024 / 1024 / 1024) }} GB</div>
+                                </div>
+                                {% endif %}
+
+                                {% if drive.free %}
+                                <div class="metric-item">
+                                    <div class="metric-label">Free Space</div>
+                                    <div class="metric-value">{{ "%.2f"|format(drive.free / 1024 / 1024 / 1024) }} GB</div>
+                                </div>
+                                {% endif %}
+
+                                {% if drive.used %}
+                                <div class="metric-item">
+                                    <div class="metric-label">Used Space</div>
+                                    <div class="metric-value">{{ "%.2f"|format(drive.used / 1024 / 1024 / 1024) }} GB</div>
+                                </div>
+                                {% endif %}
+
+                                {% if drive.usedPer is not none %}
+                                <div class="metric-item">
+                                    <div class="metric-label">Usage</div>
+                                    <div class="metric-value">
+                                        <span class="badge {% if drive.usedPer >= 90 %}bg-danger{% elif drive.usedPer >= 75 %}bg-warning{% else %}bg-success{% endif %} fs-5">
+                                            {{ "%.1f"|format(drive.usedPer) }}%
+                                        </span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Network Interfaces Section #}
+        {% if device.audit_data.networkList %}
+        <div class="row g-4 mt-4">
+            <div class="col-12">
+                <div class="card h-100 shadow">
+                    <div class="card-header d-flex align-items-center">
+                        <i class="fas fa-network-wired me-2"></i>
+                        <h6 class="card-title mb-0">Network Interfaces</h6>
+                    </div>
+                    <div class="card-body">
+                        {% for interface_entry in device.audit_data.networkList %}
+                            {% for iface_name, iface in interface_entry.items() %}
+                            <div class="nested-data mb-3">
+                                <h6 class="mb-3">
+                                    <i class="fas fa-ethernet me-2"></i>
+                                    {{ iface_name }}
+                                    {% if iface.ifIsUp is not none %}
+                                    <span class="badge {% if iface.ifIsUp %}bg-success{% else %}bg-secondary{% endif %}">
+                                        {{ iface.ifIsUp and 'UP' or 'DOWN' }}
+                                    </span>
+                                    {% endif %}
+                                </h6>
+                                <div class="metric-grid">
+                                    {% if iface.address4 %}
+                                    <div class="metric-item">
+                                        <div class="metric-label">IPv4 Address</div>
+                                        <div class="metric-value metric-value-small">{{ iface.address4 }}</div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if iface.netmask4 %}
+                                    <div class="metric-item">
+                                        <div class="metric-label">IPv4 Netmask</div>
+                                        <div class="metric-value metric-value-small">{{ iface.netmask4 }}</div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if iface.ifSpeed %}
+                                    <div class="metric-item">
+                                        <div class="metric-label">Speed</div>
+                                        <div class="metric-value">{{ iface.ifSpeed }} Mbps</div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if iface.bytesRecv is not none %}
+                                    <div class="metric-item">
+                                        <div class="metric-label">Bytes Received</div>
+                                        <div class="metric-value">{{ iface.bytesRecv }}</div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if iface.bytesSent is not none %}
+                                    <div class="metric-item">
+                                        <div class="metric-label">Bytes Sent</div>
+                                        <div class="metric-value">{{ iface.bytesSent }}</div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Battery Section #}
+        {% if device.audit_data.battery and device.audit_data.battery.installed %}
+        <div class="row g-4 mt-4">
+            <div class="col-12">
+                <div class="card h-100 shadow">
+                    <div class="card-header d-flex align-items-center">
+                        <i class="fas fa-battery-three-quarters me-2"></i>
+                        <h6 class="card-title mb-0">Battery Information</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="metric-grid">
+                            {% if device.audit_data.battery.pcCharged is not none %}
+                            <div class="metric-item">
+                                <div class="metric-label">Battery Level</div>
+                                <div class="metric-value">
+                                    <span class="badge {% if device.audit_data.battery.pcCharged >= 60 %}bg-success{% elif device.audit_data.battery.pcCharged >= 20 %}bg-warning{% else %}bg-danger{% endif %} fs-5">
+                                        {{ device.audit_data.battery.pcCharged }}%
+                                    </span>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if device.audit_data.battery.powerPlug is not none %}
+                            <div class="metric-item">
+                                <div class="metric-label">Power Status</div>
+                                <div class="metric-value">
+                                    {% if device.audit_data.battery.powerPlug %}
+                                    <span class="badge bg-success">Plugged In</span>
+                                    {% else %}
+                                    <span class="badge bg-warning">On Battery</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            {% if device.audit_data.battery.secsLeft is not none %}
+                            <div class="metric-item">
+                                <div class="metric-label">Time Remaining</div>
+                                <div class="metric-value">
+                                    {% if device.audit_data.battery.secsLeft < 0 %}
+                                        N/A
+                                    {% else %}
+                                        {{ device.audit_data.battery.secsLeft }}s
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {# Generic sections for remaining audit_data keys #}
+        {% set known_keys = ['cpu', 'memory', 'drives', 'networkList', 'battery'] %}
+        {% for key, value in device.audit_data.items() %}
+            {% if key not in known_keys %}
+                {{ render_additional_section(key, value) }}
+            {% endif %}
+        {% endfor %}
+
+    {% else %}
+        <div class="empty-state">
+            <i class="fas fa-database"></i>
+            <h5>No Audit Data Available</h5>
+            <p class="text-muted">This device hasn't sent audit data yet, or the data hasn't been loaded into the POC table.</p>
+            <button class="btn btn-primary mt-3" onclick="populateTestData()">
+                <i class="fas fa-download me-2"></i>
+                Populate from Latest Payload
+            </button>
+        </div>
+    {% endif %}
+
+</div>
+
+<script>
+
+function populateTestData() {
+    const deviceuuid = '{{ device.deviceuuid }}';
+
+    fetch(`/devices/poc-jsonb/${deviceuuid}/populate`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token() }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Test data populated successfully! Reloading page...');
+            location.reload();
+        } else {
+            alert('Error: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        alert('Error: ' + error);
+    });
+}
+</script>
+{% endblock %}
+

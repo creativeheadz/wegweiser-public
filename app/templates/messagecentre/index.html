@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+
+{% block title %}Message Centre - Wegweiser{% endblock %}
+
+{% block content %}
+<div class="main-content p-4">
+    <!-- Breadcrumb Navigation -->
+    {% call breadcrumb(title='Communication', items=[
+        {'text': 'Message Centre', 'icon': 'fas fa-envelope'}
+    ]) %}
+    {% endcall %}
+
+    <!-- Top Controls Row -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <!-- Search Box -->
+        <div class="search-container mb-3 mb-md-0">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent"><i class="fas fa-search"></i></span>
+                <input type="text" id="searchInput" class="form-control border-start-0"
+                       placeholder="Search messages...">
+            </div>
+        </div>
+
+        <!-- Filter Buttons -->
+        <div class="d-flex gap-2">
+            <div class="btn-group" role="group" aria-label="Message filters">
+                <button type="button" class="btn btn-outline-primary active" id="filter-all" onclick="showCategory('all')">
+                    <i class="fas fa-inbox me-1"></i> All Messages
+                    <span class="badge bg-primary rounded-pill ms-2">{{ (messages|length) + (terminal_sessions|length) }}</span>
+                </button>
+                <button type="button" class="btn btn-outline-primary" id="filter-system" onclick="showCategory('system')">
+                    <i class="fas fa-broadcast-tower me-1"></i> System
+                    {% if unread_count > 0 %}
+                        <span class="badge bg-danger rounded-pill ms-2">{{ unread_count }}</span>
+                    {% endif %}
+                </button>
+                <button type="button" class="btn btn-outline-primary" id="filter-conversation" onclick="showCategory('conversation')">
+                    <i class="fas fa-comments me-1"></i> Conversations
+                    {% if conversation_count > 0 %}
+                        <span class="badge bg-info rounded-pill ms-2">{{ conversation_count }}</span>
+                    {% endif %}
+                </button>
+                <button type="button" class="btn btn-outline-primary" id="filter-terminal" onclick="showCategory('terminal')">
+                    <i class="fas fa-terminal me-1"></i> Terminal Sessions
+                    {% if total_terminal_sessions > 0 %}
+                        <span class="badge bg-success rounded-pill ms-2">{{ total_terminal_sessions }}</span>
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages Container -->
+    <div id="messagesContainer" class="messages-list">
+        {% if messages or terminal_sessions %}
+            {% for message in messages %}
+            <div class="message-card mb-3" data-type="{% if message.is_conversation %}conversation{% else %}system{% endif %}"
+                 data-title="{{ message.title|lower }}" data-content="{{ message.content|lower }}">
+                <a href="{% if message.is_conversation %}{{ url_for('messagecentre_bp.view_conversation', conversation_id=message.uuid) }}{% else %}{{ url_for('messagecentre_bp.messageview', message_id=message.uuid) }}{% endif %}"
+                   class="text-decoration-none">
+                    <div class="card message-item {% if not message.is_read %}unread{% endif %}">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div class="d-flex align-items-start gap-3 flex-grow-1">
+                                    <!-- Message Icon -->
+                                    <div class="message-icon">
+                                        {% if message.is_conversation %}
+                                            <i class="fas fa-comments text-info"></i>
+                                        {% else %}
+                                            <i class="fas fa-broadcast-tower text-warning"></i>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Message Content -->
+                                    <div class="message-content flex-grow-1">
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <h6 class="mb-0 {% if not message.is_read %}fw-bold{% else %}fw-normal{% endif %}">
+                                                {{ message.title }}
+                                            </h6>
+                                            {% if not message.is_read %}
+                                                <span class="badge bg-primary rounded-pill">New</span>
+                                            {% endif %}
+                                        </div>
+                                        <p class="mb-1 text-muted small">
+                                            {{ message.content[:80] }}{% if message.content|length > 80 %}...{% endif %}
+                                        </p>
+                                        <div class="message-meta d-flex align-items-center gap-3 text-muted small">
+                                            <span><i class="fas fa-user me-1"></i>{{ message.sender }}</span>
+                                            <span><i class="fas fa-clock me-1"></i>{{ message.timestamp }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Arrow -->
+                                <div class="message-arrow">
+                                    <i class="fas fa-chevron-right text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+
+            <!-- Terminal Sessions -->
+            {% for session in terminal_sessions %}
+            <div class="message-card mb-3" data-type="terminal"
+                 data-title="{{ session.title|lower }}" data-content="{{ session.content|lower }}">
+                <a href="{{ url_for('osquery_bp.get_terminal_history', device_uuid=session.device_uuid) }}"
+                   class="text-decoration-none">
+                    <div class="card message-item">
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div class="d-flex align-items-start gap-3 flex-grow-1">
+                                    <!-- Terminal Icon -->
+                                    <div class="message-icon">
+                                        <i class="fas fa-terminal text-success"></i>
+                                    </div>
+
+                                    <!-- Terminal Session Content -->
+                                    <div class="message-content flex-grow-1">
+                                        <div class="d-flex align-items-center gap-2 mb-1">
+                                            <h6 class="mb-0 fw-normal">
+                                                {{ session.title }}
+                                            </h6>
+                                        </div>
+                                        <p class="mb-1 text-muted small">
+                                            {{ session.content }}
+                                        </p>
+                                        <div class="message-meta d-flex align-items-center gap-3 text-muted small">
+                                            <span><i class="fas fa-terminal me-1"></i>{{ session.sender }}</span>
+                                            <span><i class="fas fa-clock me-1"></i>{{ session.timestamp }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Arrow -->
+                                <div class="message-arrow">
+                                    <i class="fas fa-chevron-right text-muted"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No messages found</h5>
+                <p class="text-muted">Your message centre is empty.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* Message Centre Specific Styles */
+.message-card {
+    transition: all 0.2s ease;
+}
+
+.message-item {
+    border: 1px solid var(--glass-border);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.message-item:hover {
+    background: var(--glass-bg-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--glass-shadow), 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.message-item.unread {
+    border-left: 4px solid var(--primary);
+    background: rgba(var(--primary-rgb), 0.05);
+}
+
+[data-bs-theme="dark"] .message-item.unread {
+    background: rgba(var(--primary-rgb), 0.1);
+}
+
+.message-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-bg);
+    border-radius: var(--border-radius);
+    font-size: 1.2rem;
+}
+
+.message-arrow {
+    opacity: 0.5;
+    transition: all 0.2s ease;
+}
+
+.message-item:hover .message-arrow {
+    opacity: 1;
+    transform: translateX(3px);
+}
+
+.btn-group .btn.active {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.search-container {
+    min-width: 300px;
+}
+
+@media (max-width: 768px) {
+    .search-container {
+        min-width: 100%;
+    }
+
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-group .btn {
+        border-radius: var(--border-radius) !important;
+        margin-bottom: 0.25rem;
+    }
+}
+</style>
+
+<script>
+    let currentFilter = 'all';
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        showCategory('all');
+        setupSearch();
+    });
+
+    function showCategory(type) {
+        currentFilter = type;
+
+        // Update button active states
+        document.querySelectorAll('.btn-group .btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById('filter-' + type).classList.add('active');
+
+        // Filter messages
+        filterMessages();
+    }
+
+    function filterMessages() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const messageCards = document.querySelectorAll('.message-card');
+        let visibleCount = 0;
+
+        messageCards.forEach(card => {
+            const messageType = card.getAttribute('data-type');
+            const title = card.getAttribute('data-title');
+            const content = card.getAttribute('data-content');
+
+            // Check type filter
+            const matchesType = currentFilter === 'all' || messageType === currentFilter;
+
+            // Check search filter
+            const matchesSearch = searchTerm === '' ||
+                                title.includes(searchTerm) ||
+                                content.includes(searchTerm);
+
+            if (matchesType && matchesSearch) {
+                card.style.display = '';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        // Update empty state
+        updateEmptyState(visibleCount);
+    }
+
+    function updateEmptyState(visibleCount) {
+        const container = document.getElementById('messagesContainer');
+        let emptyState = container.querySelector('.empty-state');
+
+        if (visibleCount === 0) {
+            if (!emptyState) {
+                emptyState = document.createElement('div');
+                emptyState.className = 'empty-state text-center py-5';
+                emptyState.innerHTML = `
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No messages found</h5>
+                    <p class="text-muted">Try adjusting your search or filter criteria.</p>
+                `;
+                container.appendChild(emptyState);
+            }
+            emptyState.style.display = 'block';
+        } else if (emptyState) {
+            emptyState.style.display = 'none';
+        }
+    }
+
+    function setupSearch() {
+        const searchInput = document.getElementById('searchInput');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(filterMessages, 300);
+        });
+    }
+</script>
+{% endblock %}

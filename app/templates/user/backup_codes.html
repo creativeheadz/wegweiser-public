@@ -1,0 +1,126 @@
+<!-- Filepath: app/templates/user/backup_codes.html -->
+<!-- Filepath: app/templates/backup_codes.html -->
+{# Filepath: app/templates/backup_codes.html #}
+{% extends "base.html" %}
+
+{% block head %}
+<style>
+    .backup-codes-container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        font-family: monospace;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+    }
+
+    .backup-code {
+        padding: 8px 12px;
+        margin: 4px;
+        background-color: white;
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        display: inline-block;
+        min-width: 120px;
+        text-align: center;
+    }
+
+    .alert-icon {
+        font-size: 1.2rem;
+        margin-right: 8px;
+    }
+
+    @media print {
+        .no-print {
+            display: none !important;
+        }
+
+        .backup-codes-container {
+            border: 1px solid #ddd;
+        }
+
+        .backup-code {
+            border: 1px solid #ddd;
+            margin: 4px;
+            page-break-inside: avoid;
+        }
+
+        .card {
+            border: none;
+            box-shadow: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card mt-5 shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Your Backup Codes</h2>
+
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle alert-icon"></i>
+                        <strong>Important:</strong> Each code can only be used once. Store these codes in a secure
+                        location as they cannot be displayed again.
+                    </div>
+
+                    <div class="backup-codes-container p-4 mb-4">
+                        {% for code in backup_codes %}
+                        <div class="backup-code">
+                            {{ code[:5] }}-{{ code[5:] }}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-outline-secondary me-2 no-print" onclick="window.print()">
+                            <i class="fas fa-print"></i> Print Codes
+                        </button>
+                        <a href="{{ url_for('profile_bp.profile') }}" class="btn btn-primary no-print">
+                            <i class="fas fa-check"></i> Done
+                        </a>
+                    </div>
+
+                    <div class="mt-4 small text-muted no-print">
+                        <p class="mb-1"><i class="fas fa-info-circle"></i> Security Tips:</p>
+                        <ul>
+                            <li>Store these codes separately from your authenticator app</li>
+                            <li>Consider keeping a physical copy in a secure location</li>
+                            <li>Don't store them on the same device you use for 2FA</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Print-only footer -->
+                <div class="d-none d-print-block mt-4 text-center">
+                    <p class="small text-muted">
+                        Backup codes for {{ session.get('companyemail') }}<br>
+                        Generated on {{ now().strftime('%Y-%m-%d %H:%M:%S') }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    // Copy to clipboard functionality
+    document.querySelectorAll('.backup-code').forEach(code => {
+        code.addEventListener('click', function () {
+            const text = this.innerText.replace('-', '');
+            navigator.clipboard.writeText(text).then(() => {
+                const originalBackground = this.style.backgroundColor;
+                this.style.backgroundColor = '#d4edda';
+                setTimeout(() => {
+                    this.style.backgroundColor = originalBackground;
+                }, 200);
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

@@ -1,0 +1,1841 @@
+{% extends "base.html" %}
+{% block title %}Design System - Wegweiser{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    {% call breadcrumb(title='Documentation', items=[
+    {'text': 'Design System', 'icon': 'fas fa-palette'}
+    ]) %}
+    {% endcall %}
+
+    <div class="row mb-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h1>Wegweiser Design System</h1>
+                    <p class="lead">A comprehensive guide to UI components, styles, and patterns used in the Wegweiser
+                        application.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title">Table of Contents</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <ul class="nav flex-column">
+                                <li class="nav-item"><a class="nav-link" href="#colors">Colors</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#typography">Typography</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#spacing">Spacing</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#layout">Layout</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <ul class="nav flex-column">
+                                <li class="nav-item"><a class="nav-link" href="#buttons">Buttons</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#cards">Cards</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#forms">Forms</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#tables">Tables</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <ul class="nav flex-column">
+                                <li class="nav-item"><a class="nav-link" href="#navigation">Navigation</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#gauges">Gauges & Visualizations</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#modals">Modals & Dialogs</a></li>
+                                <li class="nav-item"><a class="nav-link" href="#notifications">Notifications</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Colors Section -->
+    <section id="colors" class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Colors</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Primary Colors</h6>
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="p-4 rounded" style="background-color: var(--primary);">
+                            <div class="text-white mb-2">Primary</div>
+                            <code class="text-white">var(--primary)</code>
+                            <div class="text-white small">#3a57e8</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-4 rounded" style="background-color: var(--secondary);">
+                            <div class="text-white mb-2">Secondary</div>
+                            <code class="text-white">var(--secondary)</code>
+                            <div class="text-white small">#6c757d</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-4 rounded" style="background-color: var(--success);">
+                            <div class="text-white mb-2">Success</div>
+                            <code class="text-white">var(--success)</code>
+                            <div class="text-white small">#1f9e86</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-4 rounded" style="background-color: var(--danger);">
+                            <div class="text-white mb-2">Danger</div>
+                            <code class="text-white">var(--danger)</code>
+                            <div class="text-white small">#dc3545</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Interface Colors</h6>
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="p-4 rounded border" style="background-color: var(--body-bg);">
+                            <div class="mb-2">Body Background</div>
+                            <code>var(--body-bg)</code>
+                            <div class="small">#f5f7fb</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-4 rounded border" style="background-color: var(--card-bg);">
+                            <div class="mb-2">Card Background</div>
+                            <code>var(--card-bg)</code>
+                            <div class="small">#ffffff</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-4 rounded border" style="background-color: var(--header-bg);">
+                            <div class="mb-2">Header Background</div>
+                            <code>var(--header-bg)</code>
+                            <div class="small">#ffffff</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-4 rounded border" style="background-color: var(--sidebar-bg);">
+                            <div class="mb-2">Sidebar Background</div>
+                            <code>var(--sidebar-bg)</code>
+                            <div class="small">#ffffff</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Text Colors</h6>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="p-4 rounded border">
+                            <div style="color: var(--text-primary);" class="mb-2">Text Primary</div>
+                            <code>var(--text-primary)</code>
+                            <div class="small">#212529</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-4 rounded border">
+                            <div style="color: var(--text-secondary);" class="mb-2">Text Secondary</div>
+                            <code>var(--text-secondary)</code>
+                            <div class="small">#6c757d</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-4 rounded border">
+                            <div style="color: var(--text-muted);" class="mb-2">Text Muted</div>
+                            <code>var(--text-muted)</code>
+                            <div class="small">#868e96</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-4 rounded border" style="background-color: var(--primary);">
+                            <div style="color: #ffffff;" class="mb-2">Text on Dark</div>
+                            <code class="text-white">White (#ffffff)</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Typography Section -->
+    <section id="typography" class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Typography</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Headings</h6>
+                <div class="bg-light p-4 rounded mb-4">
+                    <h1>H1 Heading (2.5rem / 40px)</h1>
+                    <h2>H2 Heading (2rem / 32px)</h2>
+                    <h3>H3 Heading (1.75rem / 28px)</h3>
+                    <h4>H4 Heading (1.5rem / 24px)</h4>
+                    <h5>H5 Heading (1.25rem / 20px)</h5>
+                    <h6>H6 Heading (1rem / 16px)</h6>
+                </div>
+
+                <h6 class="fw-bold mb-3">Body Text</h6>
+                <div class="bg-light p-4 rounded mb-4">
+                    <p class="lead">Lead paragraph. Used for introductory text. (1.25rem / 20px)</p>
+                    <p>Regular paragraph text. This is the default body text used throughout the application. (1rem /
+                        16px)</p>
+                    <p class="small">Small text used for secondary information. (0.875rem / 14px)</p>
+                </div>
+
+                <h6 class="fw-bold mb-3">Font Weights</h6>
+                <div class="bg-light p-4 rounded mb-4">
+                    <p class="fw-light">Light (300): Used sparingly for large text.</p>
+                    <p class="fw-normal">Normal (400): Default weight for body text.</p>
+                    <p class="fw-medium">Medium (500): Used for semi-emphasized text.</p>
+                    <p class="fw-semibold">Semibold (600): Used for headings and important text.</p>
+                    <p class="fw-bold">Bold (700): Used for strong emphasis.</p>
+                </div>
+
+                <h6 class="fw-bold">Font Specifications</h6>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Element</th>
+                            <th>Font</th>
+                            <th>Weight</th>
+                            <th>Size</th>
+                            <th>Line Height</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Body text</td>
+                            <td>Noto Sans</td>
+                            <td>400</td>
+                            <td>1rem (16px)</td>
+                            <td>1.5</td>
+                        </tr>
+                        <tr>
+                            <td>Headings</td>
+                            <td>Noto Sans</td>
+                            <td>600</td>
+                            <td>Varies</td>
+                            <td>1.2</td>
+                        </tr>
+                        <tr>
+                            <td>Sidebar links</td>
+                            <td>Noto Sans</td>
+                            <td>400 (500 when active)</td>
+                            <td>0.9rem (14.4px)</td>
+                            <td>1.5</td>
+                        </tr>
+                        <tr>
+                            <td>Table headers</td>
+                            <td>Noto Sans</td>
+                            <td>600</td>
+                            <td>0.85rem (13.6px)</td>
+                            <td>1.5</td>
+                        </tr>
+                        <tr>
+                            <td>Buttons</td>
+                            <td>Noto Sans</td>
+                            <td>500</td>
+                            <td>1rem (16px)</td>
+                            <td>1.5</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Spacing Section -->
+    <section id="spacing" class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Spacing</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-4">Wegweiser uses a consistent spacing system based on the following variables:</p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Variable</th>
+                                    <th>Value</th>
+                                    <th>Example</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>--spacer-sm</code></td>
+                                    <td>0.5rem (8px)</td>
+                                    <td>
+                                        <div class="bg-primary" style="width: 0.5rem; height: 0.5rem;"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>--spacer</code></td>
+                                    <td>1rem (16px)</td>
+                                    <td>
+                                        <div class="bg-primary" style="width: 1rem; height: 1rem;"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>--spacer-lg</code></td>
+                                    <td>1.5rem (24px)</td>
+                                    <td>
+                                        <div class="bg-primary" style="width: 1.5rem; height: 1.5rem;"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><code>--spacer-xl</code></td>
+                                    <td>3rem (48px)</td>
+                                    <td>
+                                        <div class="bg-primary" style="width: 3rem; height: 3rem;"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3">Spacing Demonstration</h6>
+                        <div class="bg-light p-3 rounded">
+                            <div class="mb-2">Margin bottom (--spacer-sm):</div>
+                            <div class="bg-primary p-2 mb-2 text-white">Element with .mb-2</div>
+
+                            <div class="mb-2">Margin bottom (--spacer):</div>
+                            <div class="bg-primary p-2 mb-3 text-white">Element with .mb-3</div>
+
+                            <div class="mb-2">Margin bottom (--spacer-lg):</div>
+                            <div class="bg-primary p-2 mb-4 text-white">Element with .mb-4</div>
+
+                            <div class="mb-2">Margin bottom (--spacer-xl):</div>
+                            <div class="bg-primary p-2 mb-5 text-white">Element with .mb-5</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mt-4 mb-3">Common Spacing Guidelines</h6>
+                <ul>
+                    <li>Section spacing: <code>--spacer-lg</code> (1.5rem / 24px)</li>
+                    <li>Between cards: <code>--spacer</code> (1rem / 16px)</li>
+                    <li>Card padding: <code>--spacer-lg</code> (1.5rem / 24px)</li>
+                    <li>Form element spacing: <code>--spacer</code> (1rem / 16px)</li>
+                    <li>Button padding: <code>0.375rem 1rem</code> (6px 16px)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Layout Section -->
+    <section id="layout" class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Layout</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Application Structure</h6>
+                <div class="mb-4">
+                    <img src="{{ url_for('static', filename='images/design/layout-structure.png') }}"
+                        alt="Layout Structure"
+                        style="max-width: 100%; height: auto; border: 1px solid var(--border-color);">
+                </div>
+
+                <h6 class="fw-bold mb-3">Key Dimensions</h6>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Element</th>
+                            <th>Dimension</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Sidebar width</td>
+                            <td>260px</td>
+                            <td>Fixed width, collapses on mobile</td>
+                        </tr>
+                        <tr>
+                            <td>Header height</td>
+                            <td>60px</td>
+                            <td>Fixed height</td>
+                        </tr>
+                        <tr>
+                            <td>Main content padding</td>
+                            <td>1.5rem (24px)</td>
+                            <td>Consistent padding on all sides</td>
+                        </tr>
+                        <tr>
+                            <td>Footer height</td>
+                            <td>40px</td>
+                            <td>Fixed height</td>
+                        </tr>
+                        <tr>
+                            <td>Card border-radius</td>
+                            <td>0.5rem (8px)</td>
+                            <td>Consistent across all cards</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h6 class="fw-bold mt-4 mb-3">Responsive Breakpoints</h6>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Breakpoint</th>
+                            <th>Width</th>
+                            <th>Behavior</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>xs</td>
+                            <td>&lt; 576px</td>
+                            <td>Mobile portrait - Stacked layout, hidden sidebar</td>
+                        </tr>
+                        <tr>
+                            <td>sm</td>
+                            <td>≥ 576px</td>
+                            <td>Mobile landscape - Stacked layout, hidden sidebar</td>
+                        </tr>
+                        <tr>
+                            <td>md</td>
+                            <td>≥ 768px</td>
+                            <td>Tablet - Starts to use columns, hidden sidebar</td>
+                        </tr>
+                        <tr>
+                            <td>lg</td>
+                            <td>≥ 992px</td>
+                            <td>Desktop - Full layout, visible sidebar</td>
+                        </tr>
+                        <tr>
+                            <td>xl</td>
+                            <td>≥ 1200px</td>
+                            <td>Large desktop - Full layout, more spacing</td>
+                        </tr>
+                        <tr>
+                            <td>xxl</td>
+                            <td>≥ 1400px</td>
+                            <td>Extra large desktop - Full layout, optimized for large screens</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Buttons Section -->
+    <section id="buttons" class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Buttons</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Button Variants</h6>
+                <div class="bg-light p-4 rounded mb-4">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <button class="btn btn-primary">Primary</button>
+                        <button class="btn btn-secondary">Secondary</button>
+                        <button class="btn btn-success">Success</button>
+                        <button class="btn btn-danger">Danger</button>
+                        <button class="btn btn-warning">Warning</button>
+                        <button class="btn btn-info">Info</button>
+                        <button class="btn btn-light">Light</button>
+                        <button class="btn btn-dark">Dark</button>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-outline-primary">Primary</button>
+                        <button class="btn btn-outline-secondary">Secondary</button>
+                        <button class="btn btn-outline-success">Success</button>
+                        <button class="btn btn-outline-danger">Danger</button>
+                        <button class="btn btn-outline-warning">Warning</button>
+                        <button class="btn btn-outline-info">Info</button>
+                        <button class="btn btn-outline-light">Light</button>
+                        <button class="btn btn-outline-dark">Dark</button>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Button Sizes</h6>
+                <div class="bg-light p-4 rounded mb-4">
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <button class="btn btn-primary btn-lg">Large button</button>
+                        <button class="btn btn-primary">Regular button</button>
+                        <button class="btn btn-primary btn-sm">Small button</button>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Button with Icons</h6>
+                <div class="bg-light p-4 rounded mb-4">
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Add New
+                        </button>
+                        <button class="btn btn-success">
+                            <i class="fas fa-check me-2"></i>Approve
+                        </button>
+                        <button class="btn btn-danger">
+                            <i class="fas fa-trash me-2"></i>Delete
+                        </button>
+                        <button class="btn btn-info">
+                            <i class="fas fa-sync me-2"></i>Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Button States</h6>
+                <div class="bg-light p-4 rounded mb-4">
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-primary">Normal</button>
+                        <button class="btn btn-primary active">Active</button>
+                        <button class="btn btn-primary" disabled>Disabled</button>
+                        <button class="btn btn-primary">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Loading...
+                        </button>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Button Groups</h6>
+                <div class="bg-light p-4 rounded">
+                    <div class="btn-group mb-3" role="group">
+                        <button type="button" class="btn btn-primary">Left</button>
+                        <button type="button" class="btn btn-primary">Middle</button>
+                        <button type="button" class="btn btn-primary">Right</button>
+                    </div>
+
+                    <div>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary">Action</button>
+                            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                                data-bs-toggle="dropdown">
+                                <span class="visually-hidden">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mt-4">Button Usage Guidelines</h6>
+                <ul>
+                    <li>Use <strong>Primary</strong> buttons for main actions (submit, save, create)</li>
+                    <li>Use <strong>Secondary</strong> buttons for alternative actions (cancel, back)</li>
+                    <li>Use <strong>Outline</strong> variants for less dominant actions</li>
+                    <li>Use <strong>Danger</strong> buttons for destructive actions (delete, remove)</li>
+                    <li>Use <strong>Icons</strong> to reinforce the button's action</li>
+                    <li>Button text should be concise and action-oriented (verb + noun)</li>
+                    <li>Maintain consistent spacing between buttons (0.5rem/8px minimum)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cards Section -->
+    <section id="cards" class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Cards</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Standard Card</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title">Card Title</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>This is a standard card with a header, body, and footer. Cards are used to group
+                                    related content and actions.</p>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-primary btn-sm">Action</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Specifications:</div>
+                        <ul>
+                            <li>Border: 1px solid var(--border-color)</li>
+                            <li>Border Radius: var(--border-radius-lg) (0.5rem/8px)</li>
+                            <li>Background: var(--card-bg)</li>
+                            <li>Shadow: var(--shadow-sm)</li>
+                            <li>Header Padding: var(--spacer) var(--spacer-lg) (1rem 1.5rem)</li>
+                            <li>Body Padding: var(--spacer-lg) (1.5rem)</li>
+                            <li>Footer Padding: var(--spacer) var(--spacer-lg) (1rem 1.5rem)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Card with Icon Header</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center">
+                                <i class="fas fa-chart-pie me-2"></i>
+                                <h5 class="card-title mb-0">Health Score</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>This card features an icon in the header to visually indicate its purpose.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Usage:</div>
+                        <ul>
+                            <li>Use icon headers for dashboard cards and data visualization</li>
+                            <li>Keep headers concise and aligned with the icon</li>
+                            <li>Use a 0.75rem margin between the icon and title</li>
+                            <li>Icon color should match the primary theme color</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Card with Actions</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Devices</h5>
+                                <div>
+                                    <button class="btn btn-primary btn-sm">
+                                        <i class="fas fa-plus me-md-2"></i>
+                                        <span class="d-none d-md-inline">Add Device</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p>This card includes action buttons in the header, using justify-content-between for
+                                    alignment.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Pattern:</div>
+                        <pre><code>&lt;div class="card-header d-flex justify-content-between align-items-center"&gt;
+  &lt;h5 class="card-title mb-0"&gt;Title&lt;/h5&gt;
+  &lt;div&gt;
+    &lt;button class="btn btn-primary btn-sm"&gt;Action&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Card Variations</h6>
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-0">Colored Header</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Card with a colored header for emphasis.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 border-primary">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Bordered Card</h5>
+                            </div>
+                            <div class="card-body">
+                                <p>Card with a colored border for subtle emphasis.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title">Simple Card</h5>
+                                <p>Card without a header, useful for simpler content.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mt-4">Card Usage Guidelines</h6>
+                <ul>
+                    <li>Use cards to group related content and functionality</li>
+                    <li>Maintain consistent spacing between cards (1.5rem/24px)</li>
+                    <li>Keep card headers concise and descriptive</li>
+                    <li>Use card footers for actions that apply to the entire card</li>
+                    <li>Consider using a grid layout for multiple cards (col-md-4, col-md-6, etc.)</li>
+                    <li>Use h-100 class for equal height cards in a row</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Forms Section -->
+    <section id="forms" class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Forms</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Form Controls</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <form>
+                            <div class="mb-3">
+                                <label for="exampleInputText" class="form-label">Text Input</label>
+                                <input type="text" class="form-control" id="exampleInputText" placeholder="Enter text">
+                                <div class="form-text">Helper text goes here.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleSelect" class="form-label">Select</label>
+                                <select class="form-select" id="exampleSelect">
+                                    <option selected>Choose an option</option>
+                                    <option value="1">Option 1</option>
+                                    <option value="2">Option 2</option>
+                                    <option value="3">Option 3</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleTextarea" class="form-label">Textarea</label>
+                                <textarea class="form-control" id="exampleTextarea" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Specifications:</div>
+                        <ul>
+                            <li>Input Height: 38px</li>
+                            <li>Border: 1px solid var(--input-border)</li>
+                            <li>Border Radius: var(--border-radius) (0.375rem/6px)</li>
+                            <li>Padding: 0.375rem 0.75rem</li>
+                            <li>Font Size: 1rem</li>
+                            <li>Line Height: 1.5</li>
+                            <li>Spacing Between Fields: 1rem (16px)</li>
+                            <li>Label Font Weight: 500</li>
+                            <li>Helper Text Font Size: 0.875rem</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Form States</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <form>
+                            <div class="mb-3">
+                                <label for="validatedInput" class="form-label">Valid Input</label>
+                                <input type="text" class="form-control is-valid" id="validatedInput"
+                                    value="Valid input">
+                                <div class="valid-feedback">Looks good!</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="invalidInput" class="form-label">Invalid Input</label>
+                                <input type="text" class="form-control is-invalid" id="invalidInput"
+                                    value="Invalid input">
+                                <div class="invalid-feedback">Please provide a valid input.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="disabledInput" class="form-label">Disabled Input</label>
+                                <input type="text" class="form-control" id="disabledInput" placeholder="Disabled input"
+                                    disabled>
+                            </div>
+                            <div class="mb-3">
+                                <label for="readonlyInput" class="form-label">Readonly Input</label>
+                                <input type="text" class="form-control" id="readonlyInput" value="Readonly input"
+                                    readonly>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Validation Styling:</div>
+                        <ul>
+                            <li>Valid: Green border (var(--success)), success icon</li>
+                            <li>Invalid: Red border (var(--danger)), error icon</li>
+                            <li>Disabled: Lighter background, muted text</li>
+                            <li>Readonly: Regular appearance but non-editable</li>
+                            <li>Focus: Blue border with box shadow</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Input Groups</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="prefixInput" class="form-label">Prefix</label>
+                            <div class="input-group">
+                                <span class="input-group-text">@</span>
+                                <input type="text" class="form-control" id="prefixInput" placeholder="Username">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="suffixInput" class="form-label">Suffix</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="suffixInput" placeholder="Amount">
+                                <span class="input-group-text">.00</span>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="buttonInput" class="form-label">Button Addon</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="buttonInput" placeholder="Search">
+                                <button class="btn btn-primary" type="button">Search</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Input Group Guidelines:</div>
+                        <ul>
+                            <li>Use input groups to provide context for form controls</li>
+                            <li>Keep addons simple and recognizable</li>
+                            <li>Use icons or short text for prefix/suffix</li>
+                            <li>Align icon addons vertically and horizontally</li>
+                            <li>Consider using button addons for action-oriented inputs</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mt-4">Form Layout Patterns</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="fw-medium mb-3">Stacked (Default)</h6>
+                        <form>
+                            <div class="mb-3">
+                                <label for="firstNameStacked" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstNameStacked">
+                            </div>
+                            <div class="mb-3">
+                                <label for="lastNameStacked" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastNameStacked">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-medium mb-3">Horizontal</h6>
+                        <form>
+                            <div class="row mb-3">
+                                <label for="firstNameHorizontal" class="col-sm-3 col-form-label">First Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="firstNameHorizontal">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="lastNameHorizontal" class="col-sm-3 col-form-label">Last Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" id="lastNameHorizontal">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mt-4">Form Usage Guidelines</h6>
+                <ul>
+                    <li>Group related form elements together</li>
+                    <li>Use clear and concise labels above form controls</li>
+                    <li>Provide helper text for complex inputs</li>
+                    <li>Implement client-side validation with meaningful error messages</li>
+                    <li>Use placeholders for additional context, not as replacements for labels</li>
+                    <li>Ensure sufficient spacing between form groups (1rem/16px minimum)</li>
+                    <li>Consider using form grids for complex layouts</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tables Section -->
+    <section id="tables" class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Tables</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Standard Table</h6>
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>John Doe</td>
+                                        <td>john@example.com</td>
+                                        <td>Admin</td>
+                                        <td><span class="badge bg-success">Active</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Jane Smith</td>
+                                        <td>jane@example.com</td>
+                                        <td>User</td>
+                                        <td><span class="badge bg-warning">Pending</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>Robert Johnson</td>
+                                        <td>robert@example.com</td>
+                                        <td>User</td>
+                                        <td><span class="badge bg-danger">Inactive</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-2">Specifications:</div>
+                        <ul>
+                            <li>Header Background: rgba(0, 0, 0, 0.025)</li>
+                            <li>Header Font: 0.85rem, uppercase, semibold</li>
+                            <li>Cell Padding: 0.75rem 1rem</li>
+                            <li>Border: 1px solid var(--border-color)</li>
+                            <li>Row Hover: rgba(0, 0, 0, 0.025)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">High-Density Table</h6>
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h6 class="card-title mb-0">Devices</h6>
+                                <div>
+                                    <button class="btn btn-sm btn-primary">
+                                        <i class="fas fa-plus me-1"></i> Add
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Device Name</th>
+                                                <th>Health Score</th>
+                                                <th>Platform</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="flex-shrink-0">
+                                                            <i class="fas fa-laptop"></i>
+                                                        </div>
+                                                        <div>
+                                                            <div class="fw-medium">Hera</div>
+                                                            <div class="small text-muted">Old Forge Technologies</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="flex-grow-1 me-2" style="width: 80px;">
+                                                            <div class="progress" style="height: 6px;">
+                                                                <div class="progress-bar bg-success"
+                                                                    style="width: 64%;"></div>
+                                                            </div>
+                                                        </div>
+                                                        <span class="small fw-medium">64%</span>
+                                                    </div>
+                                                </td>
+                                                <td>Windows 11</td>
+                                                <td>
+                                                    <div class="d-flex gap-1">
+                                                        <button class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="flex-shrink-0">
+                                                            <i class="fas fa-server"></i>
+                                                        </div>
+                                                        <div>
+                                                            <div class="fw-medium">Atlas</div>
+                                                            <div class="small text-muted">RLT Nutrition Ltd</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <div class="flex-grow-1 me-2" style="width: 80px;">
+                                                            <div class="progress" style="height: 6px;">
+                                                                <div class="progress-bar bg-warning"
+                                                                    style="width: 37%;"></div>
+                                                            </div>
+                                                        </div>
+                                                        <span class="small fw-medium">37%</span>
+                                                    </div>
+                                                </td>
+                                                <td>Windows Server</td>
+                                                <td>
+                                                    <div class="d-flex gap-1">
+                                                        <button class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-danger">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-2">High-Density Features:</div>
+                        <ul>
+                            <li>Reduced padding: 0.65rem 1rem</li>
+                            <li>Aligned elements (align-middle)</li>
+                            <li>Compound cells with primary/secondary text</li>
+                            <li>Interactive elements (progress bars, buttons)</li>
+                            <li>Multi-level information hierarchy</li>
+                            <li>Hover effects for rows</li>
+                            <li>Nested in card with header actions</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mt-4">Table Variations</h6>
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-3">
+                        <h6 class="fw-medium mb-2">Striped Rows</h6>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Item 1</td>
+                                    <td>Value 1</td>
+                                </tr>
+                                <tr>
+                                    <td>Item 2</td>
+                                    <td>Value 2</td>
+                                </tr>
+                                <tr>
+                                    <td>Item 3</td>
+                                    <td>Value 3</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <h6 class="fw-medium mb-2">Bordered Table</h6>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Item 1</td>
+                                    <td>Value 1</td>
+                                </tr>
+                                <tr>
+                                    <td>Item 2</td>
+                                    <td>Value 2</td>
+                                </tr>
+                                <tr>
+                                    <td>Item 3</td>
+                                    <td>Value 3</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <h6 class="fw-medium mb-2">Borderless Table</h6>
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Item 1</td>
+                                    <td>Value 1</td>
+                                </tr>
+                                <tr>
+                                    <td>Item 2</td>
+                                    <td>Value 2</td>
+                                </tr>
+                                <tr>
+                                    <td>Item 3</td>
+                                    <td>Value 3</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mt-4">Table Usage Guidelines</h6>
+                <ul>
+                    <li>Use tables for structured data with clear relationships</li>
+                    <li>Include a table header with descriptive column names</li>
+                    <li>Consider using the table-responsive class for horizontal scrolling on small screens</li>
+                    <li>Use alignment to improve readability (text-start, text-center, text-end)</li>
+                    <li>Use table-hover for interactive tables where rows represent selectable items</li>
+                    <li>Include pagination for long tables (more than 10-15 rows)</li>
+                    <li>Consider adding sorting and filtering for large datasets</li>
+                    <li>Use consistent cell formatting (dates, numbers, etc.)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation Section -->
+    <section id="navigation" class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Navigation</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Sidebar Navigation</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="bg-light p-3 rounded" style="width: 260px;">
+                            <div class="d-flex align-items-center px-3 py-2 border-bottom">
+                                <div class="me-2">
+                                    <img src="https://via.placeholder.com/30" alt="Logo" class="rounded">
+                                </div>
+                                <h5 class="mb-0">Wegweiser</h5>
+                            </div>
+                            <div class="mt-3">
+                                <div class="px-3 py-1 text-muted small text-uppercase fw-medium">Core</div>
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link px-3 py-2 active">
+                                            <i class="fas fa-home me-2"></i>
+                                            <span>Dashboard</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link px-3 py-2">
+                                            <i class="fas fa-laptop me-2"></i>
+                                            <span>Devices</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link px-3 py-2">
+                                            <i class="fas fa-users me-2"></i>
+                                            <span>Groups</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="px-3 py-1 mt-3 text-muted small text-uppercase fw-medium">Management</div>
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link px-3 py-2">
+                                            <i class="fas fa-chart-bar me-2"></i>
+                                            <span>Overview</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Specifications:</div>
+                        <ul>
+                            <li>Width: 260px</li>
+                            <li>Background: var(--sidebar-bg)</li>
+                            <li>Header Height: 60px</li>
+                            <li>Section Label: 0.7rem uppercase, var(--text-muted)</li>
+                            <li>Link Padding: 0.4rem var(--spacer) (6.4px 16px)</li>
+                            <li>Link Font Size: 0.9rem (14.4px)</li>
+                            <li>Icon Size: 0.9rem (14.4px)</li>
+                            <li>Active Link: background-color: rgba(var(--primary-rgb), 0.15)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Breadcrumbs</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center mb-3 bg-light p-3 rounded">
+                            <div class="me-3 fw-medium">Administration</div>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb mb-0">
+                                    <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                                    <li class="breadcrumb-item"><a href="#">Device Management</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">Overview</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Implementation:</div>
+                        <pre><code>{% call breadcrumb(title='Administration', items=[
+    {'text': 'Device Management', 'icon': 'fas fa-server', 'url': url_for('devices_bp.handle_devices')},
+    {'text': 'Overview'}
+]) %}
+    <!-- Action buttons can go here -->
+{% endcall %}</code></pre>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Tabs</h6>
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
+                                    data-bs-target="#home-tab-pane" type="button" role="tab"
+                                    aria-controls="home-tab-pane" aria-selected="true">General</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="profile-tab" data-bs-toggle="tab"
+                                    data-bs-target="#profile-tab-pane" type="button" role="tab"
+                                    aria-controls="profile-tab-pane" aria-selected="false">Hardware</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="contact-tab" data-bs-toggle="tab"
+                                    data-bs-target="#contact-tab-pane" type="button" role="tab"
+                                    aria-controls="contact-tab-pane" aria-selected="false">Network</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content p-3 border border-top-0 rounded-bottom" id="myTabContent">
+                            <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel"
+                                aria-labelledby="home-tab" tabindex="0">
+                                General information content goes here.
+                            </div>
+                            <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel"
+                                aria-labelledby="profile-tab" tabindex="0">
+                                Hardware information content goes here.
+                            </div>
+                            <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel"
+                                aria-labelledby="contact-tab" tabindex="0">
+                                Network information content goes here.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-2">Usage Guidelines:</div>
+                        <ul>
+                            <li>Use tabs to segment related content within a single page</li>
+                            <li>Keep tab labels short and descriptive</li>
+                            <li>Tabs should have consistent width</li>
+                            <li>Highlight the active tab clearly</li>
+                            <li>Content areas should have consistent padding</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mt-4">Navigation Patterns</h6>
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <h6 class="fw-medium mb-2">Pagination</h6>
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <h6 class="fw-medium mb-2">Dropdown Navigation</h6>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Actions
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" href="#">View Details</a></li>
+                                <li><a class="dropdown-item" href="#">Edit</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item text-danger" href="#">Delete</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <h6 class="fw-medium mb-2">Button Navigation</h6>
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button type="button" class="btn btn-primary">Left</button>
+                            <button type="button" class="btn btn-primary">Middle</button>
+                            <button type="button" class="btn btn-primary">Right</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gauges & Visualizations Section -->
+    <section id="gauges" class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Gauges & Visualizations</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Health Score Gauge</h6>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center">
+                                <i class="fas fa-chart-pie me-2"></i>
+                                <h5 class="card-title mb-0">Health Score</h5>
+                            </div>
+                            <div class="card-body d-flex align-items-center justify-content-center">
+                                <div data-health-score="64" style="width: 140px; height: 140px; position: relative;">
+                                    <!-- Placeholder for health gauge visualization -->
+                                    <div
+                                        style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                                        <div style="font-size: 1.75rem; font-weight: 600;">64%</div>
+                                        <div style="font-size: 0.85rem; color: var(--text-secondary);">Health Score
+                                        </div>
+                                    </div>
+                                    <svg width="140" height="140" viewBox="0 0 140 140"
+                                        style="transform: rotate(-90deg);">
+                                        <circle cx="70" cy="70" r="60" fill="none" stroke="rgba(0,0,0,0.1)"
+                                            stroke-width="12"></circle>
+                                        <circle cx="70" cy="70" r="60" fill="none" stroke="#ff9800" stroke-width="12"
+                                            stroke-dasharray="377" stroke-dashoffset="135.72"></circle>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="mb-2">Implementation with uPlot:</div>
+                        <pre><code>// Create a health gauge
+function createHealthGauge(element, score) {
+  // Get color based on score
+  let color = getHealthColor(score);
+
+  // Create uPlot instance
+  const opts = {
+    width: 140,
+    height: 140,
+    series: [
+      {},
+      {
+        stroke: color,
+        paths: drawGauge
+      }
+    ]
+  };
+
+  new uPlot(opts, [[], [score]], element);
+
+  // Add percentage display
+  const valueDisplay = document.createElement('div');
+  valueDisplay.className = 'health-gauge-value';
+  valueDisplay.textContent = `${score}%`;
+  element.appendChild(valueDisplay);
+}</code></pre>
+                        <div class="mt-3">
+                            <div class="mb-2">Color Coding:</div>
+                            <div class="d-flex gap-3">
+                                <div>
+                                    <div
+                                        style="width: 20px; height: 20px; background: var(--health-excellent); border-radius: 3px;">
+                                    </div>
+                                    <div class="small mt-1">75-100%</div>
+                                </div>
+                                <div>
+                                    <div
+                                        style="width: 20px; height: 20px; background: var(--health-good); border-radius: 3px;">
+                                    </div>
+                                    <div class="small mt-1">50-74%</div>
+                                </div>
+                                <div>
+                                    <div
+                                        style="width: 20px; height: 20px; background: var(--health-fair); border-radius: 3px;">
+                                    </div>
+                                    <div class="small mt-1">25-49%</div>
+                                </div>
+                                <div>
+                                    <div
+                                        style="width: 20px; height: 20px; background: var(--health-poor); border-radius: 3px;">
+                                    </div>
+                                    <div class="small mt-1">0-24%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Progress Bars</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <div>Basic Progress</div>
+                                <div>75%</div>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: 75%;" aria-valuenow="75"
+                                    aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <div>Health Score (64%)</div>
+                                <div>64%</div>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 64%;"
+                                    aria-valuenow="64" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <div>Storage Usage</div>
+                                <div>256GB / 500GB</div>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 51%;"
+                                    aria-valuenow="51" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Progress Bar Specifications:</div>
+                        <ul>
+                            <li>Height: 6px (default), 4px (slim), 10px (thick)</li>
+                            <li>Border Radius: 3px (to make rounded ends)</li>
+                            <li>Background: rgba(0, 0, 0, 0.1) for light theme</li>
+                            <li>Background: rgba(255, 255, 255, 0.1) for dark theme</li>
+                            <li>Color follows the health score color system</li>
+                            <li>Include text percentage outside the bar for readability</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Charts</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header d-flex align-items-center">
+                                <i class="fas fa-chart-line me-2"></i>
+                                <h5 class="card-title mb-0">Health Score History</h5>
+                            </div>
+                            <div class="card-body">
+                                <img src="https://via.placeholder.com/500x300" alt="Chart Example"
+                                    style="max-width: 100%; height: auto;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Chart Guidelines:</div>
+                        <ul>
+                            <li>Use uPlot for all chart visualizations</li>
+                            <li>Maintain consistent colors across the application</li>
+                            <li>Provide interactive tooltips for data points</li>
+                            <li>Include a legend when multiple series are shown</li>
+                            <li>Use appropriate chart types for the data (line, bar, pie)</li>
+                            <li>Ensure charts are responsive to container size</li>
+                            <li>Apply a minimum height to avoid squashed charts</li>
+                            <li>Include proper axis labels and units</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mt-4">Visualization Usage Guidelines</h6>
+                <ul>
+                    <li>Use visualizations to present complex data in an understandable way</li>
+                    <li>Keep visualizations simple and focused on the key metrics</li>
+                    <li>Maintain consistent color coding across all visualizations</li>
+                    <li>Provide sufficient context (labels, titles, legends)</li>
+                    <li>Ensure visualizations are accessible (color contrast, alternative text)</li>
+                    <li>Consider using small multiples for comparing related data</li>
+                    <li>Provide interactive elements when appropriate (tooltips, filters)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modals & Dialogs Section -->
+    <section id="modals" class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Modals & Dialogs</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Standard Modal</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#exampleModal">
+                            Launch demo modal
+                        </button>
+
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Modal Title</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>This is a standard modal dialog with a header, body, and footer.</p>
+                                        <p>Use modals to focus user attention on important actions or information.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Modal Specifications:</div>
+                        <ul>
+                            <li>Width: 500px standard, 800px large, 300px small</li>
+                            <li>Border Radius: var(--border-radius) (0.375rem/6px)</li>
+                            <li>Backdrop: rgba(0, 0, 0, 0.5)</li>
+                            <li>Header Padding: 1rem</li>
+                            <li>Body Padding: 1rem</li>
+                            <li>Footer Padding: 0.75rem</li>
+                            <li>Border Color: var(--border-color)</li>
+                            <li>Animation: fade + slight scale</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Confirmation Dialog</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#confirmationModal">
+                            Delete Item
+                        </button>
+
+                        <div class="modal fade" id="confirmationModal" tabindex="-1"
+                            aria-labelledby="confirmationModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-sm modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="confirmationModalLabel">Confirm Deletion</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn btn-danger">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Best Practices:</div>
+                        <ul>
+                            <li>Use modal-dialog-centered for confirmation dialogs</li>
+                            <li>Keep confirmation messages concise and clear</li>
+                            <li>Use destructive action color (danger) for delete buttons</li>
+                            <li>Place the cancel action first, the confirm action second</li>
+                            <li>Use verbs that match the action (Delete, not Yes)</li>
+                            <li>Indicate the consequences of the action</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Modal Sizes</h6>
+                <div class="d-flex gap-2 mb-4">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#smallModal">
+                        Small modal
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#standardModal">
+                        Standard modal
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#largeModal">
+                        Large modal
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#extraLargeModal">
+                        Extra large modal
+                    </button>
+                </div>
+
+                <!-- Small Modal -->
+                <div class="modal fade" id="smallModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Small Modal</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>This is a small modal dialog.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Standard Modal -->
+                <div class="modal fade" id="standardModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Standard Modal</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>This is a standard modal dialog.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Large Modal -->
+                <div class="modal fade" id="largeModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Large Modal</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>This is a large modal dialog.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Extra Large Modal -->
+                <div class="modal fade" id="extraLargeModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Extra Large Modal</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>This is an extra large modal dialog.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mt-4">Modal Usage Guidelines</h6>
+                <ul>
+                    <li>Use modals to focus user attention on important actions</li>
+                    <li>Keep modal content concise and focused on a single task</li>
+                    <li>Choose appropriate modal size for the content</li>
+                    <li>Include a clear way to dismiss the modal (close button, cancel button)</li>
+                    <li>Use centered modals for short, important messages (confirmations)</li>
+                    <li>Use scrollable modals for longer content (modal-dialog-scrollable)</li>
+                    <li>Ensure modals are accessible (focus management, keyboard navigation)</li>
+                    <li>Don't stack modals (open a modal from within another modal)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Notifications Section -->
+    <section id="notifications" class="mb-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Notifications</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">Alert Messages</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="alert alert-primary" role="alert">
+                            <i class="fas fa-info-circle me-2"></i> This is a primary alert message.
+                        </div>
+                        <div class="alert alert-success" role="alert">
+                            <i class="fas fa-check-circle me-2"></i> This is a success alert message.
+                        </div>
+                        <div class="alert alert-warning" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i> This is a warning alert message.
+                        </div>
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-times-circle me-2"></i> This is a danger alert message.
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Alert Specifications:</div>
+                        <ul>
+                            <li>Border Radius: var(--border-radius) (0.375rem/6px)</li>
+                            <li>Padding: 0.75rem 1.25rem</li>
+                            <li>Include appropriate icons for alert type</li>
+                            <li>Use alert-dismissible for dismissible alerts</li>
+                            <li>Keep alert messages concise and actionable</li>
+                            <li>Use the appropriate alert type for the message context</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Toast Notifications</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-primary mb-3" id="showToastBtn">Show Toast
+                            Notification</button>
+
+                        <div class="toast-container position-relative">
+                            <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="toast-header">
+                                    <i class="fas fa-bell me-2 text-primary"></i>
+                                    <strong class="me-auto">Notification</strong>
+                                    <small>Just now</small>
+                                    <button type="button" class="btn-close" data-bs-dismiss="toast"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="toast-body">
+                                    This is a toast notification message.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Toast Specifications:</div>
+                        <ul>
+                            <li>Position: Top-right corner of the screen</li>
+                            <li>Width: 350px</li>
+                            <li>Border Radius: var(--border-radius) (0.375rem/6px)</li>
+                            <li>Animation: Slide in from right</li>
+                            <li>Auto-hide: After 5 seconds (configurable)</li>
+                            <li>Z-index: 1090 (above most content)</li>
+                            <li>Include an icon indicating the type of notification</li>
+                            <li>Include a timestamp when applicable</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mb-3">Badges</h6>
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <span class="badge bg-primary">Primary</span>
+                            <span class="badge bg-secondary">Secondary</span>
+                            <span class="badge bg-success">Success</span>
+                            <span class="badge bg-danger">Danger</span>
+                            <span class="badge bg-warning text-dark">Warning</span>
+                            <span class="badge bg-info text-dark">Info</span>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <span class="badge rounded-pill bg-primary">Primary</span>
+                            <span class="badge rounded-pill bg-secondary">Secondary</span>
+                            <span class="badge rounded-pill bg-success">Success</span>
+                            <span class="badge rounded-pill bg-danger">Danger</span>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button type="button" class="btn btn-primary position-relative">
+                                Inbox
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    99+
+                                </span>
+                            </button>
+
+                            <button type="button" class="btn btn-outline-primary position-relative">
+                                Notifications
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    9
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-2">Badge Usage:</div>
+                        <ul>
+                            <li>Use badges to highlight status, counts, or labels</li>
+                            <li>Use appropriate colors for status (success, warning, danger)</li>
+                            <li>Use rounded-pill for count indicators</li>
+                            <li>Keep badge text short (1-3 characters for counts)</li>
+                            <li>Position badges consistently (top-right for notifications)</li>
+                            <li>Ensure sufficient contrast for text on badges</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h6 class="fw-bold mt-4">Notification Usage Guidelines</h6>
+                <ul>
+                    <li>Use notifications sparingly to avoid overwhelming users</li>
+                    <li>Match notification type to the message context (success, warning, error)</li>
+                    <li>Keep notification messages clear and concise</li>
+                    <li>Include actions when appropriate (undo, view details)</li>
+                    <li>Use persistent alerts for critical information</li>
+                    <li>Use temporary toasts for non-critical information</li>
+                    <li>Group related notifications to reduce the number of interruptions</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Show/hide toast notification example
+    document.getElementById('showToastBtn')?.addEventListener('click', function () {
+        // This would typically create and show a new toast
+        alert('This would show a toast notification in a real implementation');
+    });
+
+    // Make code snippets more readable
+    document.querySelectorAll('pre code').forEach(block => {
+        block.innerHTML = block.innerHTML
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    });
+</script>
+{% endblock %}

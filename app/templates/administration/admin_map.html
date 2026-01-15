@@ -1,0 +1,168 @@
+<!-- Filepath: app/templates/administration/admin_map.html -->
+{% extends "base.html" %}
+{% block extra_head %}
+<link href="{{ url_for('static', filename='plugins/vectormap/jquery-jvectormap-2.0.2.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+ <!--breadcrumb-->
+ <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <div class="breadcrumb-title pe-3">Administration</div>
+    <div class="ps-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+                <li class="breadcrumb-item active" aria-current="page">Maps</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="ms-auto">
+        <div class="btn-group">
+            <button type="button" class="btn btn-primary">Settings</button>
+            <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
+                <h6 class="dropdown-header">Toggle Columns</h6>
+                <div class="dropdown-item">
+                    <div class="form-check">
+                        <input class="form-check-input column-toggle" type="checkbox" value="col-device-name" id="col-device-name" checked>
+                        <label class="form-check-label" for="col-device-name">Device Name</label>
+                    </div>
+                </div>
+                <!-- Add other columns as needed -->
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="javascript:;" id="save-column-preferences">Save Preferences</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end breadcrumb-->
+
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- Card for the World Map -->
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title mb-4">World Device Map</h4>
+            <div id="world-map-markers" style="height: 600px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <!-- Card for the UK Map -->
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title mb-4">UK Device Map</h4>
+            <div id="uk-map-markers" style="height: 600px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='plugins/vectormap/jquery-jvectormap-2.0.2.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/vectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/vectormap/jquery-jvectormap-uk-mill-en.js') }}"></script>
+<script>
+    $(function () {
+        $.ajax({
+            url: "{{ url_for('widgets.map_data') }}",
+            method: "GET",
+            success: function(data) {
+                var markers = data.map(function(device) {
+                    return {
+                        latLng: [device.latitude, device.longitude],
+                        name: `Public IP: ${device.publicIp} (${device.device_count} devices)`
+                    };
+                });
+    
+                $('#world-map-markers').vectorMap({
+                    map: 'world_mill_en',
+                    backgroundColor: 'transparent',
+                    borderColor: '#818181',
+                    borderOpacity: 0.25,
+                    borderWidth: 1,
+                    zoomOnScroll: false,
+                    color: '#009efb',
+                    regionStyle: {
+                        initial: {
+                            fill: '#673ab7'
+                        }
+                    },
+                    markerStyle: {
+                        initial: {
+                            r: 9,
+                            'fill': '#fff',
+                            'fill-opacity': 1,
+                            'stroke': '#000',
+                            'stroke-width': 5,
+                            'stroke-opacity': 0.4
+                        }
+                    },
+                    enableZoom: true,
+                    hoverColor: '#009efb',
+                    markers: markers,
+                    hoverOpacity: null,
+                    normalizeFunction: 'linear',
+                    scaleColors: ['#b6d6ff', '#005ace'],
+                    selectedColor: '#c9dfaf',
+                    selectedRegions: [],
+                    showTooltip: true,
+                    onRegionClick: function (element, code, region) {
+                        var message = 'You clicked "' + region + '" which has the code: ' + code.toUpperCase();
+                        alert(message);
+                    }
+                });
+
+                // UK Map initialization
+                $('#uk-map-markers').vectorMap({
+                    map: 'uk_mill_en',
+                    backgroundColor: 'transparent',
+                    borderColor: '#818181',
+                    borderOpacity: 0.25,
+                    borderWidth: 1,
+                    zoomOnScroll: false,
+                    color: '#009efb',
+                    regionStyle: {
+                        initial: {
+                            fill: '#673ab7'
+                        }
+                    },
+                    markerStyle: {
+                        initial: {
+                            r: 9,
+                            'fill': '#fff',
+                            'fill-opacity': 1,
+                            'stroke': '#000',
+                            'stroke-width': 5,
+                            'stroke-opacity': 0.4
+                        }
+                    },
+                    enableZoom: true,
+                    hoverColor: '#009efb',
+                    markers: markers, // If you want different markers, you'll need to filter them for the UK
+                    hoverOpacity: null,
+                    normalizeFunction: 'linear',
+                    scaleColors: ['#b6d6ff', '#005ace'],
+                    selectedColor: '#c9dfaf',
+                    selectedRegions: [],
+                    showTooltip: true,
+                    onRegionClick: function (element, code, region) {
+                        var message = 'You clicked "' + region + '" which has the code: ' + code.toUpperCase();
+                        alert(message);
+                    }
+                });
+            },
+            error: function(error) {
+                console.error('Error fetching map data:', error);
+            }
+        });
+    });
+    </script>
+{% endblock %}

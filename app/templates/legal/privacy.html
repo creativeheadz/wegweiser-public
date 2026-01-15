@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Wegweiser</title>
+
+    <!-- Pace loading indicator -->
+    <link href="{{ url_for('static', filename='css/pace.minimal.css') }}" rel="stylesheet">
+    <script>
+        window.paceOptions = {
+            elements: false,
+            restartOnRequestAfter: false
+        };
+    </script>
+    <script src="{{ url_for('static', filename='js/pace.js') }}"></script>
+    <style>
+        /* Standalone legal page styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            color: #f0f6fc;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        /* Background image */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('{{ url_for("static", filename="images/bg-themes/15.jpg") }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        .legal-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .legal-content {
+            line-height: 1.6;
+            color: var(--text-color, #ffffff);
+        }
+        
+        .legal-content h1 {
+            color: var(--primary-color, #ffffff);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .legal-content h2 {
+            color: var(--primary-color, #ffffff);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 0.5rem;
+        }
+        
+        .legal-content p {
+            margin-bottom: 1rem;
+        }
+        
+        .legal-content ul {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+        
+        .legal-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary-color, #ffffff);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .back-link:hover {
+            opacity: 1;
+        }
+        
+        .contact-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="legal-container">
+        <a href="javascript:history.back()" class="back-link">← Back</a>
+        
+        <div class="legal-content">
+            <h1>Privacy Policy</h1>
+            
+            <p><strong>Effective Date:</strong> {{ current_year|default('2025') }}</p>
+            
+            <h2>1. Introduction</h2>
+            <p>Wegweiser ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our AI-powered device intelligence platform designed for Managed Service Providers (MSPs).</p>
+            
+            <h2>2. Information We Collect</h2>
+            <p>We collect information you provide directly to us, such as:</p>
+            <ul>
+                <li>Account registration information (name, email, company details)</li>
+                <li>Device data and system logs from monitored endpoints</li>
+                <li>Usage data and analytics from your use of our platform</li>
+                <li>Communication data when you contact our support team</li>
+            </ul>
+            
+            <h2>3. How We Use Your Information</h2>
+            <p>We use the information we collect to:</p>
+            <ul>
+                <li>Provide and maintain our AI-powered device intelligence services</li>
+                <li>Process and analyze device data to generate insights and reports</li>
+                <li>Communicate with you about your account and our services</li>
+                <li>Improve our platform and develop new features</li>
+                <li>Ensure the security and integrity of our services</li>
+            </ul>
+            
+            <h2>4. Information Sharing and Disclosure</h2>
+            <p>We do not sell, trade, or otherwise transfer your personal information to third parties except:</p>
+            <ul>
+                <li>With your explicit consent</li>
+                <li>To comply with legal obligations</li>
+                <li>To protect our rights and the safety of our users</li>
+                <li>With trusted service providers who assist in operating our platform</li>
+            </ul>
+            
+            <h2>5. Data Security</h2>
+            <p>We implement appropriate technical and organizational measures to protect your information against unauthorized access, alteration, disclosure, or destruction. This includes encryption, access controls, and regular security assessments.</p>
+            
+            <h2>6. Data Retention</h2>
+            <p>We retain your information for as long as necessary to provide our services and comply with legal obligations. Device data is typically retained for analysis and historical reporting purposes as specified in your service agreement.</p>
+            
+            <h2>7. Your Rights</h2>
+            <p>Depending on your location, you may have certain rights regarding your personal information, including:</p>
+            <ul>
+                <li>The right to access and receive a copy of your personal information</li>
+                <li>The right to rectify inaccurate personal information</li>
+                <li>The right to request deletion of your personal information</li>
+                <li>The right to restrict or object to processing</li>
+                <li>The right to data portability</li>
+            </ul>
+            
+            <h2>8. International Data Transfers</h2>
+            <p>Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place to protect your information in accordance with applicable data protection laws.</p>
+            
+            <h2>9. Changes to This Privacy Policy</h2>
+            <p>We may update this Privacy Policy from time to time. We will notify you of any material changes by posting the new Privacy Policy on this page and updating the effective date.</p>
+            
+            <h2>10. Contact Us</h2>
+            <div class="contact-info">
+                <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+                <p><strong>Email:</strong> privacy@wegweiser.tech</p>
+                <p><strong>Address:</strong> Old Forge Technologies, United Kingdom</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

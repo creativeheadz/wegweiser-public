@@ -1,0 +1,5 @@
+after changes are made to collector.py
+
+1. use pyinstaller to make collector.exe
+2. run innosetup.exe with collector2.iss to build a new installer (this requires the createwintask.pas nad runfirstaudit.ps1)
+3. copy the installer to github wegweiser/downloads

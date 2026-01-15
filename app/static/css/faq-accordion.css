@@ -1,0 +1,91 @@
+/* FAQ Accordion styling extracted for reuse on device analyses */
+.faq-accordion .accordion-item {
+    border: 2px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.faq-accordion .accordion-item:hover {
+    transform: translateY(-2px);
+}
+
+.faq-accordion .accordion-button {
+    padding: 1.5rem;
+    font-weight: 600;
+    font-size: var(--font-size-md);
+}
+
+.faq-accordion .accordion-button:not(.collapsed) {
+    background: rgba(var(--primary-rgb), 0.08);
+    color: var(--primary);
+}
+
+.faq-accordion .accordion-button:focus {
+    box-shadow: none;
+}
+
+.faq-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.15) 0%, rgba(var(--primary-rgb), 0.05) 100%);
+    border-radius: 10px;
+    color: var(--primary);
+    border: 1px solid rgba(var(--primary-rgb), 0.2);
+    font-size: var(--font-size-xl);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.faq-accordion .accordion-button:hover .faq-icon {
+    background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.25) 0%, rgba(var(--primary-rgb), 0.1) 100%);
+    transform: scale(1.1);
+}
+
+.faq-accordion .accordion-button:not(.collapsed) .faq-icon {
+    background: linear-gradient(135deg, var(--primary) 0%, rgba(var(--primary-rgb), 0.8) 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.3);
+}
+
+.faq-question-text {
+    flex-grow: 1;
+    text-align: left;
+}
+
+.faq-answer {
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+.faq-answer p:last-child {
+    margin-bottom: 0;
+}
+
+.search-container {
+    max-width: 400px;
+}
+
+.faq-stats .badge {
+    font-size: var(--font-size-base);
+}
+
+/* Smooth animations */
+.accordion-collapse {
+    transition: all 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .faq-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+
+    .search-container {
+        max-width: 100%;
+    }
+}
+

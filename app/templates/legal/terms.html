@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - Wegweiser</title>
+
+    <!-- Pace loading indicator -->
+    <link href="{{ url_for('static', filename='css/pace.minimal.css') }}" rel="stylesheet">
+    <script>
+        window.paceOptions = {
+            elements: false,
+            restartOnRequestAfter: false
+        };
+    </script>
+    <script src="{{ url_for('static', filename='js/pace.js') }}"></script>
+
+    <style>
+        /* Standalone legal page styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            color: #f0f6fc;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        /* Background image */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('{{ url_for("static", filename="images/bg-themes/15.jpg") }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        .legal-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .legal-content {
+            line-height: 1.6;
+            color: var(--text-color, #ffffff);
+        }
+        
+        .legal-content h1 {
+            color: var(--primary-color, #ffffff);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .legal-content h2 {
+            color: var(--primary-color, #ffffff);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 0.5rem;
+        }
+        
+        .legal-content p {
+            margin-bottom: 1rem;
+        }
+        
+        .legal-content ul {
+            margin-bottom: 1rem;
+            padding-left: 2rem;
+        }
+        
+        .legal-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary-color, #ffffff);
+            text-decoration: none;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .back-link:hover {
+            opacity: 1;
+        }
+        
+        .contact-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="legal-container">
+        <a href="javascript:history.back()" class="back-link">← Back</a>
+        
+        <div class="legal-content">
+            <h1>Terms of Service</h1>
+            
+            <p><strong>Effective Date:</strong> {{ current_year|default('2025') }}</p>
+            
+            <h2>1. Acceptance of Terms</h2>
+            <p>By accessing and using Wegweiser, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.</p>
+            
+            <h2>2. Description of Service</h2>
+            <p>Wegweiser is an AI-powered device intelligence platform designed for Managed Service Providers (MSPs). Our service provides:</p>
+            <ul>
+                <li>Real-time device monitoring and analytics</li>
+                <li>AI-powered analysis of system logs and device health</li>
+                <li>Automated reporting and alerting capabilities</li>
+                <li>Device management and optimization recommendations</li>
+            </ul>
+            
+            <h2>3. User Accounts and Responsibilities</h2>
+            <p>You are responsible for:</p>
+            <ul>
+                <li>Maintaining the confidentiality of your account credentials</li>
+                <li>All activities that occur under your account</li>
+                <li>Ensuring the accuracy of information provided to us</li>
+                <li>Complying with all applicable laws and regulations</li>
+                <li>Proper deployment and management of monitoring agents</li>
+            </ul>
+            
+            <h2>4. Acceptable Use Policy</h2>
+            <p>You agree not to use the service to:</p>
+            <ul>
+                <li>Violate any applicable laws or regulations</li>
+                <li>Infringe upon the rights of others</li>
+                <li>Transmit malicious code or attempt to gain unauthorized access</li>
+                <li>Interfere with or disrupt the service or servers</li>
+                <li>Use the service for any unlawful or prohibited purpose</li>
+            </ul>
+            
+            <h2>5. Data and Privacy</h2>
+            <p>Your use of our service is also governed by our Privacy Policy. By using our service, you consent to the collection and use of information as outlined in our Privacy Policy.</p>
+            
+            <h2>6. Wegcoin Virtual Currency</h2>
+            <p>Our platform uses Wegcoins, a virtual currency system:</p>
+            <ul>
+                <li>Wegcoins have no real-world monetary value</li>
+                <li>Wegcoins are used to access premium features and AI analysis</li>
+                <li>Wegcoin balances are non-transferable and non-refundable</li>
+                <li>We reserve the right to modify Wegcoin pricing and allocation</li>
+            </ul>
+            
+            <h2>7. Service Availability</h2>
+            <p>While we strive to maintain high availability, we do not guarantee uninterrupted access to our service. We may perform maintenance, updates, or modifications that may temporarily affect service availability.</p>
+            
+            <h2>8. Limitation of Liability</h2>
+            <p>To the maximum extent permitted by law, Wegweiser shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly.</p>
+            
+            <h2>9. Termination</h2>
+            <p>We may terminate or suspend your account and access to the service at our sole discretion, without prior notice, for conduct that we believe violates these Terms of Service or is harmful to other users, us, or third parties.</p>
+            
+            <h2>10. Changes to Terms</h2>
+            <p>We reserve the right to modify these terms at any time. We will notify users of any material changes. Your continued use of the service after such modifications constitutes acceptance of the updated terms.</p>
+            
+            <h2>11. Governing Law</h2>
+            <p>These terms shall be governed by and construed in accordance with the laws of the United Kingdom, without regard to its conflict of law provisions.</p>
+            
+            <h2>12. Contact Information</h2>
+            <div class="contact-info">
+                <p>If you have any questions about these Terms of Service, please contact us at:</p>
+                <p><strong>Email:</strong> legal@wegweiser.tech</p>
+                <p><strong>Address:</strong> Old Forge Technologies, United Kingdom</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

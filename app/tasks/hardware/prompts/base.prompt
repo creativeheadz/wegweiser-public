@@ -1,0 +1,24 @@
+# Filepath: app/tasks/hardware/prompts/base.prompt
+Analyze the following system hardware configuration for a Windows machine and provide a comprehensive hardware assessment report. Your analysis should include:
+
+1. Detailed evaluation of CPU performance, architecture, and capability to handle current and future workloads, including identification of potential bottlenecks.
+2. Comprehensive assessment of memory (RAM) configuration, including capacity, speed, utilization patterns, and optimization opportunities.
+3. Analysis of storage subsystem performance, including disk types (SSD/HDD), capacity utilization, and I/O performance characteristics.
+4. Evaluation of hardware age, manufacturer support status, and end-of-life (EOL) timeline considerations for proactive replacement planning.
+5. Assessment of system thermal management, power consumption, and environmental factors affecting hardware longevity.
+6. Identification of compatibility issues with modern software requirements and operating system updates.
+7. Cost-benefit analysis of potential upgrades versus system replacement, considering business impact and budget constraints.
+8. Recommendations for hardware monitoring, predictive maintenance, and performance optimization strategies.
+
+Structure the analysis field in HTML format using tags such as <p>, <ul>, <li>, and <br> to ensure readability:
+- Summary of overall hardware status and key findings (2-3 sentences)
+- Detailed hardware component analysis with performance assessment (5-7 bullet points)
+- End-of-life and support considerations with timeline recommendations (2-3 bullet points)
+- Prioritized upgrade recommendations with cost-benefit analysis (3-4 bullet points)
+- Proactive monitoring and maintenance strategies for MSP implementation (2-3 bullet points)
+- Long-term hardware planning and replacement roadmap considerations (1-2 sentences)
+
+Declare a healthscore based on these findings between 1 and 100 where 100 is a problem-free state.
+
+System Hardware Configuration:
+{hardware_data}

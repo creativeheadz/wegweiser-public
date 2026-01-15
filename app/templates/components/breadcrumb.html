@@ -1,0 +1,42 @@
+<!-- Filepath: app/templates/components/breadcrumb.html -->
+{% macro breadcrumb(title='', items=[]) %}
+<div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+    <div class="breadcrumb-container d-flex align-items-center">
+        <!-- Home icon -->
+        <a href="{{ url_for('dashboard_bp.dashboard') }}" class="text-decoration-none">
+            <i class="fas fa-home"></i>
+        </a>
+        
+        <!-- Title separator (only show if title exists) -->
+        {% if title %}
+        <span class="mx-2">|</span>
+        <div class="breadcrumb-title">{{ title }}</div>
+        {% endif %}
+        
+        <!-- Items with separator -->
+        {% if items and items|length > 0 %}
+            {% for item in items %}
+                <!-- Use a simple forward slash as separator -->
+                <span class="mx-2">/</span>
+                {% if item.url and not loop.last %}
+                    <a href="{{ item.url }}" class="text-decoration-none">
+                        {% if item.icon %}<i class="{{ item.icon }} me-1"></i>{% endif %}
+                        {{ item.text }}
+                    </a>
+                {% else %}
+                    <span class="{% if loop.last %}active{% endif %}">
+                        {% if item.icon %}<i class="{{ item.icon }} me-1"></i>{% endif %}
+                        {{ item.text }}
+                    </span>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    {% if caller %}
+        <div class="ms-auto">
+            {{ caller() }}
+        </div>
+    {% endif %}
+</div>
+{% endmacro %}

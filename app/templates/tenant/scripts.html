@@ -1,0 +1,90 @@
+<!-- Filepath: app/templates/tenant/scripts.html -->
+<script>
+    window.tenant_uuid = "{{ tenant_overview.tenantuuid }}";
+</script>
+
+
+
+<script>
+// Define functions globally so they can be called from onclick handlers
+function loadSuggestions() {
+        fetch('/tenant/ai_suggestions')
+            .then(response => response.json())
+            .then(data => {
+                const aiSuggestionsDiv = document.getElementById('aiSuggestions');
+                if (data.success) {
+                    // Handle truncation like other analysis cards
+                    if (data.pending) {
+                        aiSuggestionsDiv.innerHTML = `<p>${data.suggestions}</p>`;
+                        setTimeout(loadSuggestions, 30000); // Poll every 30 seconds
+                    } else {
+                        // Strip HTML tags and truncate
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = data.suggestions;
+                        const plainText = tempDiv.textContent || tempDiv.innerText || '';
+
+                        if (plainText.length > 300) {
+                            const truncatedText = plainText.substring(0, 300);
+                            aiSuggestionsDiv.innerHTML = `${truncatedText}...<br><a href="#" onclick="showFullSuggestions(); return false;">Read More</a>`;
+                        } else {
+                            aiSuggestionsDiv.innerHTML = data.suggestions;
+                        }
+                    }
+                } else {
+                    aiSuggestionsDiv.innerHTML = `<p class="text-danger">Error: ${data.error}</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const aiSuggestionsDiv = document.getElementById('aiSuggestions');
+                aiSuggestionsDiv.innerHTML = '<p class="text-danger">Failed to load suggestions. Please try again later.</p>';
+            });
+}
+
+function showFullSuggestions() {
+    const modal = new bootstrap.Modal(document.getElementById('suggestionsModal'));
+
+    fetch('/tenant/ai_suggestions')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('suggestionsModalContent').innerHTML = data.suggestions;
+                modal.show();
+            } else {
+                console.error('Failed to load suggestions:', data.error);
+                alert('Failed to load suggestions: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to load suggestions');
+        });
+}
+
+function showFullRecommendations() {
+    const modal = new bootstrap.Modal(document.getElementById('recommendationsModal'));
+
+    // Get the full recommendations content via AJAX to avoid escaping issues
+    fetch('/tenant/ai_recommendations')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.recommendations) {
+                document.getElementById('recommendationsModalContent').innerHTML = data.recommendations;
+                modal.show();
+            } else {
+                console.error('No recommendations content available');
+                alert('No recommendations content available');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading recommendations:', error);
+            alert('Error loading recommendations');
+        });
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    loadSuggestions();
+});
+</script>
+

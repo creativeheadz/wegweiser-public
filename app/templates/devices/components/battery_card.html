@@ -1,0 +1,37 @@
+{# Battery Information Card Component - Content Only #}
+{# Only show if battery is installed - explicitly check battery_installed is True #}
+{% if device.modular_data and device.modular_data.battery and device.modular_data.battery.battery_installed == True %}
+<div class="row">
+        <div class="col-md-3">
+            {% if device.modular_data.battery.percent_charged %}
+            <p class="mb-1"><strong>Charge:</strong>
+                <span class="badge {% if device.modular_data.battery.percent_charged <= 10 %}bg-danger{% elif device.modular_data.battery.percent_charged <= 25 %}bg-warning{% else %}bg-success{% endif %}">
+                    {{ device.modular_data.battery.percent_charged }}%
+                </span>
+            </p>
+            {% endif %}
+        </div>
+        <div class="col-md-3">
+            <p class="mb-1"><strong>Power:</strong> {{ device.modular_data.battery.power_source }}</p>
+        </div>
+        <div class="col-md-3">
+            <p class="mb-1"><strong>Status:</strong>
+                <span class="badge {% if device.modular_data.battery.charge_status == 'Critical' %}bg-danger{% elif device.modular_data.battery.charge_status == 'Low' %}bg-warning{% else %}bg-success{% endif %}">
+                    {{ device.modular_data.battery.charge_status }}
+                </span>
+            </p>
+        </div>
+        <div class="col-md-3">
+            <p class="mb-1">
+                <strong>Health:</strong> 
+                <span class="ai-insight-icon-wrapper">
+                    {{ device.modular_data.battery.battery_health }}
+                    <span class="ai-insight-icon" data-ai-insight="battery_health" data-insight-value="Battery Health: {{ device.modular_data.battery.battery_health }}, Charge: {{ device.modular_data.battery.percent_charged or 'N/A' }}%, Status: {{ device.modular_data.battery.charge_status or 'N/A' }}">
+                        <i class="fas fa-wand-magic-sparkles"></i>
+                    </span>
+                </span>
+            </p>
+        </div>
+    </div>
+{% endif %}
+

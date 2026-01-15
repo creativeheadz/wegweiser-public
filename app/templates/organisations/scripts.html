@@ -1,0 +1,44 @@
+<!-- Filepath: app/templates/organisations/scripts.html -->
+<script src="https://cdn.jsdelivr.net/npm/uplot@1.6.31/dist/uPlot.iife.min.js"></script>
+<script src="{{ url_for('static', filename='js/org/org_healthscore.js') }}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Global variables
+        const orgUuid = "{{ organisation.orguuid }}";
+        const entityType = "organisation";
+
+        // Copy functionality is now handled by the centralized copy utility
+        // No additional setup needed - the data attributes handle everything
+
+        // Initialize popovers if any
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl);
+        });
+
+        // Load organization analyses
+        if (typeof window.orguuid !== 'undefined') {
+            loadOrganizationAnalyses(window.orguuid);
+        }
+    });
+
+    function loadOrganizationAnalyses(org_uuid) {
+        $.get(`/organisations/${org_uuid}/analyses`, function (data) {
+            $('#dynamic-org-analyses-grid').html(data);
+        }).fail(function () {
+            console.error("Failed to load organization analyses.");
+            $('#dynamic-org-analyses-grid').html(`
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body text-center py-5">
+                            <i class="fa fa-exclamation-triangle fs-1 text-warning mb-3"></i>
+                            <h5 class="text-muted">Failed to Load Organization Analyses</h5>
+                            <p class="text-muted">There was an error loading the organization analysis data. Please refresh the page to try again.</p>
+                        </div>
+                    </div>
+                </div>
+            `);
+        });
+    }
+</script>

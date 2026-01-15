@@ -1,0 +1,227 @@
+<!-- Filepath: app/templates/user/index.html -->
+{% extends "base.html" %}
+{% block title %}Profile - Wegweiser{% endblock %}
+{% block content %}
+
+<div class="main-content">
+
+        {% call breadcrumb(title='Personal', items=[{'text': 'User Profile', 'icon': 'fas fa-tachometer-alt'}]) %}
+        {% endcall %}
+
+       
+    
+
+    <div class="card rounded-4 mb-4" style="overflow: visible;">
+        <div class="card-body p-0" style="overflow: visible;">
+            <div class="position-relative">
+                <div class="spacer-div bg-transparent w-100 rounded-top-4" style="height: 100px;"></div>
+                <div class="profile-avatar position-absolute bottom-0 start-50 translate-middle-x" style="bottom: -60px; z-index: 10;">
+                    <img src="{{ url_for('static', filename=user.profile_picture or 'images/profilepictures/default.png') }}"
+                         class="img-fluid rounded-circle p-1 bg-white shadow" width="120" height="120">
+                </div>
+            </div>
+            <div class="profile-info mt-5 text-center pb-3">
+                <h3>{{ user.firstname }} {{ user.lastname }}</h3>
+                <p>{{ user.position }} at {{ user.companyname }}</p>
+                <p>{{ user.city }}, {{ user.country }}</p>
+                <button class="btn btn-primary">Request Support</button>
+                <button class="btn btn-outline-primary" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop">Customize Theme</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card rounded-4">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-start justify-content-between mb-3">
+                <h5 class="mb-0 fw-bold">Edit Profile</h5>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        {{ form.firstname.label(class="form-label") }}
+                        {{ form.firstname(class="form-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.lastname.label(class="form-label") }}
+                        {{ form.lastname(class="form-control") }}
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.companyemail.label(class="form-label") }}
+                        {{ form.companyemail(class="form-control") }}
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.position.label(class="form-label") }}
+                        {{ form.position(class="form-control") }}
+                    </div>
+                    {% if form.devices_default_view is defined %}
+                    <div class="col-md-12">
+                        {{ form.devices_default_view.label(class="form-label") }}
+                        {{ form.devices_default_view(class="form-select") }}
+                    </div>
+                    {% endif %}
+                    <div class="col-md-12">
+                        {{ form.password.label(class="form-label") }}
+                        {{ form.password(class="form-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.phone.label(class="form-label") }}
+                        {{ form.phone(class="form-control") }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.date_of_birth.label(class="form-label") }}
+                        {{ form.date_of_birth(class="form-control") }}
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.country.label(class="form-label") }}
+                        {{ form.country(class="form-select") }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ form.city.label(class="form-label") }}
+                        {{ form.city(class="form-control") }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form.state.label(class="form-label") }}
+                        {{ form.state(class="form-control") }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ form.zip.label(class="form-label") }}
+                        {{ form.zip(class="form-control") }}
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.address.label(class="form-label") }}
+                        {{ form.address(class="form-control", rows=4) }}
+                    </div>
+                    <div class="col-md-12">
+                        {{ form.profile_picture.label(class="form-label") }}
+                        {{ form.profile_picture(class="form-control") }}
+                        {% if form.profile_picture.errors %}
+                            {% for error in form.profile_picture.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                        <button type="reset" class="btn btn-secondary">Reset</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+<!-- Two-Factor Authentication Section -->
+<div class="card rounded-4 mt-4">
+    <div class="card-body p-4">
+        <div class="d-flex align-items-start justify-content-between mb-3">
+            <h5 class="mb-0 fw-bold">Two-Factor Authentication</h5>
+        </div>
+
+        {% if not user_2fa or not user_2fa.is_enabled %}
+        <div class="alert alert-warning d-flex align-items-center gap-2">
+            <i class="fa-solid fa-shield-halved"></i>
+            <div>
+                <p class="mb-3">Your account is not protected by two-factor authentication. Enable 2FA for enhanced security.</p>
+                <a href="{{ url_for('two_factor_bp.setup_2fa') }}" class="btn btn-warning">
+                    <i class="fa-solid fa-lock"></i> Enable 2FA
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-success d-flex align-items-center gap-2">
+            <i class="fa-solid fa-circle-check"></i>
+            <div>
+                <p class="mb-3">Two-factor authentication is active on your account.</p>
+                <div class="d-flex gap-2">
+                    <form method="POST" action="{{ url_for('two_factor_bp.generate_new_backup_codes') }}" class="d-inline">
+                        {{ form.csrf_token(id="csrf_token_view_backup_codes") }}
+
+                        <button type="submit" class="btn btn-secondary">
+                            <i class="fa-solid fa-floppy-disk"></i> View Backup Codes
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ url_for('two_factor_bp.disable_2fa') }}" class="d-inline">
+                        {{ form.csrf_token(id="csrf_token_disable_2fa") }}
+                        <button type="submit" class="btn btn-danger" 
+                                onclick="return confirm('Are you sure you want to disable 2FA? This will make your account less secure.')">
+                            <i class="fa-solid fa-lock-open"></i> Disable 2FA
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Theme changer -->
+<div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="staticBackdrop">
+    <div class="offcanvas-header border-bottom h-70">
+        <div class="">
+            <h5 class="mb-0">Theme Customizer</h5>
+            <p class="mb-0">Customize your theme</p>
+        </div>
+        <a href="javascript:;" class="primaery-menu-close" data-bs-dismiss="offcanvas">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+    </div>
+    <div class="offcanvas-body">
+        <div>
+            <p>Theme variation</p>
+            <div class="row g-3">
+                <div class="col-12 col-xl-6">
+                    <input type="radio" class="btn-check" name="theme-options" id="LightTheme" value="light">
+                    <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="LightTheme">
+                        <i class="fa-solid fa-sun"></i>
+                        <span>Light</span>
+                    </label>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <input type="radio" class="btn-check" name="theme-options" id="DarkTheme" value="dark">
+                    <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="DarkTheme">
+                        <i class="fa-solid fa-moon"></i>
+                        <span>Dark</span>
+                    </label>
+                </div>
+<!--                <div class="col-12 col-xl-6">
+                    <input type="radio" class="btn-check" name="theme-options" id="MonochromeTheme" value="monochrome">
+                    <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="MonochromeTheme">
+                        <span class="material-icons-outlined">filter_b_and_w</span>
+                        <span>Monochrome</span>
+                    </label>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <input type="radio" class="btn-check" name="theme-options" id="BlueTheme" value="blue">
+                    <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="BlueTheme">
+                        <span class="material-icons-outlined">contactless</span>
+                        <span>Blue</span>
+                    </label>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <input type="radio" class="btn-check" name="theme-options" id="SemiDarkTheme" value="semi-dark">
+                    <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="SemiDarkTheme">
+                        <span class="material-icons-outlined">contrast</span>
+                        <span>Semi Dark</span>
+                    </label>
+                </div>
+                 <div class="col-12 col-xl-6">
+                    <input type="radio" class="btn-check" name="theme-options" id="BoderedTheme" value="bordered">
+                    <label class="btn btn-outline-secondary d-flex flex-column gap-1 align-items-center justify-content-center p-4" for="BoderedTheme">
+                        <span class="material-icons-outlined">border_style</span>
+                        <span>Bordered</span>
+                    </label>
+                </div> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+{% endblock %}
+{% block extra_scripts %}
+{% include "user/scripts.html" %}
+{% endblock %}

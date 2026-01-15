@@ -1,0 +1,984 @@
+{% extends "base.html" %}
+
+{% block title %}Tour Management - Wegweiser{% endblock %}
+
+{% block extra_head %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<style>
+    .tour-step-item {
+        border: 1px solid var(--glass-border);
+        background: var(--glass-bg);
+        border-radius: var(--border-radius);
+        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .tour-step-item:hover {
+        border-color: var(--primary);
+        box-shadow: var(--glass-shadow);
+    }
+    
+    .step-handle {
+        cursor: move;
+        color: var(--text-muted);
+    }
+    
+    .step-handle:hover {
+        color: var(--primary);
+    }
+    
+    .tour-preview {
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid var(--glass-border);
+        border-radius: var(--border-radius);
+        background: var(--glass-bg);
+    }
+    
+    .json-editor {
+        font-family: 'Courier New', monospace;
+        font-size: 0.875rem;
+    }
+    
+    .tour-status-badge {
+        font-size: 0.75rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="main-content p-4">
+    <!-- Hidden CSRF token for fallback -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <!-- Breadcrumb Navigation -->
+    {% call breadcrumb(title='Administration', items=[
+        {'text': 'Tour Management', 'icon': 'fas fa-route'}
+    ]) %}
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTourModal">
+            <i class="fas fa-plus me-1"></i> Create New Tour
+        </button>
+        <button type="button" class="btn btn-outline-info" data-bs-toggle="collapse" data-bs-target="#helpSection">
+            <i class="fas fa-question-circle me-1"></i> Help
+        </button>
+    {% endcall %}
+
+    <!-- Help Section -->
+    <div class="collapse mb-4" id="helpSection">
+        <div class="card border-info">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>How Guided Tours Work</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Tour Actions:</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-edit text-primary me-2"></i><strong>Edit:</strong> Modify tour content (coming soon)</li>
+                            <li><i class="fas fa-eye text-secondary me-2"></i><strong>Preview:</strong> See how the tour looks to users</li>
+                            <li><i class="fas fa-toggle-on text-warning me-2"></i><strong>Toggle:</strong> Activate/deactivate tours for users</li>
+                            <li><i class="fas fa-trash text-danger me-2"></i><strong>Delete:</strong> Permanently remove tours</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Tour Status:</h6>
+                        <ul class="list-unstyled">
+                            <li><span class="badge bg-success me-2">Active</span>Users can see and start this tour</li>
+                            <li><span class="badge bg-secondary me-2">Inactive</span>Tour is hidden from users</li>
+                        </ul>
+                        <h6 class="mt-3">Auto Start:</h6>
+                        <p class="small text-muted">When enabled, tours automatically start for first-time visitors to that page.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tours Overview -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-route fa-2x text-primary mb-2"></i>
+                    <h5 class="card-title">Total Tours</h5>
+                    <h3 class="text-primary">{{ tours|length }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-play fa-2x text-success mb-2"></i>
+                    <h5 class="card-title">Active Tours</h5>
+                    <h3 class="text-success">{{ tours|selectattr('is_active')|list|length }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-2x text-info mb-2"></i>
+                    <h5 class="card-title">Total Users</h5>
+                    <h3 class="text-info">{{ total_users or 0 }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-2x text-warning mb-2"></i>
+                    <h5 class="card-title">Completions</h5>
+                    <h3 class="text-warning">{{ total_completions or 0 }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tours List -->
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-list me-2"></i>
+                    Guided Tours
+                </h5>
+                <div class="d-flex gap-2">
+                    <span class="badge bg-info" title="Edit tour content">
+                        <i class="fas fa-edit me-1"></i> Edit
+                    </span>
+                    <span class="badge bg-secondary" title="Preview tour steps">
+                        <i class="fas fa-eye me-1"></i> Preview
+                    </span>
+                    <span class="badge bg-warning" title="Activate/Deactivate tour">
+                        <i class="fas fa-toggle-on me-1"></i> Toggle
+                    </span>
+                    <span class="badge bg-danger" title="Permanently delete tour">
+                        <i class="fas fa-trash me-1"></i> Delete
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            {% if tours %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Page</th>
+                                <th>Tour Name</th>
+                                <th>Steps</th>
+                                <th>Status</th>
+                                <th>Auto Start</th>
+                                <th>Version</th>
+                                <th>Last Updated</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tour in tours %}
+                            <tr data-tour-id="{{ tour.tour_id }}" {% if not tour.is_active %}class="table-secondary opacity-75"{% endif %}>
+                                <td>
+                                    <strong>{{ tour.page_title }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ tour.page_identifier }}</small>
+                                </td>
+                                <td>
+                                    {{ tour.tour_name }}
+                                    {% if not tour.is_active %}
+                                        <small class="text-muted">(Inactive)</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ tour.steps|length }} steps</span>
+                                </td>
+                                <td>
+                                    {% if tour.is_active %}
+                                        <span class="badge bg-success tour-status-badge">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary tour-status-badge">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if tour.auto_start %}
+                                        <i class="fas fa-check text-success"></i>
+                                    {% else %}
+                                        <i class="fas fa-times text-muted"></i>
+                                    {% endif %}
+                                </td>
+                                <td>v{{ tour.version }}</td>
+                                <td>
+                                    <small>{{ 'Recently' if tour.updated_at else 'N/A' }}</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button type="button" class="btn btn-outline-primary edit-tour-btn" 
+                                                data-tour-id="{{ tour.tour_id }}"
+                                                title="Edit Tour">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-info preview-tour-btn" 
+                                                data-tour-id="{{ tour.tour_id }}"
+                                                title="Preview Tour">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-warning toggle-status-btn"
+                                                data-tour-id="{{ tour.tour_id }}"
+                                                data-current-status="{{ tour.is_active }}"
+                                                title="{% if tour.is_active %}Deactivate Tour{% else %}Activate Tour{% endif %}">
+                                            {% if tour.is_active %}
+                                                <i class="fas fa-pause"></i>
+                                            {% else %}
+                                                <i class="fas fa-play"></i>
+                                            {% endif %}
+                                        </button>
+                                        <button type="button" class="btn btn-outline-danger delete-tour-btn" 
+                                                data-tour-id="{{ tour.tour_id }}"
+                                                data-tour-name="{{ tour.tour_name }}"
+                                                title="Delete Tour">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-route fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No tours created yet</h5>
+                    <p class="text-muted">Create your first guided tour to help users navigate your application.</p>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTourModal">
+                        <i class="fas fa-plus me-1"></i> Create First Tour
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Create Tour Modal -->
+<div class="modal fade" id="createTourModal" tabindex="-1" aria-labelledby="createTourModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createTourModalLabel">
+                    <i class="fas fa-plus me-2"></i>Create New Guided Tour
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="createTourForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="pageIdentifier" class="form-label">Page Identifier *</label>
+                                <input type="text" class="form-control" id="pageIdentifier" name="page_identifier" 
+                                       placeholder="e.g., dashboard, devices, organizations" required>
+                                <div class="form-text">Unique identifier for the page (lowercase, no spaces)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="pageTitle" class="form-label">Page Title *</label>
+                                <input type="text" class="form-control" id="pageTitle" name="page_title" 
+                                       placeholder="e.g., Dashboard, Device Management" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="tourName" class="form-label">Tour Name *</label>
+                                <input type="text" class="form-control" id="tourName" name="tour_name" 
+                                       placeholder="e.g., Dashboard Overview Tour" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Options</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="autoStart" name="auto_start">
+                                    <label class="form-check-label" for="autoStart">
+                                        Auto-start on first visit
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="tourDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="tourDescription" name="tour_description" rows="2" 
+                                  placeholder="Brief description of what this tour covers"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Tour Steps</label>
+                        <div id="tourStepsContainer">
+                            <!-- Steps will be added dynamically -->
+                        </div>
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="addStepBtn">
+                            <i class="fas fa-plus me-1"></i> Add Step
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveTourBtn">
+                    <i class="fas fa-save me-1"></i> Create Tour
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Tour Modal -->
+<div class="modal fade" id="editTourModal" tabindex="-1" aria-labelledby="editTourModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editTourModalLabel">
+                    <i class="fas fa-edit me-2"></i>Edit Guided Tour
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Edit form will be populated dynamically -->
+                <div id="editTourContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Tour Modal -->
+<div class="modal fade" id="previewTourModal" tabindex="-1" aria-labelledby="previewTourModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="previewTourModalLabel">
+                    <i class="fas fa-eye me-2"></i>Tour Preview
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="previewTourContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteTourModal" tabindex="-1" aria-labelledby="deleteTourModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteTourModalLabel">
+                    <i class="fas fa-exclamation-triangle me-2 text-warning"></i>Confirm Deletion
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the tour "<strong id="deleteTourName"></strong>"?</p>
+                <p class="text-muted small">This action cannot be undone. All user progress for this tour will also be deleted.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash me-1"></i> Delete Tour
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Tour management JavaScript
+let currentTourId = null;
+let stepCounter = 0;
+
+// CSRF token
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize event listeners
+    setupEventListeners();
+
+    // Add first step to create form
+    addTourStep();
+});
+
+function setupEventListeners() {
+    // Add step button
+    document.getElementById('addStepBtn').addEventListener('click', addTourStep);
+
+    // Save tour button
+    document.getElementById('saveTourBtn').addEventListener('click', saveTour);
+
+    // Edit tour buttons
+    document.querySelectorAll('.edit-tour-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tourId = this.dataset.tourId;
+            editTour(tourId);
+        });
+    });
+
+    // Preview tour buttons
+    document.querySelectorAll('.preview-tour-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tourId = this.dataset.tourId;
+            previewTour(tourId);
+        });
+    });
+
+    // Toggle status buttons
+    document.querySelectorAll('.toggle-status-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tourId = this.dataset.tourId;
+            const currentStatus = this.dataset.currentStatus === 'True';
+            toggleTourStatus(tourId, !currentStatus);
+        });
+    });
+
+    // Delete tour buttons
+    document.querySelectorAll('.delete-tour-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tourId = this.dataset.tourId;
+            const tourName = this.dataset.tourName;
+            showDeleteConfirmation(tourId, tourName);
+        });
+    });
+
+    // Confirm delete button
+    document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDeleteTour);
+}
+
+function addTourStep() {
+    stepCounter++;
+    const container = document.getElementById('tourStepsContainer');
+
+    const stepHtml = `
+        <div class="tour-step-item p-3 mb-2" data-step-index="${stepCounter}">
+            <div class="d-flex align-items-start gap-3">
+                <div class="step-handle">
+                    <i class="fas fa-grip-vertical"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label class="form-label small">Step ID *</label>
+                                <input type="text" class="form-control form-control-sm" name="step_id_${stepCounter}"
+                                       placeholder="e.g., welcome, navigation" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label class="form-label small">Target Element</label>
+                                <input type="text" class="form-control form-control-sm" name="step_element_${stepCounter}"
+                                       placeholder="e.g., #dashboard-card, .nav-menu">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">Step Text *</label>
+                        <textarea class="form-control form-control-sm" name="step_text_${stepCounter}" rows="2"
+                                  placeholder="Text to display in this step" required></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label class="form-label small">Position</label>
+                                <select class="form-select form-select-sm" name="step_position_${stepCounter}">
+                                    <option value="bottom">Bottom</option>
+                                    <option value="top">Top</option>
+                                    <option value="left">Left</option>
+                                    <option value="right">Right</option>
+                                    <option value="center">Center</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label class="form-label small">Title (Optional)</label>
+                                <input type="text" class="form-control form-control-sm" name="step_title_${stepCounter}"
+                                       placeholder="Step title">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-outline-danger btn-sm remove-step-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', stepHtml);
+
+    // Add remove functionality to the new step
+    const newStep = container.lastElementChild;
+    newStep.querySelector('.remove-step-btn').addEventListener('click', function() {
+        newStep.remove();
+    });
+}
+
+function collectTourData() {
+    const form = document.getElementById('createTourForm');
+    const formData = new FormData(form);
+
+    const tourData = {
+        page_identifier: formData.get('page_identifier'),
+        page_title: formData.get('page_title'),
+        tour_name: formData.get('tour_name'),
+        tour_description: formData.get('tour_description'),
+        auto_start: formData.has('auto_start'),
+        steps: []
+    };
+
+    // Collect steps
+    const stepItems = document.querySelectorAll('.tour-step-item');
+    stepItems.forEach((item, index) => {
+        const stepIndex = item.dataset.stepIndex;
+        const stepId = formData.get(`step_id_${stepIndex}`);
+        const stepText = formData.get(`step_text_${stepIndex}`);
+        const stepElement = formData.get(`step_element_${stepIndex}`);
+        const stepPosition = formData.get(`step_position_${stepIndex}`);
+        const stepTitle = formData.get(`step_title_${stepIndex}`);
+
+        if (stepId && stepText) {
+            const step = {
+                id: stepId,
+                text: stepText
+            };
+
+            if (stepTitle) step.title = stepTitle;
+
+            if (stepElement) {
+                step.attachTo = {
+                    element: stepElement,
+                    on: stepPosition || 'bottom'
+                };
+            }
+
+            tourData.steps.push(step);
+        }
+    });
+
+    return tourData;
+}
+
+function saveTour() {
+    const tourData = collectTourData();
+
+    if (!tourData.page_identifier || !tourData.tour_name || tourData.steps.length === 0) {
+        alert('Please fill in all required fields and add at least one step.');
+        return;
+    }
+
+    fetch('/admin/tours/create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify(tourData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload(); // Reload to show the new tour
+        } else {
+            alert('Error creating tour: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error creating tour. Please try again.');
+    });
+}
+
+function editTour(tourId) {
+    fetch(`/admin/tours/${tourId}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            populateEditForm(data.tour);
+            new bootstrap.Modal(document.getElementById('editTourModal')).show();
+        } else {
+            alert('Error loading tour: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error loading tour. Please try again.');
+    });
+}
+
+function previewTour(tourId) {
+    fetch(`/admin/tours/${tourId}`)
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayTourPreview(data.tour);
+            new bootstrap.Modal(document.getElementById('previewTourModal')).show();
+        } else {
+            alert('Error loading tour: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error loading tour. Please try again.');
+    });
+}
+
+function displayTourPreview(tour) {
+    const content = document.getElementById('previewTourContent');
+
+    let stepsHtml = '';
+    tour.steps.forEach((step, index) => {
+        stepsHtml += `
+            <div class="card mb-2">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        Step ${index + 1}: ${step.title || step.id}
+                    </h6>
+                    <p class="card-text">${step.text}</p>
+                    ${step.attachTo ? `<small class="text-muted">Target: ${step.attachTo.element} (${step.attachTo.on})</small>` : ''}
+                </div>
+            </div>
+        `;
+    });
+
+    content.innerHTML = `
+        <div class="mb-3">
+            <h6>${tour.tour_name}</h6>
+            <p class="text-muted">${tour.tour_description || 'No description'}</p>
+            <div class="d-flex gap-2 mb-3">
+                <span class="badge bg-info">${tour.steps.length} steps</span>
+                <span class="badge bg-${tour.is_active ? 'success' : 'secondary'}">${tour.is_active ? 'Active' : 'Inactive'}</span>
+                ${tour.auto_start ? '<span class="badge bg-warning">Auto-start</span>' : ''}
+            </div>
+        </div>
+        <div class="tour-preview">
+            ${stepsHtml}
+        </div>
+    `;
+}
+
+function toggleTourStatus(tourId, newStatus) {
+    const action = newStatus ? 'activate' : 'deactivate';
+    const message = `Are you sure you want to ${action} this tour?\n\n${newStatus ? 'Users will be able to see and start this tour.' : 'This tour will be hidden from users.'}`;
+
+    if (!confirm(message)) {
+        return;
+    }
+
+    fetch(`/admin/tours/${tourId}/toggle`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ is_active: newStatus })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            const statusText = newStatus ? 'activated' : 'deactivated';
+            alert(`Tour ${statusText} successfully!`);
+            location.reload(); // Reload to update the status
+        } else {
+            alert('Error updating tour status: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating tour status. Please try again.');
+    });
+}
+
+function showDeleteConfirmation(tourId, tourName) {
+    currentTourId = tourId;
+    document.getElementById('deleteTourName').textContent = tourName;
+    new bootstrap.Modal(document.getElementById('deleteTourModal')).show();
+}
+
+function confirmDeleteTour() {
+    if (!currentTourId) return;
+
+    fetch(`/admin/tours/${currentTourId}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRFToken': csrfToken
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload(); // Reload to remove the deleted tour
+        } else {
+            alert('Error deleting tour: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error deleting tour. Please try again.');
+    });
+}
+
+function populateEditForm(tour) {
+    currentTourId = tour.tour_id;
+    const editContent = document.getElementById('editTourContent');
+
+    // Reset step counter for editing
+    stepCounter = 0;
+
+    editContent.innerHTML = `
+        <form id="editTourForm">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="editPageIdentifier" class="form-label">Page Identifier *</label>
+                        <input type="text" class="form-control" id="editPageIdentifier" name="page_identifier"
+                               value="${tour.page_identifier}" readonly>
+                        <div class="form-text">Page identifier cannot be changed</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="editPageTitle" class="form-label">Page Title *</label>
+                        <input type="text" class="form-control" id="editPageTitle" name="page_title"
+                               value="${tour.page_title}" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        <label for="editTourName" class="form-label">Tour Name *</label>
+                        <input type="text" class="form-control" id="editTourName" name="tour_name"
+                               value="${tour.tour_name}" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label class="form-label">Options</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editAutoStart" name="auto_start"
+                                   ${tour.auto_start ? 'checked' : ''}>
+                            <label class="form-check-label" for="editAutoStart">
+                                Auto-start on first visit
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editIsActive" name="is_active"
+                                   ${tour.is_active ? 'checked' : ''}>
+                            <label class="form-check-label" for="editIsActive">
+                                Tour is active
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="editTourDescription" class="form-label">Description</label>
+                <textarea class="form-control" id="editTourDescription" name="tour_description" rows="2">${tour.tour_description || ''}</textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Tour Steps</label>
+                <div id="editTourStepsContainer">
+                    <!-- Steps will be populated here -->
+                </div>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="editAddStepBtn">
+                    <i class="fas fa-plus me-1"></i> Add Step
+                </button>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="saveEditTourBtn">
+                <i class="fas fa-save me-1"></i> Save Changes
+            </button>
+        </div>
+    `;
+
+    // Populate existing steps
+    tour.steps.forEach((step, index) => {
+        addEditTourStep(step);
+    });
+
+    // Add event listeners for edit form
+    document.getElementById('editAddStepBtn').addEventListener('click', () => addEditTourStep());
+    document.getElementById('saveEditTourBtn').addEventListener('click', saveEditTour);
+}
+
+function addEditTourStep(stepData = null) {
+    stepCounter++;
+    const container = document.getElementById('editTourStepsContainer');
+
+    const step = stepData || {
+        id: '',
+        text: '',
+        title: '',
+        attachTo: { element: '', on: 'bottom' }
+    };
+
+    const stepHtml = `
+        <div class="tour-step-item p-3 mb-2" data-step-index="${stepCounter}">
+            <div class="d-flex align-items-start gap-3">
+                <div class="step-handle">
+                    <i class="fas fa-grip-vertical"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label class="form-label small">Step ID *</label>
+                                <input type="text" class="form-control form-control-sm" name="step_id_${stepCounter}"
+                                       value="${step.id}" placeholder="e.g., welcome, navigation" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label class="form-label small">Target Element</label>
+                                <input type="text" class="form-control form-control-sm" name="step_element_${stepCounter}"
+                                       value="${step.attachTo ? step.attachTo.element || '' : ''}"
+                                       placeholder="e.g., #dashboard-card, .nav-menu">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">Step Text *</label>
+                        <textarea class="form-control form-control-sm" name="step_text_${stepCounter}" rows="2"
+                                  placeholder="Text to display in this step" required>${step.text}</textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label class="form-label small">Position</label>
+                                <select class="form-select form-select-sm" name="step_position_${stepCounter}">
+                                    <option value="bottom" ${step.attachTo && step.attachTo.on === 'bottom' ? 'selected' : ''}>Bottom</option>
+                                    <option value="top" ${step.attachTo && step.attachTo.on === 'top' ? 'selected' : ''}>Top</option>
+                                    <option value="left" ${step.attachTo && step.attachTo.on === 'left' ? 'selected' : ''}>Left</option>
+                                    <option value="right" ${step.attachTo && step.attachTo.on === 'right' ? 'selected' : ''}>Right</option>
+                                    <option value="center" ${step.attachTo && step.attachTo.on === 'center' ? 'selected' : ''}>Center</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-2">
+                                <label class="form-label small">Title (Optional)</label>
+                                <input type="text" class="form-control form-control-sm" name="step_title_${stepCounter}"
+                                       value="${step.title || ''}" placeholder="Step title">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-outline-danger btn-sm remove-step-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', stepHtml);
+
+    // Add remove functionality to the new step
+    const newStep = container.lastElementChild;
+    newStep.querySelector('.remove-step-btn').addEventListener('click', function() {
+        newStep.remove();
+    });
+}
+
+function collectEditTourData() {
+    const form = document.getElementById('editTourForm');
+    const formData = new FormData(form);
+
+    const tourData = {
+        page_identifier: formData.get('page_identifier'),
+        page_title: formData.get('page_title'),
+        tour_name: formData.get('tour_name'),
+        tour_description: formData.get('tour_description'),
+        auto_start: formData.has('auto_start'),
+        is_active: formData.has('is_active'),
+        steps: []
+    };
+
+    // Collect steps
+    const stepItems = document.querySelectorAll('#editTourStepsContainer .tour-step-item');
+    stepItems.forEach((item, index) => {
+        const stepIndex = item.dataset.stepIndex;
+        const stepId = formData.get(`step_id_${stepIndex}`);
+        const stepText = formData.get(`step_text_${stepIndex}`);
+        const stepElement = formData.get(`step_element_${stepIndex}`);
+        const stepPosition = formData.get(`step_position_${stepIndex}`);
+        const stepTitle = formData.get(`step_title_${stepIndex}`);
+
+        if (stepId && stepText) {
+            const step = {
+                id: stepId,
+                text: stepText
+            };
+
+            if (stepTitle) step.title = stepTitle;
+
+            if (stepElement) {
+                step.attachTo = {
+                    element: stepElement,
+                    on: stepPosition || 'bottom'
+                };
+            }
+
+            tourData.steps.push(step);
+        }
+    });
+
+    return tourData;
+}
+
+function saveEditTour() {
+    const tourData = collectEditTourData();
+
+    if (!tourData.page_identifier || !tourData.tour_name || tourData.steps.length === 0) {
+        alert('Please fill in all required fields and add at least one step.');
+        return;
+    }
+
+    fetch(`/admin/tours/${currentTourId}/update`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify(tourData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Tour updated successfully!');
+            location.reload(); // Reload to show the updated tour
+        } else {
+            alert('Error updating tour: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error updating tour. Please try again.');
+    });
+}
+</script>
+{% endblock %}

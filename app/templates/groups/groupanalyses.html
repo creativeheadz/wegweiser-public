@@ -1,0 +1,121 @@
+<!-- Filepath: app/templates/groups/groupanalyses.html -->
+{% for analysis in analyses %}
+<div class="col-12">
+    <div class="card h-100 shadow-sm rounded-4">
+        <!-- Card Header with Icon and Title -->
+        <div class="card-header d-flex align-items-center">
+            <i class="fa {{ analysis.icon }} fs-2 text-primary me-2"></i>
+            <div class="flex-grow-1">
+                <h6 class="card-title mb-0">{{ analysis.name }}</h6>
+                <small class="text-muted">
+                    {% if analysis.device_count %}
+                        {{ analysis.device_count }} devices analyzed
+                    {% endif %}
+                    {% if analysis.analyzed_at %}
+                        • {{ analysis.analyzed_at.strftime('%Y-%m-%d %H:%M') }}
+                    {% endif %}
+                </small>
+            </div>
+            {% if analysis.pending_count > 0 %}
+            <span class="badge bg-warning">{{ analysis.pending_count }} pending</span>
+            {% endif %}
+        </div>
+
+        <!-- Card Body with Analysis Text -->
+        <div class="card-body">
+            {% set plain_text = analysis.analysis|striptags %}
+            <div class="analysis-preview">
+                {% if plain_text|length > 400 %}
+                    {{ plain_text[:400] }}...
+                    <br><a href="#" data-bs-toggle="modal" data-bs-target="#readMoreModal{{ loop.index }}">Read More</a>
+                {% else %}
+                    {{ analysis.analysis|safe }}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Health Score Gauge -->
+        <div class="px-3 pb-3">
+            <div class="modern-gauge-info">
+                <div class="modern-gauge-label">Health Score</div>
+                <div class="modern-gauge-value" id="health-score-value-group-{{ loop.index0 }}">{{ analysis.score }}%</div>
+                <div class="modern-gauge-bar">
+                    <div class="modern-gauge-bar-fill" id="health-score-bar-group-{{ loop.index0 }}" style="width: {{ analysis.score }}%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Score Trend Indicator -->
+        {% if analysis.previous_score is not none %}
+        <div class="card-footer bg-transparent">
+            <small class="text-muted">
+                Previous: {{ analysis.previous_score }}%
+                {% if analysis.score > analysis.previous_score %}
+                <i class="fa fa-arrow-up text-success ms-1"></i>
+                <span class="text-success">+{{ analysis.score - analysis.previous_score }}%</span>
+                {% elif analysis.score < analysis.previous_score %}
+                <i class="fa fa-arrow-down text-danger ms-1"></i>
+                <span class="text-danger">{{ analysis.score - analysis.previous_score }}%</span>
+                {% else %}
+                <i class="fa fa-minus text-muted ms-1"></i>
+                <span class="text-muted">No change</span>
+                {% endif %}
+            </small>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+
+{% if not analyses %}
+<div class="col-12">
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="fa fa-users fs-1 text-muted mb-3"></i>
+            <h5 class="text-muted">No Group Analyses Available</h5>
+            <p class="text-muted">Group analyses will appear here once they are processed. This may take a few minutes after devices are added to the group.</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% block modals %}
+{% for analysis in analyses %}
+<div class="modal fade" id="readMoreModal{{ loop.index }}" tabindex="-1"
+    aria-labelledby="readMoreModalLabel{{ loop.index }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="readMoreModalLabel{{ loop.index }}">{{ analysis.name }}</h5>
+                <div class="ms-auto">
+                    {% if analysis.device_count %}
+                    <small class="text-muted me-3">{{ analysis.device_count }} devices</small>
+                    {% endif %}
+                    {% if analysis.analyzed_at %}
+                    <small class="text-muted">{{ analysis.analyzed_at.strftime('%Y-%m-%d %H:%M') }}</small>
+                    {% endif %}
+                </div>
+                <button type="button" class="btn-close ms-2" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="analysis-content">
+                    {{ analysis.analysis|safe }}
+                </div>
+            </div>
+            <div class="p-3 pt-0">
+                <div class="modern-gauge-info">
+                    <div class="modern-gauge-label">Health Score</div>
+                    <div class="modern-gauge-value" id="health-score-value-group-modal-{{ loop.index0 }}">{{ analysis.score }}%</div>
+                    <div class="modern-gauge-bar">
+                        <div class="modern-gauge-bar-fill" id="health-score-bar-group-modal-{{ loop.index0 }}" style="width: {{ analysis.score }}%"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

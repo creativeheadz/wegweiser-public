@@ -1,0 +1,171 @@
+/**
+ * AI Insights Icon Styling
+ * Styles for hardware component AI insight icons
+ * Matches the hot pink chat toggle button style
+ */
+
+.ai-insight-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    z-index: 10 !important;
+    margin: 0 4px !important;
+    padding: 6px 10px !important;
+    cursor: pointer !important;
+    color: #fff !important;
+    background-color: #d63384 !important;
+    border: none !important;
+    border-radius: 4px !important;
+    font-size: 0.9rem !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    box-shadow: 0 2px 6px rgba(214, 51, 132, 0.3) !important;
+    transition: all 0.2s ease !important;
+    vertical-align: baseline !important;
+    flex-shrink: 0 !important;
+    overflow: visible !important;
+}
+
+.ai-insight-icon:hover {
+    background-color: #c71f7f !important;
+    box-shadow: 0 4px 12px rgba(214, 51, 132, 0.5) !important;
+    transform: scale(1.1) !important;
+}
+
+.ai-insight-icon:focus {
+    outline: 2px solid #d63384 !important;
+    outline-offset: 2px !important;
+}
+
+.ai-insight-icon i {
+    display: inline-flex !important;
+    width: auto !important;
+    height: auto !important;
+    line-height: 1 !important;
+    font-size: 0.9rem !important;
+    pointer-events: none !important;
+}
+
+.ai-insight-icon:hover i {
+    animation: ai-pulse 0.4s ease !important;
+}
+
+.ai-insight-icon:active {
+    transform: scale(0.95) !important;
+    box-shadow: 0 2px 4px rgba(214, 51, 132, 0.4) !important;
+}
+
+/* AI Pulse animation for interaction feedback */
+@keyframes ai-pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Theme variants */
+[data-bs-theme="light"] .ai-insight-icon {
+    background-color: #d63384 !important;
+    color: #fff !important;
+}
+
+[data-bs-theme="light"] .ai-insight-icon:hover {
+    background-color: #c71f7f !important;
+}
+
+/* Dark theme variant */
+[data-bs-theme="dark"] .ai-insight-icon {
+    background-color: #d63384 !important;
+    color: #fff !important;
+}
+
+[data-bs-theme="dark"] .ai-insight-icon:hover {
+    background-color: #e64ba8 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    .ai-insight-icon {
+        padding: 4px 6px !important;
+        font-size: 0.75rem !important;
+        min-width: 28px !important;
+        min-height: 28px !important;
+    }
+
+    .ai-insight-icon i {
+        font-size: 0.75rem !important;
+    }
+}
+
+
+/* Visual refinement: icon-only style (no background) */
+.ai-insight-icon {
+    margin: 0 6px !important;
+    padding: 0 !important;
+    color: #d63384 !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    font-size: inherit !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    box-shadow: none !important;
+    transition: color 0.15s ease-in-out !important;
+    vertical-align: middle !important;
+}
+
+.ai-insight-icon:hover {
+    color: #c71f7f !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+    outline: 1px solid currentColor !important;
+    outline-offset: 2px !important;
+}
+
+.ai-insight-icon:focus {
+    outline: 1px dashed #d63384 !important;
+    outline-offset: 2px !important;
+}
+
+.ai-insight-icon i {
+    display: inline-block !important;
+    line-height: 1 !important;
+    font-size: 1em !important;
+}
+
+/* Theme variants */
+[data-bs-theme="light"] .ai-insight-icon {
+    color: #d63384 !important;
+    background: transparent !important;
+}
+[data-bs-theme="light"] .ai-insight-icon:hover {
+    color: #c71f7f !important;
+    background: transparent !important;
+}
+
+[data-bs-theme="dark"] .ai-insight-icon {
+    color: #d63384 !important;
+    background: transparent !important;
+}
+[data-bs-theme="dark"] .ai-insight-icon:hover {
+    color: #e64ba8 !important;
+    background: transparent !important;
+}
+
+/* Responsive tweaks */
+@media (max-width: 576px) {
+    .ai-insight-icon { margin: 0 4px !important; }
+}
+
+/* Disable pulse animation for minimal icon style */
+.ai-insight-icon:hover i {
+    animation: none !important;
+}
+

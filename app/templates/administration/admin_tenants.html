@@ -1,0 +1,323 @@
+<!-- Filepath: app/templates/administration/admin_tenants.html -->
+{% extends "base.html" %}
+
+{% block title %}Tenant Management - Wegweiser{% endblock %}
+
+{% block extra_head %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <!--breadcrumb-->
+    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div class="breadcrumb-title pe-3">Administration</div>
+        <div class="ps-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 p-0">
+                    <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Tenant Management</li>
+                </ol>
+            </nav>
+        </div>
+        <div class="ms-auto">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary">Actions</button>
+                <button type="button" class="btn btn-primary split-bg-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-end">
+                    <a class="dropdown-item" href="javascript:;">Add Tenant</a>
+                    <a class="dropdown-item" href="javascript:;">Export Data</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="javascript:;" onclick="testTenantRoute()">Test Route</a>
+                    <a class="dropdown-item" href="javascript:;" onclick="deleteSelectedTenants()">Delete Selected</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end breadcrumb-->
+    
+    <div class="card rounded-4">
+        <div class="card-body">
+            <!-- Search Bar -->
+            <form method="get" action="{{ url_for('admin_bp.view_tenants') }}" class="mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search" placeholder="Search Tenants" value="{{ search_query }}">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </form>
+
+            <!-- Pagination Controls -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <form method="get" action="{{ url_for('admin_bp.view_tenants') }}" class="d-flex align-items-center">
+                        <input type="hidden" name="search" value="{{ search_query }}">
+                        <label class="me-2">Show:</label>
+                        <select name="per_page" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="20" {% if per_page == 20 %}selected{% endif %}>20</option>
+                            <option value="50" {% if per_page == 50 %}selected{% endif %}>50</option>
+                            <option value="100" {% if per_page == 100 %}selected{% endif %}>100</option>
+                        </select>
+                    </form>
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination mb-0">
+                        {% if pagination.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('admin_bp.view_tenants', page=pagination.prev_num, per_page=per_page, search=search_query) }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        {% for page_num in pagination.iter_pages() %}
+                        <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('admin_bp.view_tenants', page=page_num, per_page=per_page, search=search_query) }}">{{ page_num }}</a>
+                        </li>
+                        {% endfor %}
+
+                        {% if pagination.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('admin_bp.view_tenants', page=pagination.next_num, per_page=per_page, search=search_query) }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Tenant Table -->
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th width="50">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="selectAllTenants" onchange="toggleSelectAll()">
+                                </div>
+                            </th>
+                            <th>Tenant Name</th>
+                            <th>Organizations</th>
+                            <th>Groups</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tenant in tenants %}
+                        <tr>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input tenant-checkbox" type="checkbox" value="{{ tenant.tenantuuid }}" id="tenant{{ loop.index }}">
+                                </div>
+                            </td>
+                            <td>
+                                <strong>{{ tenant.tenantname }}</strong>
+                                <br>
+                                <small class="text-muted">{{ tenant.tenantuuid }}</small>
+                            </td>
+                            <td>
+                                {% if tenant.organisations %}
+                                    <div class="mb-2">
+                                        {% for org in tenant.organisations %}
+                                            <span class="badge bg-primary me-1 mb-1">{{ org.orgname }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    <small class="text-muted">{{ tenant.organisations|length }} organization(s)</small>
+                                {% else %}
+                                    <span class="text-muted">No organizations</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% set all_groups = [] %}
+                                {% for org in tenant.organisations %}
+                                    {% for group in org.groups %}
+                                        {% set _ = all_groups.append(group) %}
+                                    {% endfor %}
+                                {% endfor %}
+
+                                {% if all_groups %}
+                                    <div class="mb-2">
+                                        {% for group in all_groups %}
+                                            <span class="badge bg-secondary me-1 mb-1">{{ group.groupname }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    <small class="text-muted">{{ all_groups|length }} group(s)</small>
+                                {% else %}
+                                    <span class="text-muted">No groups</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteTenant('{{ tenant.tenantuuid }}', '{{ tenant.tenantname }}')">
+                                    <i class="bx bx-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteTenantModal" tabindex="-1" aria-labelledby="deleteTenantModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteTenantModalLabel">Confirm Tenant Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <i class="bx bx-warning"></i>
+                    <strong>Warning:</strong> This action will permanently delete the tenant and all associated data including:
+                    <ul class="mt-2">
+                        <li>All organizations and groups</li>
+                        <li>All devices and their data</li>
+                        <li>All messages, conversations, and AI memories</li>
+                        <li>All metadata and historical data</li>
+                    </ul>
+                    <strong>A complete backup will be created before deletion.</strong>
+                </div>
+                <p id="deleteTenantMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Tenant</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let tenantToDelete = null;
+let tenantsToDelete = [];
+
+function deleteTenant(tenantUuid, tenantName) {
+    tenantToDelete = tenantUuid;
+    document.getElementById('deleteTenantMessage').innerHTML =
+        `Are you sure you want to delete tenant <strong>${tenantName}</strong>?`;
+
+    document.getElementById('confirmDeleteBtn').onclick = function() {
+        performTenantDeletion([tenantUuid]);
+    };
+
+    new bootstrap.Modal(document.getElementById('deleteTenantModal')).show();
+}
+
+function deleteSelectedTenants() {
+    const checkboxes = document.querySelectorAll('.tenant-checkbox:checked');
+    if (checkboxes.length === 0) {
+        alert('Please select at least one tenant to delete.');
+        return;
+    }
+
+    tenantsToDelete = Array.from(checkboxes).map(cb => cb.value);
+    const tenantNames = Array.from(checkboxes).map(cb => {
+        const accordionButton = cb.closest('.accordion-button');
+        return accordionButton.querySelector('.flex-grow-1').textContent.trim();
+    });
+
+    document.getElementById('deleteTenantMessage').innerHTML =
+        `Are you sure you want to delete ${tenantsToDelete.length} tenant(s)?<br><strong>${tenantNames.join(', ')}</strong>`;
+
+    document.getElementById('confirmDeleteBtn').onclick = function() {
+        performTenantDeletion(tenantsToDelete);
+    };
+
+    new bootstrap.Modal(document.getElementById('deleteTenantModal')).show();
+}
+
+function performTenantDeletion(tenantUuids) {
+    // Show loading state
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    const originalText = confirmBtn.innerHTML;
+    confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Deleting...';
+    confirmBtn.disabled = true;
+
+    // Get CSRF token if it exists
+    const csrfToken = document.querySelector('meta[name=csrf-token]');
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+    if (csrfToken) {
+        headers['X-CSRFToken'] = csrfToken.getAttribute('content');
+    }
+
+    fetch('/admin/tenants/delete', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+            tenant_uuids: tenantUuids
+        })
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+
+        if (!response.ok) {
+            return response.text().then(text => {
+                console.error('Error response:', text);
+                throw new Error(`HTTP ${response.status}: ${text.substring(0, 200)}...`);
+            });
+        }
+
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+            // Close modal and reload page
+            bootstrap.Modal.getInstance(document.getElementById('deleteTenantModal')).hide();
+            location.reload();
+        } else {
+            alert('Error deleting tenant(s): ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error deleting tenant(s): ' + error.message);
+    })
+    .finally(() => {
+        // Reset button state
+        confirmBtn.innerHTML = originalText;
+        confirmBtn.disabled = false;
+    });
+}
+
+// Test route functionality
+function testTenantRoute() {
+    fetch('/admin/tenants/test', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => {
+        console.log('Test response status:', response.status);
+        return response.json();
+    })
+    .then(data => {
+        console.log('Test response data:', data);
+        alert('Test successful: ' + data.message);
+    })
+    .catch(error => {
+        console.error('Test error:', error);
+        alert('Test failed: ' + error.message);
+    });
+}
+
+// Select all functionality
+function toggleSelectAll() {
+    const selectAllCheckbox = document.getElementById('selectAllTenants');
+    const tenantCheckboxes = document.querySelectorAll('.tenant-checkbox');
+
+    tenantCheckboxes.forEach(checkbox => {
+        checkbox.checked = selectAllCheckbox.checked;
+    });
+}
+</script>
+{% endblock %}

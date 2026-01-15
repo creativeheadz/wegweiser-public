@@ -1,0 +1,26 @@
+{# Device Header Component - Breadcrumb and Title #}
+<div id="general-info-{{ device.deviceuuid }}" class="mb-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h4 class="mb-0">
+            {% if 'Windows' in device.hardwareinfo %}
+            <i class="fa-brands fa-windows fs-2 os-icon me-2"></i>
+            {% elif 'Linux' in device.hardwareinfo %}
+            <i class="fa-brands fa-linux fs-2 os-icon me-2"></i>
+            {% elif 'Darwin' in device.hardwareinfo or 'MacOS' in device.hardwareinfo %}
+            <i class="fa-brands fa-apple fs-2 os-icon me-2"></i>
+            {% else %}
+            <i class="fa-solid fa-computer fs-2 os-icon me-2"></i>
+            {% endif %}
+            <span class="text-muted" style="font-size: 0.9em;">{{ device.orgname or 'No Org' }} / {{
+                device.groupname or 'No Group' }} / </span>{{ device.devicename }}
+        </h4>
+
+        <!-- PDF Export Button -->
+        <div class="ms-auto">
+            <button type="button" class="btn btn-outline-primary" id="exportPdfBtn" onclick="exportDevicePdf()">
+                <i class="fas fa-file-pdf me-2"></i>Export PDF Report
+            </button>
+        </div>
+    </div>
+</div>
+

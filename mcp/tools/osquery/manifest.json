@@ -1,0 +1,43 @@
+{
+  "name": "osquery",
+  "version": "1.0.0",
+  "description": "osquery integration tools for system information gathering",
+  "tools": [
+    {
+      "module": "schema_discovery:SchemaDiscovery",
+      "name": "osquery_schema",
+      "description": "Discover available osquery tables and their schemas",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "table_name": {
+            "type": "string",
+            "description": "Optional specific table name (leave empty for all tables)"
+          }
+        },
+        "required": []
+      }
+    },
+    {
+      "module": "query_executor:QueryExecutor",
+      "name": "osquery_execute",
+      "description": "Execute an osquery SQL query and return results",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "SQL query to execute"
+          },
+          "timeout": {
+            "type": "integer",
+            "description": "Query timeout in seconds (default: 30)"
+          }
+        },
+        "required": ["query"]
+      }
+    }
+  ],
+  "dependencies": ["osquery >= 5.0"],
+  "platforms": ["linux", "windows", "darwin"]
+}

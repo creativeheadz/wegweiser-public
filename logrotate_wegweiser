@@ -1,0 +1,53 @@
+# Logrotate configuration for Wegweiser application logs
+# Handles rotation of celery, gunicorn, and application logs
+
+# Run as wegweiser user since that's who owns the logs
+su wegweiser www-data
+
+# Celery log - most aggressive rotation (50MB or daily)
+/opt/wegweiser/wlog/celery.log {
+    daily
+    size 50M
+    rotate 7
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0664 wegweiser www-data
+    postrotate
+        if [ -f /opt/wegweiser/wlog/celery.pid ]; then
+            kill -USR2 $(cat /opt/wegweiser/wlog/celery.pid) 2>/dev/null || true
+        fi
+    endscript
+}
+
+# Gunicorn logs
+/opt/wegweiser/wlog/gunicorn_access.log
+/opt/wegweiser/wlog/gunicorn_error.log {
+    daily
+    rotate 7
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0664 wegweiser www-data
+    postrotate
+        if [ -f /opt/wegweiser/wlog/gunicorn.pid ]; then
+            kill -USR2 $(cat /opt/wegweiser/wlog/gunicorn.pid) 2>/dev/null || true
+        fi
+    endscript
+}
+
+# Application logs
+/opt/wegweiser/wlog/wegweiser.log
+/opt/wegweiser/wlog/live_tests.log
+/opt/wegweiser/wlog/cron_monitoring.log {
+    daily
+    rotate 14
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0664 wegweiser www-data
+}
+

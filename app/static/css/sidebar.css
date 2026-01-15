@@ -1,0 +1,38 @@
+/* filepath: /opt/wegweiser/app/static/css/sidebar.css */
+/* 
+ * Sidebar Styles
+ * Uses unified variables from _variables.css
+ */
+
+/* Import unified variables */
+@import url('./_variables.css');
+
+/* ==========================================================================
+   SIDEBAR - Uses unified surface hierarchy
+   ========================================================================== */
+
+/* Sidebar wrapper uses var(--sidebar-bg) from _variables.css */
+.sidebar-wrapper {
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--border-subtle);
+}
+
+/* Sidebar sections use overlay surface for slight differentiation */
+.sidebar-section-header {
+    background-color: transparent;
+    color: var(--text-muted);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: var(--letter-spacing-wider);
+}
+
+/* Nav items use hover-bg on interaction */
+.sidebar-nav .nav-link:hover {
+    background-color: var(--hover-bg);
+}
+
+.sidebar-nav .nav-link.active {
+    background-color: rgba(var(--primary-rgb), 0.12);
+    color: var(--primary);
+}

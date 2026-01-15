@@ -1,0 +1,371 @@
+/* Filepath: app/static/css/unified-chat-terminal.css */
+/* Unified Chat/Terminal Component Styling */
+
+/* Mode toggle styling - Dark theme (default) */
+.mode-toggle-group {
+    display: flex;
+    gap: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mode-toggle-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-lg);
+}
+
+.mode-toggle-btn:hover {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.mode-toggle-btn.active {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Light theme mode toggle styling */
+[data-bs-theme="light"] .mode-toggle-group {
+    background: rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+[data-bs-theme="light"] .mode-toggle-btn {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+[data-bs-theme="light"] .mode-toggle-btn:hover {
+    color: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.12);
+}
+
+[data-bs-theme="light"] .mode-toggle-btn.active {
+    background: rgba(0, 0, 0, 0.15);
+    color: rgba(0, 0, 0, 0.9);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Mode content styling */
+.mode-content {
+    transition: opacity 0.2s ease;
+}
+
+/* Chat mode - visible by default */
+#chatModeContent {
+    display: flex !important;
+    opacity: 1;
+}
+
+#chatModeContent:not(.active) {
+    display: none !important;
+}
+
+/* Terminal mode - hidden by default */
+#terminalModeContent {
+    display: none !important;
+    opacity: 0;
+}
+
+#terminalModeContent.active {
+    display: flex !important;
+    opacity: 1;
+}
+
+/* Pulse animation override for Animate.css integration */
+.floating-combined-tab.animate__pulse {
+    --animate-duration: 2s;
+}
+
+/* Custom pulse keyframes for enhanced glow effect */
+@keyframes tabPulseGlow {
+    0%, 100% {
+        box-shadow: -4px 4px 15px rgba(255, 20, 147, 0.3), 0 0 20px rgba(255, 105, 180, 0.2);
+        opacity: 1;
+    }
+    50% {
+        box-shadow: -4px 4px 20px rgba(255, 20, 147, 0.5), 0 0 30px rgba(255, 105, 180, 0.35);
+        opacity: 0.95;
+    }
+}
+
+/* Light theme pulse animation */
+@keyframes tabPulseGlowLight {
+    0%, 100% {
+        box-shadow: -4px 4px 15px rgba(255, 20, 147, 0.25), 0 0 20px rgba(255, 105, 180, 0.15);
+        opacity: 1;
+    }
+    50% {
+        box-shadow: -4px 4px 20px rgba(255, 20, 147, 0.4), 0 0 30px rgba(255, 105, 180, 0.25);
+        opacity: 0.95;
+    }
+}
+
+/* Sticky side tab styling */
+.floating-combined-tab {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(135deg, rgba(255, 20, 147, 0.15) 0%, rgba(255, 105, 180, 0.15) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-right: none;
+    color: white;
+    padding: 24px 18px;
+    border-radius: 12px 0 0 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    z-index: 1040;
+    transition: all 0.3s ease;
+    box-shadow: -4px 4px 15px rgba(255, 20, 147, 0.15), 0 0 20px rgba(255, 105, 180, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+    line-height: 1.2;
+    text-align: center;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    white-space: normal;
+    width: 70px;
+    min-height: 120px;
+    animation: tabPulseGlow 2s ease-in-out infinite;
+}
+
+.floating-combined-tab:hover {
+    background: linear-gradient(135deg, rgba(255, 20, 147, 0.25) 0%, rgba(255, 105, 180, 0.25) 100%);
+    box-shadow: -6px 4px 25px rgba(255, 20, 147, 0.25), 0 0 30px rgba(255, 105, 180, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    padding-left: 18px;
+    animation: none;
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.floating-combined-tab .tab-icons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.floating-combined-tab .tab-icons .separator {
+    opacity: 0.5;
+    font-weight: 300;
+    writing-mode: horizontal-tb;
+}
+
+.floating-combined-tab .fas,
+.floating-combined-tab .material-icons-outlined {
+    font-size: var(--font-size-3xl);
+    writing-mode: horizontal-tb;
+}
+
+/* AI Robot Icon Styling */
+.ai-icon {
+    color: white;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.4), 0 0 12px rgba(255, 20, 147, 0.3);
+    font-size: 2.25rem;
+    transform-origin: center;
+    transition: text-shadow 0.3s ease, color 0.3s ease;
+}
+
+.floating-combined-tab:hover .ai-icon {
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(255, 20, 147, 0.7);
+}
+
+/* Light theme floating tab styling */
+[data-bs-theme="light"] .floating-combined-tab {
+    background: linear-gradient(135deg, rgba(255, 20, 147, 0.25) 0%, rgba(255, 105, 180, 0.25) 100%);
+    border: 1px solid rgba(255, 20, 147, 0.35);
+    box-shadow: -4px 4px 15px rgba(255, 20, 147, 0.2), 0 0 20px rgba(255, 105, 180, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    animation: tabPulseGlowLight 2s ease-in-out infinite;
+}
+
+[data-bs-theme="light"] .floating-combined-tab:hover {
+    background: linear-gradient(135deg, rgba(255, 20, 147, 0.35) 0%, rgba(255, 105, 180, 0.35) 100%);
+    box-shadow: -6px 4px 25px rgba(255, 20, 147, 0.3), 0 0 30px rgba(255, 105, 180, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    border-color: rgba(255, 20, 147, 0.5);
+}
+
+[data-bs-theme="light"] .ai-icon {
+    color: rgba(255, 20, 147, 0.9);
+    text-shadow: 0 0 8px rgba(255, 20, 147, 0.3), 0 0 12px rgba(255, 105, 180, 0.2);
+    font-size: 2.25rem;
+}
+
+[data-bs-theme="light"] .floating-combined-tab:hover .ai-icon {
+    color: rgba(255, 20, 147, 1);
+    text-shadow: 0 0 15px rgba(255, 20, 147, 0.5), 0 0 25px rgba(255, 105, 180, 0.4);
+}
+
+/* Hide combined tab when offcanvas is open */
+#chatOffcanvas.show ~ .floating-combined-tab {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Terminal output styling */
+.terminal-output {
+    background: var(--bs-dark, #212529);
+    color: var(--bs-light, #f8f9fa);
+    font-family: var(--font-mono);
+    font-size: var(--font-size-base);
+    line-height: 1.4;
+}
+
+[data-bs-theme="light"] .terminal-output {
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+.terminal-welcome {
+    margin-bottom: 1rem;
+}
+
+.terminal-prompt {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.terminal-input-container {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.terminal-command {
+    color: #00ff00;
+    margin-bottom: 0.5rem;
+}
+
+.terminal-result {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    border-left: 3px solid #007bff;
+}
+
+.terminal-error {
+    color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.1);
+    border-left-color: #ff6b6b;
+}
+
+.terminal-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.5rem 0;
+}
+
+.terminal-table th,
+.terminal-table td {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: left;
+}
+
+.terminal-table th {
+    background: rgba(255, 255, 255, 0.1);
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    #chatOffcanvas {
+        width: 100vw !important;
+    }
+}
+
+/* Hide old individual tabs */
+.floating-chat-tab,
+.floating-terminal-tab {
+    display: none !important;
+}
+
+
+
+/* Glassmorphism modal styling for NL→SQL */
+.glass-modal {
+    background: var(--glass-bg, rgba(17, 17, 34, 0.6));
+    backdrop-filter: var(--glass-blur, blur(12px));
+    -webkit-backdrop-filter: var(--glass-blur, blur(12px));
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45);
+}
+
+.glass-header,
+.glass-footer {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.glass-body {
+    background: transparent;
+}
+
+.glass-input {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #fff;
+}
+
+.glass-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+[data-bs-theme="light"] .glass-modal {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-bs-theme="light"] .glass-input {
+    background: rgba(0, 0, 0, 0.04);
+    color: #111;
+}
+
+
+/* Osquery Quick Bar layout and alignment */
+#osqueryQuickBar.osq-quickbar {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 8px;
+}
+#osqueryQuickBar .osq-dropdown { grid-column: 1 / 2; min-width: 280px; }
+#osqueryQuickBar .osq-ask-btn { grid-column: 2 / 3; white-space: nowrap; }
+#osqueryQuickBar .osq-chips-scroll {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    flex-wrap: nowrap;
+}
+#osqueryQuickBar .osq-recent {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+}
+#osqueryQuickBar .osq-recent .text-muted.small { white-space: nowrap; }
+#osqueryQuickBar select.form-select-sm { min-height: 30px; }
+#osqueryQuickBar .btn.btn-sm { line-height: 1.1; }

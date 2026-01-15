@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<!-- Filepath: app/templates/index.html -->
+<html lang="en" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome - Wegweiser</title>
+
+    <!-- Pace loading indicator -->
+    <link href="{{ url_for('static', filename='css/pace.minimal.css') }}" rel="stylesheet">
+    <!-- <link href="{{ url_for('static', filename='css/pace.min.css') }}" rel="stylesheet"> -->
+
+    <script>
+        window.paceOptions = {
+            // Disable the 'elements' source
+            elements: false,
+
+            // Only show the progress on regular and ajax-y page navigation, not every request
+            restartOnRequestAfter: false
+        };
+    </script>
+    <script src="{{ url_for('static', filename='js/pace.js') }}"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon-32x32.png') }}" type="image/png">
+    <style>
+        .welcome-card {
+            max-width: 600px;
+            padding: 3rem 2.5rem;
+            text-align: center;
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #4f46e5, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .wegweiser-definition {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+        }
+
+        .definition-word {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 0.5rem;
+            font-family: 'Georgia', serif;
+        }
+
+        .definition-type {
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .definition-pronunciation {
+            color: var(--text-secondary);
+            font-family: monospace;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .definition-meaning {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .definition-context {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            font-style: italic;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .welcome-actions {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 3rem;
+            justify-content: center;
+        }
+
+        .welcome-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box;
+            min-height: 56px;
+            min-width: 140px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .welcome-btn-primary {
+            background: linear-gradient(135deg, #4f46e5, #3b82f6);
+            color: white;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .welcome-btn-primary:hover {
+            background: linear-gradient(135deg, #4338ca, #2563eb);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+            text-decoration: none;
+        }
+
+        .welcome-btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .welcome-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .welcome-title {
+                font-size: 2.5rem;
+            }
+
+            .welcome-subtitle {
+                font-size: 1.1rem;
+                margin-bottom: 2rem;
+            }
+
+            .wegweiser-definition {
+                margin: 2rem 0;
+                padding: 1.5rem;
+            }
+
+            .definition-word {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .welcome-actions {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .welcome-btn {
+                width: 100%;
+            }
+
+            .welcome-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+    <script src="{{ url_for('static', filename='js/compass-tracker.js') }}"></script>
+</head>
+
+<body class="auth-page">
+    <!-- Floating particles background -->
+    <div class="auth-particles">
+        <div class="particle particle-1"></div>
+        <div class="particle particle-2"></div>
+        <div class="particle particle-3"></div>
+        <div class="particle particle-4"></div>
+        <div class="particle particle-5"></div>
+        <div class="particle particle-6"></div>
+    </div>
+
+    <div class="auth-card welcome-card">
+        <!-- Mascot Character -->
+        {% include 'components/mascot-guide.html' %}
+
+        <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Wegweiser Logo" class="auth-logo">
+
+        <div class="wegweiser-definition">
+            <div class="definition-word">Wegweiser</div>
+            <div class="definition-type">noun</div>
+            <div class="definition-pronunciation">[ masculine ] /ˈveːkvaɪzɐ/</div>
+            <div class="definition-meaning">
+                A guide or signpost that shows the way; one who points the direction.
+            </div>
+            <div class="definition-context">
+                The intelligent pathfinder for MSPs, guiding you through complex system landscapes with AI-powered insights and real-time monitoring.
+            </div>
+        </div>
+
+        <div class="welcome-actions">
+            <a href="{{ url_for('login_bp.login') }}" class="welcome-btn welcome-btn-primary">
+                <i class="fas fa-sign-in-alt"></i>
+                Login
+            </a>
+            <a href="{{ url_for('register_bp.register') }}" class="welcome-btn welcome-btn-secondary">
+                <i class="fas fa-user-plus"></i>
+                Register
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

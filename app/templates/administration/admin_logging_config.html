@@ -1,0 +1,350 @@
+<!-- Filepath: app/templates/administration/admin_logging_config.html -->
+{% extends "base.html" %}
+
+{% block title %}Logging Configuration - Wegweiser{% endblock %}
+
+{% block extra_head %}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <!-- Hidden CSRF token for fallback -->
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <!--breadcrumb-->
+    <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
+        <div class="breadcrumb-title pe-3">Administration</div>
+        <div class="ps-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 p-0">
+                    <li class="breadcrumb-item"><a href="javascript:;"><i class="bx bx-home-alt"></i></a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Logging Configuration</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    <!--end breadcrumb-->
+
+    <!-- Configuration Status Card -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 rounded-4">
+                <div class="card-body">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div class="fs-1 text-info">
+                                <i class="fa-solid fa-gear"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h5 class="mb-0">Logging Configuration</h5>
+                                <p class="mb-0 text-muted">Configure application logging levels in real-time</p>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <small class="text-muted">Last Updated: <span id="lastUpdated">Loading...</span></small><br>
+                            <small class="text-muted">Updated By: <span id="updatedBy">Loading...</span></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logging Levels Configuration -->
+    <div class="card border-0 rounded-4">
+        <div class="card-header py-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <h6 class="mb-0">Logging Levels</h6>
+                <div>
+                    <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="reloadConfig()">
+                        <i class="fa-solid fa-rotate"></i> Reload
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="saveConfig()">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row g-4">
+                <!-- INFO Level -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="fs-2 text-info me-3">
+                                        <i class="fa-solid fa-circle-info"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">INFO Level</h6>
+                                        <p class="mb-0 text-muted small">General information messages</p>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="infoLevel" data-level="INFO">
+                                    <label class="form-check-label" for="infoLevel"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DEBUG Level -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="fs-2 text-secondary me-3">
+                                        <i class="fa-solid fa-bug"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">DEBUG Level</h6>
+                                        <p class="mb-0 text-muted small">Detailed debugging information</p>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="debugLevel" data-level="DEBUG">
+                                    <label class="form-check-label" for="debugLevel"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ERROR Level -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="fs-2 text-danger me-3">
+                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">ERROR Level</h6>
+                                        <p class="mb-0 text-muted small">Error conditions and exceptions</p>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="errorLevel" data-level="ERROR">
+                                    <label class="form-check-label" for="errorLevel"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WARNING Level -->
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="fs-2 text-warning me-3">
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-1">WARNING Level</h6>
+                                        <p class="mb-0 text-muted small">Warning messages and potential issues</p>
+                                    </div>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="warningLevel"
+                                        data-level="WARNING">
+                                    <label class="form-check-label" for="warningLevel"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration Info -->
+            <div class="mt-4">
+                <div class="alert alert-info d-flex align-items-center" role="alert">
+                    <i class="fa-solid fa-circle-info me-2"></i>
+                    <div>
+                        <strong>Note:</strong> Changes are applied immediately without requiring a service restart.
+                        The configuration is automatically saved to a file and will persist across application restarts.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="messageContainer" class="mt-3" style="display: none;">
+        <div id="messageAlert" class="alert" role="alert">
+            <div class="d-flex align-items-center">
+                <i id="messageIcon" class="fa-solid fa-circle-check me-2" style="font-size: var(--font-size-md);"></i>
+                <span id="messageText"></span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    let currentConfig = {};
+
+    // Get CSRF token from meta tag or cookie
+    function getCSRFToken() {
+        // Try to get from meta tag first
+        const metaToken = document.querySelector('meta[name=csrf-token]');
+        if (metaToken) {
+            return metaToken.getAttribute('content');
+        }
+
+        // Try to get from cookie
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'csrf_token') {
+                return decodeURIComponent(value);
+            }
+        }
+
+        // If no token found, try to get it from a hidden form field
+        const hiddenInput = document.querySelector('input[name="csrf_token"]');
+        if (hiddenInput) {
+            return hiddenInput.value;
+        }
+
+        return null;
+    }
+
+    function showMessage(message, type = 'success') {
+        const container = document.getElementById('messageContainer');
+        const alert = document.getElementById('messageAlert');
+        const icon = document.getElementById('messageIcon');
+        const text = document.getElementById('messageText');
+
+        // Set message content
+        text.textContent = message;
+
+        // Set alert type and icon
+        alert.className = `alert alert-${type}`;
+        icon.className = 'me-2 ' + (type === 'success' ? 'fas fa-circle-check' : 'fas fa-circle-xmark');
+
+        // Show message
+        container.style.display = 'block';
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            container.style.display = 'none';
+        }, 5000);
+    }
+
+    function formatDate(isoString) {
+        if (!isoString) return 'Never';
+        const date = new Date(isoString);
+        return date.toLocaleString();
+    }
+
+    function loadConfig() {
+        fetch('/api/logging-config')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentConfig = data.config;
+                    updateUI();
+                } else {
+                    showMessage('Failed to load configuration: ' + data.error, 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading config:', error);
+                showMessage('Error loading configuration', 'danger');
+            });
+    }
+
+    function updateUI() {
+        // Update status information
+        document.getElementById('lastUpdated').textContent = formatDate(currentConfig.last_updated);
+        document.getElementById('updatedBy').textContent = currentConfig.updated_by || 'Unknown';
+
+        // Update checkboxes
+        const levels = currentConfig.levels || {};
+        document.getElementById('infoLevel').checked = levels.INFO || false;
+        document.getElementById('debugLevel').checked = levels.DEBUG || false;
+        document.getElementById('errorLevel').checked = levels.ERROR || false;
+        document.getElementById('warningLevel').checked = levels.WARNING || false;
+    }
+
+    function saveConfig() {
+        const levels = {
+            INFO: document.getElementById('infoLevel').checked,
+            DEBUG: document.getElementById('debugLevel').checked,
+            ERROR: document.getElementById('errorLevel').checked,
+            WARNING: document.getElementById('warningLevel').checked
+        };
+
+        const csrfToken = getCSRFToken();
+        const headers = {
+            'Content-Type': 'application/json',
+        };
+
+        if (csrfToken) {
+            headers['X-CSRFToken'] = csrfToken;
+        }
+
+        fetch('/api/logging-config', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({ levels: levels })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    loadConfig(); // Reload to get updated timestamp
+                } else {
+                    showMessage('Failed to save configuration: ' + data.error, 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error saving config:', error);
+                showMessage('Error saving configuration', 'danger');
+            });
+    }
+
+    function reloadConfig() {
+        const csrfToken = getCSRFToken();
+        const headers = {
+            'Content-Type': 'application/json',
+        };
+
+        if (csrfToken) {
+            headers['X-CSRFToken'] = csrfToken;
+        }
+
+        fetch('/api/logging-config/reload', {
+            method: 'POST',
+            headers: headers
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentConfig = data.config;
+                    updateUI();
+                    showMessage(data.message, 'success');
+                } else {
+                    showMessage('Failed to reload configuration: ' + data.error, 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error reloading config:', error);
+                showMessage('Error reloading configuration', 'danger');
+            });
+    }
+
+    // Load configuration on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        loadConfig();
+    });
+</script>
+{% endblock %}

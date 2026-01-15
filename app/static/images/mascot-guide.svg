@@ -1,0 +1,137 @@
+<svg viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg" class="mascot-character">
+  <defs>
+    <style>
+      @keyframes float-mascot {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+      }
+      @keyframes breathing {
+        0%, 100% { transform: scaleY(1); }
+        50% { transform: scaleY(1.08); }
+      }
+      @keyframes arm-sway-left {
+        0%, 100% { transform: rotate(-20deg); }
+        50% { transform: rotate(-35deg); }
+      }
+      @keyframes arm-sway-right {
+        0%, 100% { transform: rotate(20deg); }
+        50% { transform: rotate(35deg); }
+      }
+      @keyframes eye-blink {
+        0%, 10%, 100% { cy: 65; r: 5; }
+        5% { cy: 65; r: 2; }
+      }
+      @keyframes head-bob {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-3px); }
+      }
+      @keyframes bounce-feet {
+        0%, 100% { transform: scaleY(1); }
+        50% { transform: scaleY(0.95); }
+      }
+      @keyframes pulse-glow {
+        0%, 100% { opacity: 0.6; }
+        50% { opacity: 1; }
+      }
+      .mascot-character {
+        animation: float-mascot 3s ease-in-out infinite;
+      }
+      .compass-background {
+        transform-origin: 100px 100px;
+      }
+      .compass-needle {
+        transform-origin: 100px 100px;
+        transition: transform 0.3s ease-out;
+      }
+      .glow-element {
+        animation: pulse-glow 2s ease-in-out infinite;
+      }
+    </style>
+    <linearGradient id="bodyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A90E2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2851E7;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="compassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFD93D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#6BCB77;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Large background compass circle (behind character) - Static -->
+  <g class="compass-background" opacity="0.35">
+    <!-- Outer circle -->
+    <circle cx="100" cy="100" r="70" fill="none" stroke="url(#compassGradient)" stroke-width="2"/>
+    <circle cx="100" cy="100" r="62" fill="none" stroke="url(#compassGradient)" stroke-width="1" opacity="0.5"/>
+
+    <!-- Cardinal direction labels -->
+    <text x="100" y="20" font-size="18" font-weight="bold" fill="#FF6B6B" text-anchor="middle" font-family="Arial" opacity="0.9">N</text>
+    <text x="180" y="106" font-size="16" font-weight="bold" fill="#FFD93D" font-family="Arial" opacity="0.9">E</text>
+    <text x="100" y="188" font-size="18" font-weight="bold" fill="#6BCB77" text-anchor="middle" font-family="Arial" opacity="0.9">S</text>
+    <text x="18" y="106" font-size="16" font-weight="bold" fill="#4A90E2" font-family="Arial" opacity="0.9">W</text>
+
+    <!-- Center decorative circle -->
+    <circle cx="100" cy="100" r="8" fill="none" stroke="url(#compassGradient)" stroke-width="2" opacity="0.4"/>
+    <circle cx="100" cy="100" r="4" fill="url(#compassGradient)" opacity="0.5"/>
+  </g>
+
+  <!-- Compass needle that follows cursor -->
+  <g class="compass-needle" id="compassNeedle">
+    <!-- North pointer (red) - points up -->
+    <path d="M 100 32 L 110 65 L 100 58 L 90 65 Z" fill="#FF6B6B" stroke="#C44545" stroke-width="1.5" opacity="0.8"/>
+    <!-- South pointer (subtle - opposite direction) -->
+    <path d="M 100 168 L 90 135 L 100 142 L 110 135 Z" fill="#6BCB77" stroke="#4A9D5F" stroke-width="1" opacity="0.4"/>
+  </g>
+
+  <!-- Background circle glow (subtle) -->
+  <circle cx="100" cy="100" r="85" fill="none" stroke="#2851E7" stroke-width="1" opacity="0.2" class="glow-element"/>
+
+  <!-- Head -->
+  <circle cx="100" cy="70" r="32" fill="url(#bodyGradient)" stroke="#1A40D5" stroke-width="2" style="animation: head-bob 2.5s ease-in-out infinite; transform-origin: 100px 70px;"/>
+
+  <!-- Eyes with blinking animation -->
+  <circle cx="90" cy="65" r="5" fill="white" style="animation: eye-blink 4s ease-in-out infinite; animation-delay: 0s;"/>
+  <circle cx="110" cy="65" r="5" fill="white" style="animation: eye-blink 4s ease-in-out infinite; animation-delay: 0s;"/>
+  <circle cx="90" cy="65" r="3" fill="#2851E7"/>
+  <circle cx="110" cy="65" r="3" fill="#2851E7"/>
+
+  <!-- Smile -->
+  <path d="M 92 75 Q 100 82 108 75" stroke="white" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+  <!-- Body with breathing animation -->
+  <rect x="75" y="100" width="50" height="45" rx="8" fill="url(#bodyGradient)" stroke="#1A40D5" stroke-width="2" style="animation: breathing 3s ease-in-out infinite; transform-origin: 100px 122.5px;"/>
+
+  <!-- Left Arm with swaying animation -->
+  <ellipse cx="65" cy="115" rx="12" ry="22" fill="url(#bodyGradient)" stroke="#1A40D5" stroke-width="2" style="animation: arm-sway-left 2.5s ease-in-out infinite; transform-origin: 65px 115px;" transform="rotate(-20 65 115)"/>
+
+  <!-- Right Arm with swaying animation -->
+  <ellipse cx="135" cy="115" rx="12" ry="22" fill="url(#bodyGradient)" stroke="#1A40D5" stroke-width="2" style="animation: arm-sway-right 2.5s ease-in-out infinite; transform-origin: 135px 115px;" transform="rotate(20 135 115)"/>
+
+  <!-- Left hand -->
+  <circle cx="55" cy="130" r="10" fill="url(#bodyGradient)" stroke="#1A40D5" stroke-width="2"/>
+
+  <!-- Right hand -->
+  <circle cx="145" cy="130" r="10" fill="url(#bodyGradient)" stroke="#1A40D5" stroke-width="2"/>
+
+  <!-- Path element (footprints/trail suggesting guidance) -->
+  <g opacity="0.4">
+    <circle cx="90" cy="150" r="3" fill="#2851E7"/>
+    <circle cx="100" cy="165" r="2.5" fill="#2851E7"/>
+    <circle cx="110" cy="175" r="2" fill="#2851E7"/>
+  </g>
+
+  <!-- Decorative sparkles around mascot -->
+  <g opacity="0.6" class="glow-element">
+    <path d="M 130 50 L 132 56 L 138 58 L 132 60 L 130 66 L 128 60 L 122 58 L 128 56 Z" fill="#FFD93D" stroke="#FFD93D" stroke-width="0.5"/>
+    <path d="M 65 40 L 66 44 L 70 45 L 66 46 L 65 50 L 64 46 L 60 45 L 64 44 Z" fill="#6BCB77" stroke="#6BCB77" stroke-width="0.5"/>
+    <path d="M 150 160 L 151 163 L 154 164 L 151 165 L 150 168 L 149 165 L 146 164 L 149 163 Z" fill="#FF6B6B" stroke="#FF6B6B" stroke-width="0.5"/>
+  </g>
+
+  <!-- Legs -->
+  <rect x="85" y="142" width="8" height="30" rx="4" fill="url(#bodyGradient)" stroke="#1A40D5" stroke-width="1.5"/>
+  <rect x="107" y="142" width="8" height="30" rx="4" fill="url(#bodyGradient)" stroke="#1A40D5" stroke-width="1.5"/>
+
+  <!-- Feet with bouncing animation -->
+  <ellipse cx="89" cy="175" rx="7" ry="5" fill="url(#bodyGradient)" stroke="#1A40D5" stroke-width="1.5" style="animation: bounce-feet 2.5s ease-in-out infinite; transform-origin: 89px 175px;"/>
+  <ellipse cx="111" cy="175" rx="7" ry="5" fill="url(#bodyGradient)" stroke="#1A40D5" stroke-width="1.5" style="animation: bounce-feet 2.5s ease-in-out infinite; transform-origin: 111px 175px;"/>
+</svg>

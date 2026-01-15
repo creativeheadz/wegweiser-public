@@ -1,0 +1,26 @@
+[Unit]
+Description=Wegweiser NATS Receiver (Always-on)
+After=network.target redis-server.service
+Wants=redis-server.service
+
+[Service]
+Type=simple
+User=weg-nats-svc
+Group=weg-nats-svc
+WorkingDirectory=/opt/wegweiser
+Environment=PYTHONUNBUFFERED=1
+Environment=METRICS_REDIS_HOST=localhost
+Environment=METRICS_REDIS_PORT=6379
+Environment=METRICS_REDIS_DB=3
+Environment=METRICS_REDIS_PREFIX=wegweiser:metrics
+Environment=METRICS_MAX_POINTS=300
+Environment=METRICS_TTL_SECONDS=900
+# Optional: override NATS URL
+# Environment=NATS_URL=tls://nats.wegweiser.tech:443
+ExecStart=/opt/wegweiser/venv/bin/python /opt/wegweiser/nats_receiver_runner.py
+Restart=always
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
