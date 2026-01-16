@@ -6,9 +6,6 @@
 
 set -e
 
-# Enable color support for terminals
-export TERM=${TERM:-xterm-256color}
-
 # Text formatting
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -65,22 +62,22 @@ print_header "Deployment Mode Selection"
 
 echo "Select your deployment scenario:"
 echo ""
-echo -e "1) ${BOLD}Development${NC}"
+echo "1) ${BOLD}Development${NC}"
 echo "   - Local .env file for secrets"
 echo "   - SQLite or local PostgreSQL"
 echo "   - Best for: Testing, development, small deployments"
 echo ""
-echo -e "2) ${BOLD}Production (Self-Hosted)${NC}"
+echo "2) ${BOLD}Production (Self-Hosted)${NC}"
 echo "   - OpenBao for secrets management"
 echo "   - External PostgreSQL database"
 echo "   - Best for: On-premises, private cloud, maximum control"
 echo ""
-echo -e "3) ${BOLD}Production (Azure)${NC}"
+echo "3) ${BOLD}Production (Azure)${NC}"
 echo "   - Azure Key Vault for secrets"
 echo "   - Azure Database for PostgreSQL"
 echo "   - Best for: Azure cloud deployment, enterprise"
 echo ""
-echo -e "4) ${BOLD}Hybrid (Custom)${NC}"
+echo "4) ${BOLD}Hybrid (Custom)${NC}"
 echo "   - Choose your own configuration"
 echo "   - Maximum flexibility"
 echo ""
